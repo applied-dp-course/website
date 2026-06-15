@@ -1,0 +1,13 @@
+---
+title: "Schedule"
+---
+
+Lecture status is driven by each lecture's `manifest.yml` (`migrated` / `planned` / `legacy-pdf`).
+Automating this table from the manifests is a Phase-1 task (v4 §6) — for now it is maintained by
+hand.
+
+| # | Lecture | Status | Links |
+|---|---------|--------|-------|
+| 02 | Reconstruction attacks | scaffolded (host path ready; WASM needs libdpy wheel) | [slides](lectures/02-reconstruction/slides.qmd) |
+
+See [STATUS.md](STATUS.md) for live progress.

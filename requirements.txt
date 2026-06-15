@@ -1,0 +1,13 @@
+# HOST render environment only (GitHub Actions / local `quarto render`).
+# All course logic comes from libdpy — the website defines none of it.
+# Local/host render uses the git install; the BROWSER (WASM) path uses a hosted wheel
+# via micropip/piplite instead — never git+ (v4 §1.1).
+jupyter
+numpy
+scipy
+pandas
+matplotlib
+plotly
+ipywidgets
+anywidget
+libdpy @ git+https://github.com/applied-dp-course/pub_lib.git

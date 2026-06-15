@@ -1,0 +1,8 @@
+---
+title: "Syllabus"
+---
+
+::: {.callout-note}
+Placeholder. Topics, prerequisites, grading, and logistics go here as the site shell (Phase 1)
+is completed. See [PLAN.md](PLAN.md).
+:::

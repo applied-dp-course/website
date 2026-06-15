@@ -1,0 +1,18 @@
+---
+title: "Applied Differential Privacy"
+---
+
+A hands-on course on differential privacy and privacy-preserving machine learning.
+
+Lectures pair narrative slides with **live, in-browser interactivity** — every computation is
+imported from the course library [`libdpy`](https://github.com/applied-dp-course/pub_lib); this
+site only presents and wires it together.
+
+- [Schedule](schedule.qmd) — lecture status and links.
+- [Syllabus](syllabus.qmd) — topics, prerequisites, logistics.
+
+## Featured: interactive reconstruction lecture
+
+The [reconstruction attacks lecture](lectures/02-reconstruction/slides.qmd) is the first
+interactive example — feasible-region slabs that shrink as queries accumulate, and a live
+reconstruction-error-vs-noise tradeoff.
