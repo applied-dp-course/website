@@ -1,1 +1,22 @@
+# Design rationale doc (kept locally, not tracked)
 applied-dp-course-website-plan.md
+
+# Planning docs — agent-maintained, local only (not part of the published site)
+PLAN.md
+STATUS.md
+
+# Python env
+.venv/
+__pycache__/
+*.pyc
+
+# Quarto build artifacts
+/_site/
+/.quarto/
+/lectures/**/.jupyter_cache/
+.jupyter_cache/
+
+# OS
+.DS_Store
+
+**/*.quarto_ipynb
