@@ -2,12 +2,15 @@
 title: "Schedule"
 ---
 
-Lecture status is driven by each lecture's `manifest.yml` (`migrated` / `planned` / `legacy-pdf`).
-Automating this table from the manifests is a Phase-1 task (v4 §6) — for now it is maintained by
-hand.
+Lecture status is driven by each lecture's generated `manifest.yml`
+(`migrated` / `planned` / `legacy-pdf`).
 
+<!-- BEGIN AUTO-GENERATED LECTURES -->
 | # | Lecture | Status | Links |
-|---|---------|--------|-------|
-| 02 | Reconstruction attacks | scaffolded (host path ready; WASM needs libdpy wheel) | [slides](lectures/02-reconstruction/slides.qmd) |
+|---|---|---|---|
+| 02 | Reconstruction Attacks | planned | [slides](lectures/02-reconstruction/slides.qmd) · [notebook](lectures/02-reconstruction/notebook.ipynb) |
+| 03 | DP as Hypothesis Testing | planned | [slides](lectures/03-hypothesis_testing/slides.qmd) · [notebook](lectures/03-hypothesis_testing/learn.ipynb) |
+| 03b | DP as Hypothesis Testing | planned | [slides](lectures/03b-hypothesis_testing/slides.qmd) · [notebook](lectures/03b-hypothesis_testing/learn.ipynb) |
+<!-- END AUTO-GENERATED LECTURES -->
 
 See [STATUS.md](STATUS.md) for live progress.

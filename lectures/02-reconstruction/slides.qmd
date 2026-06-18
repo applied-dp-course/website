@@ -1,65 +1,14 @@
 ---
 title: "Reconstruction Attacks"
-subtitle: "Why answering too many queries too accurately reconstructs the data"
-format:
-  revealjs:
-    theme: white
-    slide-number: true
+format: html
 ---
 
-## The setup
+<meta http-equiv="refresh" content="0; url=notebook.html">
+<script>
+window.location.replace("notebook.html");
+</script>
 
-A curator holds a private binary vector and answers subset-sum queries. Each *accurate* answer
-carves a slab out of the space of possible datasets. Enough slabs and only the true dataset
-survives — that is the reconstruction attack.
+This compatibility page now redirects to the notebook-first RevealJS deck:
 
-> All figures and widgets below are produced by `libdpy`; this deck only embeds and frames them.
-
-## Feasible region — 2 records {.smaller}
-
-As queries accumulate, the feasible Boolean corners are eliminated one slab at a time.
-
-::: {.content-visible when-format="revealjs"}
-<iframe src="apps/reconstruction-2d-slab/index.html"
-        width="100%" height="560" style="border:0"
-        loading="lazy" title="Interactive 2-D feasible-region slab"></iframe>
-:::
-
-::: {.content-visible unless-format="revealjs"}
-![Feasible region for 2 records: each query is a slab; their intersection shrinks toward the true dataset.](assets/slab-2d-static.png)
-:::
-
-## Feasible region — 3 records {.smaller}
-
-In 3-D the surviving region is the intersection of slabs inside the unit cube.
-
-::: {.content-visible when-format="revealjs"}
-<iframe src="apps/reconstruction-3d-slabs/index.html"
-        width="100%" height="560" style="border:0"
-        loading="lazy" title="Interactive 3-D feasible-region slabs"></iframe>
-:::
-
-::: {.content-visible unless-format="revealjs"}
-![Three-record feasible region: more queries shrink the surviving cube corners.](assets/slab-3d-static.png)
-:::
-
-## How many queries does it take?
-
-{{< embed notebook.ipynb#fig-candidate-elimination >}}
-
-## The query matrix
-
-{{< embed notebook.ipynb#fig-query-matrix >}}
-
-## Noise is the defense — at a cost
-
-Adding noise to each answer thickens the slabs and blocks exact reconstruction — but degrades
-utility. The tradeoff:
-
-{{< embed notebook.ipynb#fig-reconstruction-error >}}
-
-## Takeaways
-
-- Exact answers to enough subset-sum queries reconstruct the data (Dinur–Nissim).
-- The feasible region is an intersection of slabs; queries shrink it geometrically.
-- Calibrated noise is what stands between utility and reconstruction — the heart of DP.
+- [Open the reconstruction lecture deck](notebook.html)
+- Editable source: `lectures/02-reconstruction/notebook.ipynb`

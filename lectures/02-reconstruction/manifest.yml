@@ -8,10 +8,10 @@ verified_browsers: []                # e.g. [Chrome, Firefox, Safari]
 canonical_source: lectures/02-reconstruction/notebook.ipynb
 
 runtimes:
-  slides: revealjs
+  slides: revealjs-from-notebook
   student_notebook: jupyterlite      # browser path needs the libdpy wheel (v4 §1.1)
   apps:
-    - reconstruction-2d-slab         # ./apps/  (import-only entrypoints)
+    - reconstruction-2d-slab         # browser-native iframe app
     - reconstruction-3d-slabs
 
 exports:
@@ -33,22 +33,16 @@ dependencies:
     - scipy
     - pandas
     - matplotlib
-    - plotly
     - libdpy
-  browser:                           # JupyterLite/marimo/Pyodide; installs the libdpy WHEEL
-    - numpy
-    - scipy
-    - pandas
-    - matplotlib
-    - plotly
-    - libdpy                         # hosted wheel (v4 §1.1), NOT git+
+  browser: []                        # current slab apps are pure HTML/JS/canvas; no CDN package
 
 smoke_tests:                         # v4 §8
   - import libdpy
   - run lin_reg_reconstruction (small instance)
   - run lin_prog_reconstruction (small instance, method="highs")
-  - interactive_2d_slab renders and responds
-  - interactive_3d_slabs renders and responds
+  - notebook-first RevealJS deck renders
+  - browser-native 2-D slab app renders and responds
+  - browser-native 3-D slab app renders and responds
 
 # Library state: all reconstruction modules are already public on pub_lib's origin/main
 # (geometry.py, instances.py, reconstruction_lecture_visualization.py,

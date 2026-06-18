@@ -1,4 +1,8 @@
-"""Marimo/WASM entrypoint for the 2-D feasible-region slab widget.
+"""Deferred Marimo/WASM entrypoint for the 2-D feasible-region slab widget.
+
+The shipped web lecture currently embeds the browser-native app at
+``apps/reconstruction-2d-slab/index.html``. Keep this file as the future
+Python/WASM route once a hosted ``libdpy`` wheel exists.
 
 Import-only: the entire widget is defined in libdpy. This file just installs libdpy (browser =
 hosted wheel via micropip, never git+; v4 §1.1) and invokes it. No domain logic lives here.

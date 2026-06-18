@@ -7,7 +7,10 @@ numpy
 scipy
 pandas
 matplotlib
-plotly
+plotly==6.8.0
+narwhals==2.22.1
+packaging==26.2
 ipywidgets
 anywidget
+marimo==0.23.9
 libdpy @ git+https://github.com/applied-dp-course/pub_lib.git

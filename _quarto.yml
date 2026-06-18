@@ -1,9 +1,18 @@
 project:
   type: website
   output-dir: _site
+  pre-render:
+    - python scripts/sync_lectures.py
+    - python scripts/run_site_python.py scripts/build_interactives.py
+  resources:
+    - "lectures/**/apps/**"
   render:
     - "*.qmd"
     - "lectures/**/*.qmd"
+    - "lectures/**/learn.ipynb"
+    - "lectures/02-reconstruction/notebook.ipynb"
+    - "lectures/03-hypothesis_testing/notebook.ipynb"
+    - "tutorials/**/*.ipynb"
 
 # Don't re-execute unchanged notebooks on render (v4 §3).
 execute:
@@ -16,6 +25,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: lectures.qmd
+        text: Lectures
       - href: schedule.qmd
         text: Schedule
       - href: syllabus.qmd
@@ -23,12 +34,10 @@ website:
   repo-url: https://github.com/applied-dp-course/website
   page-footer: "Built with Quarto. All computation imported from libdpy (pub_lib)."
 
+# Project-level format is HTML only. The reconstruction deck declares `format: revealjs` in its
+# own front matter — declaring revealjs here too would render every page to BOTH formats and
+# collide on index.html during the output-dir move (RevealJS is canonical for slides; v4 §7).
 format:
   html:
     theme: cosmo
     toc: true
-  # RevealJS is the canonical slide format; pptx/beamer are secondary offline artifacts (v4 §7).
-  revealjs:
-    theme: white
-    slide-number: true
-    embed-resources: false

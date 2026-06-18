@@ -10,9 +10,10 @@ site only presents and wires it together.
 
 - [Schedule](schedule.qmd) — lecture status and links.
 - [Syllabus](syllabus.qmd) — topics, prerequisites, logistics.
+- [Slide authoring tutorial](tutorials/slide-authoring/tutorial.ipynb) — examples for editing notebook-based slides.
 
-## Featured: interactive reconstruction lecture
+## Featured: reconstruction lecture
 
-The [reconstruction attacks lecture](lectures/02-reconstruction/slides.qmd) is the first
-interactive example — feasible-region slabs that shrink as queries accumulate, and a live
-reconstruction-error-vs-noise tradeoff.
+The [reconstruction attacks lecture](lectures/02-reconstruction/notebook.ipynb) is now a
+notebook-first slide deck: edit the lecture in the notebook, render it to RevealJS, and use the
+embedded browser-native slab widgets directly in the web deck.

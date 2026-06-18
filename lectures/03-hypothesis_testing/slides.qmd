@@ -1,0 +1,14 @@
+---
+title: "DP as Hypothesis Testing"
+format: html
+---
+
+<meta http-equiv="refresh" content="0; url=notebook.html">
+<script>
+window.location.replace("notebook.html");
+</script>
+
+This compatibility page redirects to the notebook-first RevealJS deck:
+
+- [Open the DP-as-hypothesis-testing lecture deck](notebook.html)
+- Editable source: `lectures/03-hypothesis_testing/notebook.ipynb`

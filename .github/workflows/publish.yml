@@ -1,0 +1,78 @@
+name: Publish website
+
+# Build the Quarto site (which generates the marimo WASM interactives from libdpy),
+# verify every interactive renders in headless Chrome, then deploy to GitHub Pages.
+#
+# libdpy is installed from the public pub_lib repo (see requirements.txt), so this
+# workflow only succeeds once the interactive-widget code has been propagated there.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "1.6.43"
+
+      - name: Install Chrome (for WASM smoke tests)
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          install-dependencies: true
+
+      - name: Install Python dependencies
+        run: |
+          python -m venv .venv
+          ./.venv/bin/pip install --upgrade pip
+          ./.venv/bin/pip install -r requirements.txt
+          ./.venv/bin/pip install pytest websocket-client
+
+      - name: Render site (pre-render builds the libdpy wheel + WASM apps)
+        env:
+          QUARTO_PYTHON: ${{ github.workspace }}/.venv/bin/python
+          MPLBACKEND: Agg
+        run: quarto render --execute
+
+      - name: Build / sync unit tests
+        run: ./.venv/bin/python -m pytest tests/test_build_interactives.py tests/test_sync_lectures.py -q
+
+      - name: WASM browser smoke tests
+        env:
+          LIBDPY_CHROME: ${{ steps.chrome.outputs.chrome-path }}
+        run: ./.venv/bin/python tests/run_smoke_tests.py
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

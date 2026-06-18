@@ -1,0 +1,45 @@
+# Per-lecture contract (v4 §6). `status` drives the schedule table.
+title: DP as hypothesis testing
+status: planned                      # planned | migrated | legacy-pdf  → flip to `migrated`
+                                     #   only after the v4 §8 smoke tests pass on deployed Pages.
+owner: "course-staff"
+last_verified: ""                    # set on first successful deployed-site smoke test
+verified_browsers: []                # e.g. [Chrome, Firefox, Safari]
+canonical_source: lectures/03-hypothesis_testing/notebook.ipynb
+
+# Source materials this deck was assembled from (kept in-dir for reference).
+sources:
+  slides_pdf: lectures/03-hypothesis_testing/lecture_presentation.pdf
+  lecture_notebook: lectures/03-hypothesis_testing/lecture_dp_as_hypothesis_testing.ipynb
+
+runtimes:
+  slides: revealjs-from-notebook
+  student_notebook: jupyterlite      # browser path needs the libdpy wheel (v4 §1.1)
+  apps: []                           # no interactive iframe apps in this lecture
+
+exports:
+  pdf: true
+  pptx: true
+  beamer: false
+
+# Both slots defined; keep identical until they diverge (v4 §6).
+dependencies:
+  host:                              # Quarto render env (GitHub Actions); installs libdpy via git+
+    - quarto
+    - jupyter
+    - numpy
+    - scipy
+    - matplotlib
+    - libdpy
+  browser: []                        # pure matplotlib figures; no CDN package
+
+smoke_tests:                         # v4 §8
+  - import libdpy
+  - import libdpy.assignment_specific.dp_as_hypothesis_testing.utils.desicion_rule_params
+  - run ROC_and_distributions_visualization (Gaussian + uniform)
+  - run PrivacyPlot (norm; norm/laplace/uniform)
+  - notebook-first RevealJS deck renders
+
+# Library state: the dp_as_hypothesis_testing module and the roc_plots / privacy_plots
+# visualizations are public on pub_lib's origin/main. Local pub_lib was 1 commit behind and was
+# fast-forwarded to pick up assignment_specific/dp_as_hypothesis_testing (see ../../STATUS.md).

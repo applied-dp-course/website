@@ -4,6 +4,14 @@ applied-dp-course-website-plan.md
 # Planning docs — agent-maintained, local only (not part of the published site)
 PLAN.md
 STATUS.md
+INTERACTIVITY_DECISION.md
+LECTURE_WORKFLOW.md
+interactive-widgets-design-v2.md
+interactive-widgets-proposal.md
+
+# Lecture source materials — kept locally for reference, not published
+/lectures/03-hypothesis_testing/lecture_presentation.pdf
+/lectures/03-hypothesis_testing/lecture_dp_as_hypothesis_testing.ipynb
 
 # Python env
 .venv/
@@ -13,8 +21,23 @@ __pycache__/
 # Quarto build artifacts
 /_site/
 /.quarto/
+/_freeze/
+/generated/
+/lectures/**/apps/privacy-plot-*/
 /lectures/**/.jupyter_cache/
 .jupyter_cache/
+
+# Quarto in-place render artifacts. The project renders to _site/; these only appear when
+# something previews in place (e.g. the VS Code Quarto extension on an open .qmd). They must
+# never be committed — the hand-written apps/**/index.html files are source and are NOT matched.
+/*.html
+/site_libs/
+/lectures/**/slides.html
+/lectures/**/notebook.html
+/lectures/**/learn.html
+/lectures/**/*_files/
+/tutorials/**/*.html
+/tutorials/**/*_files/
 
 # OS
 .DS_Store
