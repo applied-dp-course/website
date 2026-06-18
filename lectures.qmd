@@ -14,7 +14,6 @@ Each lecture comes in **two forms**, both built from the course library
 <!-- BEGIN AUTO-GENERATED LECTURES -->
 - **02 · Reconstruction Attacks** — [presentation deck](lectures/02-reconstruction/slides.qmd) · [self-study notebook](lectures/02-reconstruction/notebook.ipynb)
 - **03 · DP as Hypothesis Testing** — [presentation deck](lectures/03-hypothesis_testing/slides.qmd) · [self-study notebook](lectures/03-hypothesis_testing/learn.ipynb)
-- **03b · DP as Hypothesis Testing** — [presentation deck](lectures/03b-hypothesis_testing/slides.qmd) · [self-study notebook](lectures/03b-hypothesis_testing/learn.ipynb)
 <!-- END AUTO-GENERATED LECTURES -->
 
 See the [schedule](schedule.qmd) for migration status, and [STATUS.md](STATUS.md) for live build progress.

@@ -11,7 +11,6 @@ project:
     - "lectures/**/*.qmd"
     - "lectures/**/learn.ipynb"
     - "lectures/02-reconstruction/notebook.ipynb"
-    - "lectures/03-hypothesis_testing/notebook.ipynb"
     - "tutorials/**/*.ipynb"
 
 # Don't re-execute unchanged notebooks on render (v4 §3).

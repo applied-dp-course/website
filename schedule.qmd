@@ -10,7 +10,6 @@ Lecture status is driven by each lecture's generated `manifest.yml`
 |---|---|---|---|
 | 02 | Reconstruction Attacks | planned | [slides](lectures/02-reconstruction/slides.qmd) · [notebook](lectures/02-reconstruction/notebook.ipynb) |
 | 03 | DP as Hypothesis Testing | planned | [slides](lectures/03-hypothesis_testing/slides.qmd) · [notebook](lectures/03-hypothesis_testing/learn.ipynb) |
-| 03b | DP as Hypothesis Testing | planned | [slides](lectures/03b-hypothesis_testing/slides.qmd) · [notebook](lectures/03b-hypothesis_testing/learn.ipynb) |
 <!-- END AUTO-GENERATED LECTURES -->
 
 See [STATUS.md](STATUS.md) for live progress.
