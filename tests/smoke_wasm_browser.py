@@ -161,12 +161,20 @@ def smoke_test(url: str, *, port: int = 9224, timeout: float = 300) -> None:
     if not CHROME.exists():
         raise RuntimeError(f"Chrome not found at {CHROME}")
 
-    with tempfile.TemporaryDirectory(prefix="libdpy-wasm-chrome-") as profile:
+    with tempfile.TemporaryDirectory(prefix="libdpy-wasm-chrome-") as profile, \
+            tempfile.TemporaryFile(prefix="libdpy-wasm-chrome-stderr-") as chrome_err:
+        # Capture Chrome's stderr to a file (not a PIPE, which could deadlock on a
+        # long session) so a failed launch surfaces a real message instead of an
+        # opaque "debugger did not start".
         process = subprocess.Popen(
             [
                 str(CHROME),
                 "--headless=new",
                 "--disable-gpu",
+                # Required on CI runners: the setup-chrome chromium has no SUID
+                # sandbox helper, so Chrome silently fails to start without these.
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
                 "--no-first-run",
                 "--no-default-browser-check",
                 "--remote-allow-origins=*",
@@ -175,11 +183,21 @@ def smoke_test(url: str, *, port: int = 9224, timeout: float = 300) -> None:
                 "about:blank",
             ],
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            stderr=chrome_err,
         )
         devtools = None
         try:
-            _wait_for_debugger(port)
+            try:
+                _wait_for_debugger(port)
+            except RuntimeError as exc:
+                if process.poll() is not None:
+                    chrome_err.seek(0)
+                    err = chrome_err.read().decode("utf-8", "replace")
+                    tail = "\n".join(err.strip().splitlines()[-8:])
+                    raise RuntimeError(
+                        f"{exc} (Chrome exited {process.returncode}): {tail}"
+                    ) from exc
+                raise
             target = _json_request(
                 f"http://127.0.0.1:{port}/json/new?{url}",
                 method="PUT",
