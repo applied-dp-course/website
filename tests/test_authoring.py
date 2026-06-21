@@ -44,9 +44,12 @@ class AuthoringKitTest(unittest.TestCase):
     def test_quarto_render_excludes_authoring_and_dev(self) -> None:
         config = yaml.safe_load((SITE_ROOT / "_quarto.yml").read_text(encoding="utf-8"))
         render_globs = config["project"]["render"]
-        serialized = yaml.dump(render_globs)
-        self.assertNotIn("authoring/", serialized)
-        self.assertNotIn("dev/", serialized)
+        self.assertIn("!authoring/**", render_globs)
+        self.assertIn("!dev/**", render_globs)
+        # Root-anchored globs so recursive matching cannot pick up authoring/templates/{blog,tool}/.
+        self.assertIn("/*.qmd", render_globs)
+        self.assertIn("/blog/**/index.qmd", render_globs)
+        self.assertIn("/tools/**/index.qmd", render_globs)
 
     def test_template_lecture_passes_validation_when_installed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -16,14 +16,17 @@ project:
     - "blog/**/apps/**"
     - "apps/**"
   render:
-    - "*.qmd"
+    # Leading / anchors globs to the project root (Quarto globs recurse by default).
+    - "/*.qmd"
     - "content/lectures/**/*.qmd"
     - "content/lectures/**/learn.ipynb"
     - "content/lectures/02-reconstruction/notebook.ipynb"
     - "content/assignments/**/*.ipynb"
     - "!content/assignments/**/solution.ipynb"
-    - "blog/**/index.qmd"
-    - "tools/**/index.qmd"
+    - "/blog/**/index.qmd"
+    - "/tools/**/index.qmd"
+    - "!authoring/**"
+    - "!dev/**"
 
 # Don't re-execute unchanged notebooks on render (v4 §3).
 execute:
