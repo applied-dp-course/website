@@ -10,7 +10,6 @@ import os
 import shutil
 import socket
 import subprocess
-import sys
 import tempfile
 import time
 import urllib.request
@@ -162,30 +161,32 @@ def _free_port() -> int:
         return sock.getsockname()[1]
 
 
+def _use_headless() -> bool:
+    """Headless Linux Chrome often never finishes Plotly/Pyodide; xvfb uses headed mode."""
+    if os.environ.get("LIBDPY_HEADLESS", "1").strip().lower() in {"0", "false", "no"}:
+        return False
+    return True
+
+
 def _chrome_launch_command(profile: str, port: int) -> list[str]:
-    command = [
-        str(CHROME),
-        "--headless=new",
-        # Required on CI runners: the setup-chrome chromium has no SUID
-        # sandbox helper, so Chrome silently fails to start without these.
-        "--no-sandbox",
-        "--disable-dev-shm-usage",
-        "--no-first-run",
-        "--no-default-browser-check",
-        "--remote-allow-origins=*",
-        f"--remote-debugging-port={port}",
-        f"--user-data-dir={profile}",
-        "about:blank",
-    ]
-    if sys.platform == "linux":
-        # Plotly uses WebGL; software rendering keeps headless Linux CI working.
-        command[2:2] = [
-            "--use-gl=angle",
-            "--use-angle=swiftshader-webgl",
-            "--enable-unsafe-swiftshader",
+    command = [str(CHROME)]
+    if _use_headless():
+        command.append("--headless=new")
+        command.append("--disable-gpu")
+    command.extend(
+        [
+            # Required on CI runners: the setup-chrome chromium has no SUID
+            # sandbox helper, so Chrome silently fails to start without these.
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--no-first-run",
+            "--no-default-browser-check",
+            "--remote-allow-origins=*",
+            f"--remote-debugging-port={port}",
+            f"--user-data-dir={profile}",
+            "about:blank",
         ]
-    else:
-        command.insert(2, "--disable-gpu")
+    )
     return command
 
 
@@ -203,11 +204,25 @@ window.__sliders = () => window.__deepAll(document, []).filter(
   (e) => e.tagName && e.tagName.toLowerCase() === 'marimo-slider');
 window.__thumbs = () => window.__deepAll(document, []).filter(
   (e) => e.getAttribute && e.getAttribute('role') === 'slider');
-window.__plot = () => window.__deepAll(document, []).find(
-  (e) => e.classList && e.classList.contains('js-plotly-plot'));
+window.__plot = () => {
+  const plots = window.__deepAll(document, []).filter(
+    (e) => e.classList && e.classList.contains('js-plotly-plot'));
+  return plots.find(
+    (p) => p.data && p.data[0] && p.data[0].y && p.data[0].y.length
+  ) || plots[0] || null;
+};
 window.__plotHasTraceData = () => {
-  const p = window.__plot();
-  return !!(p && p.data && p.data[0] && p.data[0].y && p.data[0].y.length);
+  const plots = window.__deepAll(document, []).filter(
+    (e) => e.classList && e.classList.contains('js-plotly-plot'));
+  return plots.some(
+    (p) => p.data && p.data[0] && p.data[0].y && p.data[0].y.length
+  );
+};
+window.__nudgeSlider = () => {
+  const thumb = window.__thumbs()[0];
+  if (!thumb) return false;
+  thumb.focus();
+  return true;
 };
 true;
 """
@@ -219,6 +234,8 @@ def _plot_diagnostics(devtools: DevTools) -> str:
         (function () {
           const sliders = (window.__sliders && window.__sliders().length) || 0;
           const thumbs = (window.__thumbs && window.__thumbs().length) || 0;
+          const plots = window.__deepAll(document, []).filter(
+            (e) => e.classList && e.classList.contains('js-plotly-plot'));
           const plot = window.__plot ? window.__plot() : null;
           const traceCount = plot && plot.data ? plot.data.length : 0;
           const yLength = plot && plot.data && plot.data[0] && plot.data[0].y
@@ -227,13 +244,55 @@ def _plot_diagnostics(devtools: DevTools) -> str:
           return [
             `marimo sliders: ${sliders}`,
             `slider thumbs: ${thumbs}`,
+            `plotly divs: ${plots.length}`,
             `plot element: ${plot ? 'yes' : 'no'}`,
             `plot traces: ${traceCount}`,
             `first trace y length: ${yLength}`,
+            `crossOriginIsolated: ${window.crossOriginIsolated}`,
           ].join('\\n');
         })()
         """
     )
+
+
+def _dispatch_arrow_right(devtools: DevTools) -> None:
+    for event_type in ("rawKeyDown", "keyUp"):
+        devtools.call(
+            "Input.dispatchKeyEvent",
+            {
+                "type": event_type,
+                "key": "ArrowRight",
+                "code": "ArrowRight",
+                "windowsVirtualKeyCode": 39,
+                "nativeVirtualKeyCode": 39,
+            },
+        )
+
+
+def _wait_for_plot(devtools: DevTools, timeout: float) -> bool:
+    deadline = time.monotonic() + timeout
+    next_log = time.monotonic() + 15.0
+    next_nudge = time.monotonic() + 8.0
+    while time.monotonic() < deadline:
+        try:
+            if devtools.evaluate("window.__plotHasTraceData()"):
+                return True
+            devtools.enable_attached_targets()
+        except Exception:
+            pass
+        now = time.monotonic()
+        if now >= next_nudge:
+            try:
+                if devtools.evaluate("window.__nudgeSlider()"):
+                    _dispatch_arrow_right(devtools)
+            except Exception:
+                pass
+            next_nudge = now + 8.0
+        if now >= next_log:
+            print("  still waiting for Plotly trace data...", flush=True)
+            next_log = now + 15.0
+        time.sleep(0.5)
+    return False
 
 
 def _browser_errors(devtools: DevTools) -> list[str]:
@@ -245,15 +304,29 @@ def _browser_errors(devtools: DevTools) -> list[str]:
         if method == "Runtime.exceptionThrown":
             details = params.get("exceptionDetails", {})
             errors.append(details.get("text", "Runtime exception"))
+        elif method == "Runtime.consoleAPICalled":
+            if params.get("type") == "error":
+                args = params.get("args", [])
+                rendered = " ".join(
+                    str(arg.get("value", arg.get("description", arg))) for arg in args
+                )
+                errors.append(f"console.error: {rendered}")
         elif method == "Log.entryAdded":
             entry = params.get("entry", {})
             if entry.get("level") == "error":
                 errors.append(entry.get("text", "Console error"))
         elif method == "Network.loadingFailed":
+            url = params.get("request", {}).get("url") or params.get("documentURL", "")
             errors.append(
                 f"Network failure: {params.get('errorText')} "
-                f"({params.get('blockedReason', 'unblocked')})"
+                f"({params.get('blockedReason', 'unblocked')}) {url}".strip()
             )
+        elif method == "Network.responseReceived":
+            response = params.get("response", {})
+            url = response.get("url", "")
+            status = response.get("status")
+            if "libdpy-" in url and url.endswith(".whl") and status != 200:
+                errors.append(f"libdpy wheel HTTP {status}: {url}")
     return errors
 
 
@@ -327,12 +400,7 @@ def smoke_test(url: str, *, port: int | None = None, timeout: float | None = Non
                 )
 
             plot_timeout = max(60.0, timeout - slider_timeout)
-            plot_ready = _wait_for(
-                devtools,
-                "window.__plotHasTraceData()",
-                timeout=plot_timeout,
-                label="Plotly trace data",
-            )
+            plot_ready = _wait_for_plot(devtools, plot_timeout)
             if not plot_ready:
                 errors = _browser_errors(devtools)
                 visible_text = devtools.evaluate("document.body.innerText.slice(-3000)")
@@ -368,17 +436,7 @@ def smoke_test(url: str, *, port: int | None = None, timeout: float | None = Non
                 if not moved:
                     raise RuntimeError(f"failed to locate marimo slider {index}")
                 for _ in range(30):
-                    for event_type in ("rawKeyDown", "keyUp"):
-                        devtools.call(
-                            "Input.dispatchKeyEvent",
-                            {
-                                "type": event_type,
-                                "key": "ArrowRight",
-                                "code": "ArrowRight",
-                                "windowsVirtualKeyCode": 39,
-                                "nativeVirtualKeyCode": 39,
-                            },
-                        )
+                    _dispatch_arrow_right(devtools)
                 changed = _wait_for(
                     devtools,
                     "(function () {"

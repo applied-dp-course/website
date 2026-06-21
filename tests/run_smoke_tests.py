@@ -113,6 +113,13 @@ def discover_canvas_app_paths(output_root: Path) -> list[str]:
 class _SiteHandler(http.server.SimpleHTTPRequestHandler):
     """Serve ``_site`` and swallow root ``/favicon.ico`` requests from headless Chrome."""
 
+    def end_headers(self) -> None:
+        # marimo/Pyodide WASM expects cross-origin isolation when loading the worker.
+        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
+        self.send_header("Cross-Origin-Resource-Policy", "same-origin")
+        super().end_headers()
+
     def do_GET(self) -> None:
         if self.path.split("?", 1)[0] == "/favicon.ico":
             self.send_response(204)

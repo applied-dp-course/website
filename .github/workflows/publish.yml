@@ -65,7 +65,8 @@ jobs:
       - name: WASM and canvas browser smoke tests
         env:
           LIBDPY_CHROME: ${{ steps.chrome.outputs.chrome-path }}
-        run: ./.venv/bin/python tests/run_smoke_tests.py
+          LIBDPY_HEADLESS: "0"
+        run: xvfb-run -a ./.venv/bin/python tests/run_smoke_tests.py
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

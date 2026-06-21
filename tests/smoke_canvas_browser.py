@@ -15,6 +15,8 @@ from smoke_wasm_browser import (
     CHROME,
     DevTools,
     _browser_errors,
+    _chrome_launch_command,
+    _free_port,
     _json_request,
     _wait_for,
     _wait_for_debugger,
@@ -40,26 +42,16 @@ def _canvas_signature(devtools: DevTools) -> str:
     )
 
 
-def smoke_test(url: str, *, port: int = 9225, timeout: float = 60) -> None:
+def smoke_test(url: str, *, port: int | None = None, timeout: float = 60) -> None:
     if not CHROME.exists():
         raise RuntimeError(f"Chrome not found at {CHROME}")
+
+    port = _free_port() if port is None else port
 
     with tempfile.TemporaryDirectory(prefix="libdpy-canvas-chrome-") as profile, \
             tempfile.TemporaryFile(prefix="libdpy-canvas-chrome-stderr-") as chrome_err:
         process = subprocess.Popen(
-            [
-                str(CHROME),
-                "--headless=new",
-                "--disable-gpu",
-                "--no-sandbox",
-                "--disable-dev-shm-usage",
-                "--no-first-run",
-                "--no-default-browser-check",
-                "--remote-allow-origins=*",
-                f"--remote-debugging-port={port}",
-                f"--user-data-dir={profile}",
-                "about:blank",
-            ],
+            _chrome_launch_command(profile, port),
             stdout=subprocess.DEVNULL,
             stderr=chrome_err,
         )
