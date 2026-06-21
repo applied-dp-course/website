@@ -25,7 +25,41 @@ import build_interactives  # noqa: E402
 import content_model  # noqa: E402
 import gallery  # noqa: E402
 from smoke_canvas_browser import smoke_test as smoke_canvas  # noqa: E402
-from smoke_wasm_browser import smoke_test as smoke_wasm  # noqa: E402
+from smoke_wasm_browser import default_wasm_timeout, smoke_test as smoke_wasm  # noqa: E402
+
+# When the same marimo export is copied to home, blog, tools, and lectures, smoke-test
+# one canonical deployment per artifact id (prefer lecture paths).
+_WASM_SMOKE_PATH_PRIORITY = (
+    "content/lectures/",
+    "tools/",
+    "blog/",
+    "apps/",
+)
+
+
+def _wasm_artifact_id(relative_path: str) -> str:
+    return Path(relative_path).name
+
+
+def dedupe_wasm_smoke_paths(wasm_paths: list[str]) -> list[str]:
+    grouped: dict[str, list[str]] = {}
+    for path in wasm_paths:
+        grouped.setdefault(_wasm_artifact_id(path), []).append(path)
+
+    canonical: list[str] = []
+    for artifact_id in sorted(grouped):
+        candidates = grouped[artifact_id]
+        chosen = candidates[0]
+        for prefix in _WASM_SMOKE_PATH_PRIORITY:
+            for candidate in candidates:
+                if candidate.startswith(prefix):
+                    chosen = candidate
+                    break
+            else:
+                continue
+            break
+        canonical.append(chosen)
+    return canonical
 
 
 def discover_smoke_targets(
@@ -63,7 +97,7 @@ def discover_smoke_targets(
             raise SystemExit(f"expected built WASM app missing: {index}")
         wasm_paths.add(relative)
 
-    return sorted(wasm_paths), sorted(canvas_paths)
+    return dedupe_wasm_smoke_paths(sorted(wasm_paths)), sorted(canvas_paths)
 
 
 def discover_wasm_app_paths(site_root: Path, output_root: Path) -> list[str]:
@@ -113,7 +147,8 @@ def main() -> None:
             label = "canvas" if relative in canvas_urls else "wasm"
             print(f"== smoke-testing {label} {relative} ==", flush=True)
             try:
-                smoke(url, timeout=300)
+                timeout = default_wasm_timeout() if label == "wasm" else 60
+                smoke(url, timeout=timeout)
             except Exception as error:  # noqa: BLE001 - aggregate and report all
                 print(f"FAIL {relative}: {error}", flush=True)
                 failures.append(relative)

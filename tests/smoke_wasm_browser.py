@@ -8,13 +8,22 @@ import base64
 import json
 import os
 import shutil
+import socket
 import subprocess
+import sys
 import tempfile
 import time
 import urllib.request
 from pathlib import Path
 
 import websocket
+
+
+def default_wasm_timeout() -> float:
+    """Pyodide cold boot + scipy/plotly import is much slower on CI runners."""
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        return 600.0
+    return 300.0
 
 
 def _resolve_chrome() -> Path:
@@ -122,8 +131,15 @@ def _wait_for_debugger(port: int, timeout: float = 10):
     raise RuntimeError("Chrome remote debugger did not start")
 
 
-def _wait_for(devtools: DevTools, expression: str, timeout: float = 90):
+def _wait_for(
+    devtools: DevTools,
+    expression: str,
+    timeout: float = 90,
+    *,
+    label: str = "",
+) -> bool | None:
     deadline = time.monotonic() + timeout
+    next_log = time.monotonic() + 15.0
     while time.monotonic() < deadline:
         try:
             value = devtools.evaluate(expression)
@@ -132,8 +148,92 @@ def _wait_for(devtools: DevTools, expression: str, timeout: float = 90):
                 return value
         except Exception:
             pass
+        now = time.monotonic()
+        if label and now >= next_log:
+            print(f"  still waiting for {label}...", flush=True)
+            next_log = now + 15.0
         time.sleep(0.5)
     return None
+
+
+def _free_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(("127.0.0.1", 0))
+        return sock.getsockname()[1]
+
+
+def _chrome_launch_command(profile: str, port: int) -> list[str]:
+    command = [
+        str(CHROME),
+        "--headless=new",
+        # Required on CI runners: the setup-chrome chromium has no SUID
+        # sandbox helper, so Chrome silently fails to start without these.
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--remote-allow-origins=*",
+        f"--remote-debugging-port={port}",
+        f"--user-data-dir={profile}",
+        "about:blank",
+    ]
+    if sys.platform == "linux":
+        # Plotly uses WebGL; software rendering keeps headless Linux CI working.
+        command[2:2] = [
+            "--use-gl=angle",
+            "--use-angle=swiftshader-webgl",
+            "--enable-unsafe-swiftshader",
+        ]
+    else:
+        command.insert(2, "--disable-gpu")
+    return command
+
+
+_PLOT_HELPERS_JS = """
+window.__deepAll = (root, acc) => {
+  const r = root || document;
+  if (r.shadowRoot) window.__deepAll(r.shadowRoot, acc);
+  r.querySelectorAll('*').forEach((el) => {
+    acc.push(el);
+    if (el.shadowRoot) window.__deepAll(el.shadowRoot, acc);
+  });
+  return acc;
+};
+window.__sliders = () => window.__deepAll(document, []).filter(
+  (e) => e.tagName && e.tagName.toLowerCase() === 'marimo-slider');
+window.__thumbs = () => window.__deepAll(document, []).filter(
+  (e) => e.getAttribute && e.getAttribute('role') === 'slider');
+window.__plot = () => window.__deepAll(document, []).find(
+  (e) => e.classList && e.classList.contains('js-plotly-plot'));
+window.__plotHasTraceData = () => {
+  const p = window.__plot();
+  return !!(p && p.data && p.data[0] && p.data[0].y && p.data[0].y.length);
+};
+true;
+"""
+
+
+def _plot_diagnostics(devtools: DevTools) -> str:
+    return devtools.evaluate(
+        """
+        (function () {
+          const sliders = (window.__sliders && window.__sliders().length) || 0;
+          const thumbs = (window.__thumbs && window.__thumbs().length) || 0;
+          const plot = window.__plot ? window.__plot() : null;
+          const traceCount = plot && plot.data ? plot.data.length : 0;
+          const yLength = plot && plot.data && plot.data[0] && plot.data[0].y
+            ? plot.data[0].y.length
+            : 0;
+          return [
+            `marimo sliders: ${sliders}`,
+            `slider thumbs: ${thumbs}`,
+            `plot element: ${plot ? 'yes' : 'no'}`,
+            `plot traces: ${traceCount}`,
+            `first trace y length: ${yLength}`,
+          ].join('\\n');
+        })()
+        """
+    )
 
 
 def _browser_errors(devtools: DevTools) -> list[str]:
@@ -157,9 +257,12 @@ def _browser_errors(devtools: DevTools) -> list[str]:
     return errors
 
 
-def smoke_test(url: str, *, port: int = 9224, timeout: float = 300) -> None:
+def smoke_test(url: str, *, port: int | None = None, timeout: float | None = None) -> None:
     if not CHROME.exists():
         raise RuntimeError(f"Chrome not found at {CHROME}")
+
+    timeout = default_wasm_timeout() if timeout is None else timeout
+    port = _free_port() if port is None else port
 
     with tempfile.TemporaryDirectory(prefix="libdpy-wasm-chrome-") as profile, \
             tempfile.TemporaryFile(prefix="libdpy-wasm-chrome-stderr-") as chrome_err:
@@ -167,21 +270,7 @@ def smoke_test(url: str, *, port: int = 9224, timeout: float = 300) -> None:
         # long session) so a failed launch surfaces a real message instead of an
         # opaque "debugger did not start".
         process = subprocess.Popen(
-            [
-                str(CHROME),
-                "--headless=new",
-                "--disable-gpu",
-                # Required on CI runners: the setup-chrome chromium has no SUID
-                # sandbox helper, so Chrome silently fails to start without these.
-                "--no-sandbox",
-                "--disable-dev-shm-usage",
-                "--no-first-run",
-                "--no-default-browser-check",
-                "--remote-allow-origins=*",
-                f"--remote-debugging-port={port}",
-                f"--user-data-dir={profile}",
-                "about:blank",
-            ],
+            _chrome_launch_command(profile, port),
             stdout=subprocess.DEVNULL,
             stderr=chrome_err,
         )
@@ -218,45 +307,38 @@ def smoke_test(url: str, *, port: int = 9224, timeout: float = 300) -> None:
             # UI, not native <input type=range>) and mounts the Plotly figure inside
             # a shadow root (<marimo-plotly>). Light-DOM selectors never match, so
             # every probe pierces shadow roots via these injected helpers.
-            devtools.evaluate(
-                """
-                window.__deepAll = (root, acc) => {
-                  const r = root || document;
-                  if (r.shadowRoot) window.__deepAll(r.shadowRoot, acc);
-                  r.querySelectorAll('*').forEach((el) => {
-                    acc.push(el);
-                    if (el.shadowRoot) window.__deepAll(el.shadowRoot, acc);
-                  });
-                  return acc;
-                };
-                window.__sliders = () => window.__deepAll(document, []).filter(
-                  (e) => e.tagName && e.tagName.toLowerCase() === 'marimo-slider');
-                window.__thumbs = () => window.__deepAll(document, []).filter(
-                  (e) => e.getAttribute && e.getAttribute('role') === 'slider');
-                window.__plot = () => window.__deepAll(document, []).find(
-                  (e) => e.classList && e.classList.contains('js-plotly-plot'));
-                true;
-                """
-            )
+            devtools.evaluate(_PLOT_HELPERS_JS)
 
-            ready = _wait_for(
+            slider_timeout = min(120.0, timeout * 0.35)
+            sliders_ready = _wait_for(
                 devtools,
-                "window.__sliders().length >= 2 && window.__thumbs().length >= 2 "
-                "&& (function () {"
-                "  const p = window.__plot();"
-                "  return !!(p && p.data && p.data[0] && p.data[0].y && p.data[0].y.length);"
-                "})()",
-                timeout=timeout,
+                "window.__sliders().length >= 2 && window.__thumbs().length >= 2",
+                timeout=slider_timeout,
+                label="marimo sliders",
             )
-            if not ready:
+            if not sliders_ready:
                 errors = _browser_errors(devtools)
                 visible_text = devtools.evaluate("document.body.innerText.slice(-3000)")
-                slider_count = devtools.evaluate(
-                    "(window.__sliders && window.__sliders().length) || 0"
-                )
                 raise RuntimeError(
-                    "interactive did not finish loading two sliders and a Plotly figure\n"
-                    f"marimo sliders found: {slider_count}\n"
+                    "interactive did not finish loading two marimo sliders\n"
+                    f"{_plot_diagnostics(devtools)}\n"
+                    f"visible text:\n{visible_text}\n"
+                    f"browser errors:\n{chr(10).join(errors) if errors else '(none captured)'}"
+                )
+
+            plot_timeout = max(60.0, timeout - slider_timeout)
+            plot_ready = _wait_for(
+                devtools,
+                "window.__plotHasTraceData()",
+                timeout=plot_timeout,
+                label="Plotly trace data",
+            )
+            if not plot_ready:
+                errors = _browser_errors(devtools)
+                visible_text = devtools.evaluate("document.body.innerText.slice(-3000)")
+                raise RuntimeError(
+                    "interactive did not finish loading a Plotly figure with trace data\n"
+                    f"{_plot_diagnostics(devtools)}\n"
                     f"visible text:\n{visible_text}\n"
                     f"browser errors:\n{chr(10).join(errors) if errors else '(none captured)'}"
                 )
@@ -337,7 +419,7 @@ def smoke_test(url: str, *, port: int = 9224, timeout: float = 300) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("url")
-    parser.add_argument("--timeout", type=float, default=300)
+    parser.add_argument("--timeout", type=float, default=None)
     arguments = parser.parse_args()
     smoke_test(arguments.url, timeout=arguments.timeout)
 

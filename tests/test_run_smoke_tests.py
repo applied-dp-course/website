@@ -187,7 +187,7 @@ class DiscoverCanvasAppsTest(unittest.TestCase):
 
 
 class LiveRepositoryWasmDiscoveryTest(unittest.TestCase):
-    def test_repository_includes_home_and_blog_wasm_apps(self) -> None:
+    def test_repository_discovers_unique_wasm_smoke_targets(self) -> None:
         output_root = content_model.SITE_ROOT / "_site"
         if not output_root.is_dir():
             self.skipTest("_site not built")
@@ -197,10 +197,15 @@ class LiveRepositoryWasmDiscoveryTest(unittest.TestCase):
         wasm_paths = run_smoke_tests.discover_wasm_app_paths(
             content_model.SITE_ROOT, output_root
         )
-        self.assertIn("apps/privacy-plot-norm-6197737a49", wasm_paths)
-        self.assertIn(
-            "blog/posts/gaussian-privacy-tradeoff/apps/privacy-plot-norm-6197737a49",
-            wasm_paths,
+        self.assertEqual(len(wasm_paths), 2)
+        self.assertTrue(
+            any(path.endswith("privacy-plot-norm-6197737a49") for path in wasm_paths)
+        )
+        self.assertTrue(
+            any("privacy-plot-norm-laplace-uniform-" in path for path in wasm_paths)
+        )
+        self.assertTrue(
+            all(path.startswith("content/lectures/") for path in wasm_paths)
         )
         home_uses = [
             use
@@ -208,6 +213,21 @@ class LiveRepositoryWasmDiscoveryTest(unittest.TestCase):
             if use.source.relative_to(content_model.SITE_ROOT).as_posix() == "index.qmd"
         ]
         self.assertEqual(len(home_uses), 1)
+
+
+class DedupeWasmSmokePathsTest(unittest.TestCase):
+    def test_prefers_lecture_path_for_duplicate_artifact(self) -> None:
+        paths = run_smoke_tests.dedupe_wasm_smoke_paths(
+            [
+                "apps/privacy-plot-norm-6197737a49",
+                "blog/posts/example/apps/privacy-plot-norm-6197737a49",
+                "content/lectures/03-hypothesis_testing/apps/privacy-plot-norm-6197737a49",
+            ]
+        )
+        self.assertEqual(
+            paths,
+            ["content/lectures/03-hypothesis_testing/apps/privacy-plot-norm-6197737a49"],
+        )
 
 
 class LiveRepositoryCanvasDiscoveryTest(unittest.TestCase):
