@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Serve the built ``_site`` and smoke-test every exported WASM interactive.
+"""Serve the built ``_site`` and smoke-test exported lecture interactives.
 
-Discovers the same ``PrivacyPlot(...).embed()`` uses the build does, derives each
-app's URL under ``_site``, and runs the headless-Chrome smoke test against it.
-Exits non-zero if any interactive fails to render or respond to its sliders.
+Discovers:
+- marimo WASM apps from ``PrivacyPlot(...).embed()`` calls in lecture sources;
+- browser-native canvas apps declared in lecture manifests.
+
+Exits non-zero if any interactive fails to render or respond to its controls.
 """
 
 from __future__ import annotations
@@ -20,7 +22,72 @@ sys.path.insert(0, str(SITE_ROOT / "scripts"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import build_interactives  # noqa: E402
-from smoke_wasm_browser import smoke_test  # noqa: E402
+import content_model  # noqa: E402
+import gallery  # noqa: E402
+from smoke_canvas_browser import smoke_test as smoke_canvas  # noqa: E402
+from smoke_wasm_browser import smoke_test as smoke_wasm  # noqa: E402
+
+
+def discover_smoke_targets(
+    site_root: Path,
+    output_root: Path,
+) -> tuple[list[str], list[str]]:
+    """Return ``(wasm_paths, canvas_paths)`` relative to ``output_root``.
+
+    Browser-native apps come from ``generated/gallery.json``. WASM apps are the union of
+    gallery-declared lecture apps and every ``PrivacyPlot(...).embed()`` export discovered
+    in site sources (home page, blog posts, standalone tools, etc.).
+    """
+
+    wasm_paths: set[str] = set()
+    canvas_paths: set[str] = set()
+
+    gallery_path = site_root / "generated" / "gallery.json"
+    if gallery_path.is_file():
+        for entry in gallery.load_gallery_json(gallery_path):
+            relative = entry.href.strip("/")
+            index = output_root / relative / "index.html"
+            if entry.runtime == "browser-native":
+                if not index.is_file():
+                    raise SystemExit(f"expected built canvas app missing: {index}")
+                canvas_paths.add(relative)
+            elif entry.runtime == "wasm-marimo" and entry.source_kind == "lecture":
+                if not index.is_file():
+                    raise SystemExit(f"expected built WASM app missing: {index}")
+                wasm_paths.add(relative)
+
+    for use in build_interactives.discover_interactives(site_root):
+        relative = use.output_directory.relative_to(site_root).as_posix()
+        index = output_root / relative / "index.html"
+        if not index.is_file():
+            raise SystemExit(f"expected built WASM app missing: {index}")
+        wasm_paths.add(relative)
+
+    return sorted(wasm_paths), sorted(canvas_paths)
+
+
+def discover_wasm_app_paths(site_root: Path, output_root: Path) -> list[str]:
+    wasm_paths, _canvas_paths = discover_smoke_targets(site_root, output_root)
+    return wasm_paths
+
+
+def discover_canvas_app_paths(output_root: Path) -> list[str]:
+    _wasm_paths, canvas_paths = discover_smoke_targets(SITE_ROOT, output_root)
+    return canvas_paths
+
+
+class _SiteHandler(http.server.SimpleHTTPRequestHandler):
+    """Serve ``_site`` and swallow root ``/favicon.ico`` requests from headless Chrome."""
+
+    def do_GET(self) -> None:
+        if self.path.split("?", 1)[0] == "/favicon.ico":
+            self.send_response(204)
+            self.end_headers()
+            return
+        super().do_GET()
+
+    def log_message(self, format: str, *args) -> None:
+        return
 
 
 def main() -> None:
@@ -28,22 +95,13 @@ def main() -> None:
     if not output_root.is_dir():
         raise SystemExit(f"built site not found: {output_root} (run `quarto render` first)")
 
-    uses = build_interactives.discover_interactives(SITE_ROOT)
-    if not uses:
-        print("No libdpy interactive embeds discovered; nothing to smoke-test.")
+    wasm_urls, canvas_urls = discover_smoke_targets(SITE_ROOT, output_root)
+    relative_urls = wasm_urls + canvas_urls
+    if not relative_urls:
+        print("No lecture interactives discovered; nothing to smoke-test.")
         return
 
-    relative_urls = []
-    for use in uses:
-        app_dir = use.output_directory.relative_to(SITE_ROOT)
-        index = output_root / app_dir / "index.html"
-        if not index.is_file():
-            raise SystemExit(f"expected built app missing: {index}")
-        relative_urls.append(app_dir.as_posix())
-
-    handler = functools.partial(
-        http.server.SimpleHTTPRequestHandler, directory=str(output_root)
-    )
+    handler = functools.partial(_SiteHandler, directory=str(output_root))
     with socketserver.TCPServer(("127.0.0.1", 0), handler) as httpd:
         port = httpd.server_address[1]
         threading.Thread(target=httpd.serve_forever, daemon=True).start()
@@ -51,9 +109,11 @@ def main() -> None:
         failures: list[str] = []
         for relative in relative_urls:
             url = f"http://127.0.0.1:{port}/{relative}/index.html"
-            print(f"== smoke-testing {relative} ==", flush=True)
+            smoke = smoke_canvas if relative in canvas_urls else smoke_wasm
+            label = "canvas" if relative in canvas_urls else "wasm"
+            print(f"== smoke-testing {label} {relative} ==", flush=True)
             try:
-                smoke_test(url, timeout=300)
+                smoke(url, timeout=300)
             except Exception as error:  # noqa: BLE001 - aggregate and report all
                 print(f"FAIL {relative}: {error}", flush=True)
                 failures.append(relative)
@@ -61,7 +121,10 @@ def main() -> None:
 
     if failures:
         raise SystemExit(f"{len(failures)} interactive(s) failed: {failures}")
-    print(f"All {len(relative_urls)} interactive(s) passed the WASM smoke test.")
+    print(
+        f"All {len(relative_urls)} interactive(s) passed smoke tests "
+        f"({len(wasm_urls)} WASM, {len(canvas_urls)} canvas)."
+    )
 
 
 if __name__ == "__main__":

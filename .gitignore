@@ -1,7 +1,7 @@
 # Design rationale doc (kept locally, not tracked)
 applied-dp-course-website-plan.md
 
-# Planning docs — agent-maintained, local only (not part of the published site)
+# Volatile planning/status notes — local only (durable docs live in dev/plan/)
 PLAN.md
 STATUS.md
 INTERACTIVITY_DECISION.md
@@ -10,8 +10,11 @@ interactive-widgets-design-v2.md
 interactive-widgets-proposal.md
 
 # Lecture source materials — kept locally for reference, not published
-/lectures/03-hypothesis_testing/lecture_presentation.pdf
-/lectures/03-hypothesis_testing/lecture_dp_as_hypothesis_testing.ipynb
+/content/lectures/03-hypothesis_testing/lecture_presentation.pdf
+/content/lectures/03-hypothesis_testing/lecture_dp_as_hypothesis_testing.ipynb
+
+# Private assignment solutions — never published
+/content/assignments/**/solution.ipynb
 
 # Python env
 .venv/
@@ -23,8 +26,11 @@ __pycache__/
 /.quarto/
 /_freeze/
 /generated/
-/lectures/**/apps/privacy-plot-*/
-/lectures/**/.jupyter_cache/
+/content/lectures/**/apps/privacy-plot-*/
+/tools/**/apps/privacy-plot-*/
+/blog/**/apps/privacy-plot-*/
+/apps/privacy-plot-*/
+/content/lectures/**/.jupyter_cache/
 .jupyter_cache/
 
 # Quarto in-place render artifacts. The project renders to _site/; these only appear when
@@ -32,12 +38,14 @@ __pycache__/
 # never be committed — the hand-written apps/**/index.html files are source and are NOT matched.
 /*.html
 /site_libs/
-/lectures/**/slides.html
-/lectures/**/notebook.html
-/lectures/**/learn.html
-/lectures/**/*_files/
-/tutorials/**/*.html
-/tutorials/**/*_files/
+/content/lectures/**/slides.html
+/content/lectures/**/notebook.html
+/content/lectures/**/learn.html
+/content/lectures/**/*_files/
+/authoring/tutorials/**/*.html
+/authoring/tutorials/**/*_files/
+/blog/**/*.html
+/blog/**/*_files/
 
 # OS
 .DS_Store

@@ -1,0 +1,11 @@
+title: Applied Differential Privacy
+repo:
+  owner: applied-dp-course
+  name: website
+  branch: main
+current_offering: 2026-fall
+instructors:
+  - name: Course staff
+    url: https://github.com/applied-dp-course
+colab:
+  enabled: true

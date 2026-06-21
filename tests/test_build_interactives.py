@@ -18,7 +18,7 @@ class BuildInteractivesTest(unittest.TestCase):
     def test_discovers_and_deduplicates_privacy_plot_embed(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            lecture = root / "lectures" / "03-test"
+            lecture = root / "content" / "lectures" / "03-test"
             lecture.mkdir(parents=True)
             code = (
                 "PrivacyPlot(distribution_types=[norm, laplace], "
@@ -47,6 +47,83 @@ class BuildInteractivesTest(unittest.TestCase):
             self.assertEqual(len(uses), 1)
             self.assertEqual(uses[0].spec.preferred_backend, "wasm-marimo")
             self.assertIn("privacy-plot-norm-laplace-", uses[0].spec.artifact_name)
+
+    def test_discovers_privacy_plot_embed_under_tools(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            tool = root / "tools" / "privacy-tradeoff-explorer"
+            tool.mkdir(parents=True)
+            code = (
+                "PrivacyPlot(distribution_types=[norm], "
+                "sensitivity=1, std=1.5).embed()"
+            )
+            (tool / "index.qmd").write_text(
+                f"```{{python}}\n{code}\n```\n",
+                encoding="utf-8",
+            )
+
+            uses = build_interactives.discover_interactives(root)
+
+            self.assertEqual(len(uses), 1)
+            self.assertTrue(
+                uses[0].source.relative_to(root).as_posix().startswith("tools/")
+            )
+
+    def test_discovers_privacy_plot_embed_on_home_page(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            code = (
+                "PrivacyPlot(distribution_types=[norm], "
+                "sensitivity=1, std=1.5).embed()"
+            )
+            (root / "index.qmd").write_text(
+                f"```{{python}}\n{code}\n```\n",
+                encoding="utf-8",
+            )
+
+            uses = build_interactives.discover_interactives(root)
+
+            self.assertEqual(len(uses), 1)
+            self.assertEqual(uses[0].source.name, "index.qmd")
+            self.assertEqual(uses[0].output_directory, root / "apps" / uses[0].spec.artifact_name)
+
+    def test_unsupported_embed_produces_warning(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            lecture = root / "content" / "lectures" / "04-test"
+            lecture.mkdir(parents=True)
+            (lecture / "slides.qmd").write_text(
+                "```python\nDynamicWidget().embed()\n```\n",
+                encoding="utf-8",
+            )
+
+            warnings = build_interactives.discover_unsupported_embeds(root)
+
+            self.assertEqual(len(warnings), 1)
+            self.assertIn("unsupported .embed() call", warnings[0])
+            self.assertIn("DynamicWidget", warnings[0])
+
+    def test_dynamic_privacy_plot_embed_produces_manifest_warning(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            lecture = root / "content" / "lectures" / "04-test"
+            lecture.mkdir(parents=True)
+            (lecture / "slides.qmd").write_text(
+                "\n".join(
+                    [
+                        "```python",
+                        "PrivacyPlot(distribution_types=types, sensitivity=1, std=1.5).embed()",
+                        "```",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            warnings = build_interactives.discover_unsupported_embeds(root)
+
+            self.assertEqual(len(warnings), 1)
+            self.assertIn("non-literal arguments", warnings[0])
+            self.assertIn("register the app in a manifest", warnings[0])
 
     def test_builds_importable_pure_python_wheel(self):
         with tempfile.TemporaryDirectory() as temporary_directory:

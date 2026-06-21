@@ -1,0 +1,10 @@
+# Rename this directory to a term slug (e.g. 2027-spring) under content/offerings/.
+label: Spring 2027
+start_date: 2027-01-19
+end_date: 2027-05-04
+meeting:
+  time: Tuesdays 10:00–12:00
+  place: ""
+staff: []
+announcements: []
+grading_notes: ""

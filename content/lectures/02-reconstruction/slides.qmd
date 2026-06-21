@@ -1,0 +1,14 @@
+---
+title: "Reconstruction Attacks"
+format: html
+---
+
+<meta http-equiv="refresh" content="0; url=notebook.html">
+<script>
+window.location.replace("notebook.html");
+</script>
+
+This compatibility page now redirects to the notebook-first RevealJS deck:
+
+- [Open the reconstruction lecture deck](notebook.html)
+- Editable source: `content/lectures/02-reconstruction/notebook.ipynb`

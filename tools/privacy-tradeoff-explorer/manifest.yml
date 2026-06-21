@@ -1,0 +1,8 @@
+title: Privacy Tradeoff Explorer
+summary: Explore how noise scale and distribution shape the privacy tradeoff curve.
+entrypoint: index.qmd
+subjects:
+  - hypothesis testing
+  - differential privacy
+runtime: wasm-marimo
+gallery: true

@@ -13,4 +13,5 @@ packaging==26.2
 ipywidgets
 anywidget
 marimo==0.23.9
+PyYAML>=6.0,<7
 libdpy @ git+https://github.com/applied-dp-course/pub_lib.git

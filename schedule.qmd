@@ -2,14 +2,13 @@
 title: "Schedule"
 ---
 
-Lecture status is driven by each lecture's generated `manifest.yml`
-(`migrated` / `planned` / `legacy-pdf`).
+Weekly plan for the current course offering. Past terms appear on the
+[archive](archive.qmd) page.
 
-<!-- BEGIN AUTO-GENERATED LECTURES -->
-| # | Lecture | Status | Links |
-|---|---|---|---|
-| 02 | Reconstruction Attacks | planned | [slides](lectures/02-reconstruction/slides.qmd) · [notebook](lectures/02-reconstruction/notebook.ipynb) |
-| 03 | DP as Hypothesis Testing | planned | [slides](lectures/03-hypothesis_testing/slides.qmd) · [notebook](lectures/03-hypothesis_testing/learn.ipynb) |
-<!-- END AUTO-GENERATED LECTURES -->
-
-See [STATUS.md](STATUS.md) for live progress.
+<!-- BEGIN AUTO-GENERATED SCHEDULE -->
+| Week | Date | Topic | Self-study | Slides | Assignment | Notes |
+|---|---|---|---|---|---|---|
+| 1 | 2026-10-20 | Reconstruction attacks | [Reconstruction attacks](content/lectures/02-reconstruction/learn.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/lectures/02-reconstruction/learn.ipynb) | [Reconstruction attacks](content/lectures/02-reconstruction/notebook.ipynb) | — | — |
+| 2 | 2026-10-27 | DP as hypothesis testing | [DP as Hypothesis Testing](content/lectures/03-hypothesis_testing/learn.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/lectures/03-hypothesis_testing/learn.ipynb) | [DP as Hypothesis Testing](content/lectures/03-hypothesis_testing/slides.qmd) | [Hypothesis Testing Assignment](content/assignments/hypothesis-testing-hw/assignment.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/assignments/hypothesis-testing-hw/assignment.ipynb) | — |
+| 3 | 2026-11-03 | Reading week | — | — | — | No class |
+<!-- END AUTO-GENERATED SCHEDULE -->

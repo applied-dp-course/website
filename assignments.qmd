@@ -1,0 +1,12 @@
+---
+title: "Assignments"
+---
+
+Course homework grouped by subject. Due dates come from the current term
+[schedule](schedule.qmd).
+
+<!-- BEGIN AUTO-GENERATED ASSIGNMENTS -->
+### hypothesis testing
+
+- **Hypothesis Testing Assignment** — [notebook](content/assignments/hypothesis-testing-hw/assignment.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/assignments/hypothesis-testing-hw/assignment.ipynb) · due Week 2 (2026-10-27) · est. 120 minutes · related lectures: [03 · DP as Hypothesis Testing](content/lectures/03-hypothesis_testing/learn.ipynb)
+<!-- END AUTO-GENERATED ASSIGNMENTS -->

@@ -1,0 +1,29 @@
+---
+title: "About"
+---
+
+This site is the public home for **Applied Differential Privacy** — lecture decks, self-study
+notebooks, assignments, and browser-based interactives.
+
+## Computation library
+
+All plots, simulations, and widgets are imported from
+[`libdpy`](https://github.com/applied-dp-course/pub_lib) (published as `pub_lib`). This repository
+contains course content, metadata, rendering scripts, and thin wiring only — no duplicated numerical
+code.
+
+## Source repository
+
+- Course website: [applied-dp-course/website](https://github.com/applied-dp-course/website)
+- Library: [applied-dp-course/pub_lib](https://github.com/applied-dp-course/pub_lib)
+
+## Site stack
+
+Pages are built with [Quarto](https://quarto.org/) and deployed to GitHub Pages. Expensive
+interactives use client-side WASM (marimo + Pyodide); the page text loads first, then each widget
+starts loading once the document is ready.
+
+## References
+
+For the theory behind the course materials, see the syllabus [topics and prerequisites](syllabus.qmd)
+and the linked lecture notebooks.

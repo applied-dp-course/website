@@ -20,6 +20,9 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+env:
+  PAGES_BASE_URL: https://applied-dp-course.github.io/website
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,16 +50,19 @@ jobs:
           ./.venv/bin/pip install -r requirements.txt
           ./.venv/bin/pip install pytest websocket-client
 
+      - name: Unit tests (before expensive WASM build)
+        run: ./.venv/bin/python -m pytest tests -q
+
       - name: Render site (pre-render builds the libdpy wheel + WASM apps)
         env:
           QUARTO_PYTHON: ${{ github.workspace }}/.venv/bin/python
           MPLBACKEND: Agg
         run: quarto render --execute
 
-      - name: Build / sync unit tests
-        run: ./.venv/bin/python -m pytest tests/test_build_interactives.py tests/test_sync_lectures.py -q
+      - name: Verify rendered routes, redirects, and internal links
+        run: ./.venv/bin/python scripts/check_site.py
 
-      - name: WASM browser smoke tests
+      - name: WASM and canvas browser smoke tests
         env:
           LIBDPY_CHROME: ${{ steps.chrome.outputs.chrome-path }}
         run: ./.venv/bin/python tests/run_smoke_tests.py
@@ -72,7 +78,30 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install metadata dependencies
+        run: |
+          python -m venv .venv
+          ./.venv/bin/pip install --upgrade pip
+          ./.venv/bin/pip install PyYAML
+
+      - name: Verify deployed GitHub Pages routes
+        env:
+          PAGES_BASE_URL: ${{ needs.deploy.outputs.page_url || env.PAGES_BASE_URL }}
+        run: ./.venv/bin/python scripts/check_site.py --base-url "$PAGES_BASE_URL"

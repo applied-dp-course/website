@@ -1,0 +1,30 @@
+---
+title: "Archive"
+---
+
+Browse schedules from every course offering. The current term's live schedule is on the
+[Schedule](schedule.qmd) page.
+
+<!-- BEGIN AUTO-GENERATED ARCHIVE -->
+<details>
+<summary><strong>Fall 2025 (2025-10-21 – 2026-01-27)</strong></summary>
+
+| Week | Date | Topic | Self-study | Slides | Assignment | Notes |
+|---|---|---|---|---|---|---|
+| 1 | 2025-10-21 | Reconstruction attacks | [Reconstruction attacks](content/lectures/02-reconstruction/learn.ipynb) | [Reconstruction attacks](content/lectures/02-reconstruction/notebook.ipynb) | — | — |
+| 2 | 2025-10-28 | DP as hypothesis testing | [DP as Hypothesis Testing](content/lectures/03-hypothesis_testing/learn.ipynb) | [DP as Hypothesis Testing](content/lectures/03-hypothesis_testing/slides.qmd) | — | — |
+| 3 | 2025-11-04 | Reading week | — | — | — | No class |
+
+</details>
+
+<details>
+<summary><strong>Fall 2026 (2026-10-20 – 2027-01-26) — current</strong></summary>
+
+| Week | Date | Topic | Self-study | Slides | Assignment | Notes |
+|---|---|---|---|---|---|---|
+| 1 | 2026-10-20 | Reconstruction attacks | [Reconstruction attacks](content/lectures/02-reconstruction/learn.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/lectures/02-reconstruction/learn.ipynb) | [Reconstruction attacks](content/lectures/02-reconstruction/notebook.ipynb) | — | — |
+| 2 | 2026-10-27 | DP as hypothesis testing | [DP as Hypothesis Testing](content/lectures/03-hypothesis_testing/learn.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/lectures/03-hypothesis_testing/learn.ipynb) | [DP as Hypothesis Testing](content/lectures/03-hypothesis_testing/slides.qmd) | [Hypothesis Testing Assignment](content/assignments/hypothesis-testing-hw/assignment.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/assignments/hypothesis-testing-hw/assignment.ipynb) | — |
+| 3 | 2026-11-03 | Reading week | — | — | — | No class |
+
+</details>
+<!-- END AUTO-GENERATED ARCHIVE -->

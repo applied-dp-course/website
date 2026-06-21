@@ -1,0 +1,14 @@
+---
+title: "Tool title"
+---
+
+Standalone interactive or explainer page. Set `gallery: true` in `manifest.yml` to list on **Tools**.
+
+Optional WASM widget:
+
+```{python}
+#| echo: false
+# from scipy.stats import norm
+# from libdpy.visualization.privacy_plots import PrivacyPlot
+# PrivacyPlot(sensitivity=1, std=1.5, distribution_types=[norm]).embed()
+```

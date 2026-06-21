@@ -1,0 +1,36 @@
+title: "DP as Hypothesis Testing"
+number: "03"
+subjects:
+  - hypothesis testing
+  - differential privacy
+status: planned
+owner: "course-staff"
+last_verified: ""
+verified_browsers: []
+surfaces:
+  learn: learn.ipynb
+  presentation: slides.qmd
+
+apps:
+  - id: privacy-plot-norm-6197737a49
+    title: Gaussian privacy tradeoff
+    path: apps/privacy-plot-norm-6197737a49
+    runtime: wasm-marimo
+    gallery: true
+  - id: privacy-plot-norm-laplace-uniform-06b3767cd2
+    title: Multi-distribution privacy tradeoff
+    path: apps/privacy-plot-norm-laplace-uniform-06b3767cd2
+    runtime: wasm-marimo
+    gallery: true
+
+runtimes:
+  slides: revealjs-from-qmd
+  student_notebook: static-html
+  apps:
+    - privacy-plot-norm-6197737a49
+    - privacy-plot-norm-laplace-uniform-06b3767cd2
+
+exports:
+  pdf: true
+  pptx: true
+  beamer: false

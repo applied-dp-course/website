@@ -26,6 +26,15 @@ from scipy import stats
 
 SITE_ROOT = Path(__file__).resolve().parents[1]
 GENERATED_ROOT = SITE_ROOT / "generated"
+DISCOVERY_ROOTS = (
+    "content/lectures",
+    "blog",
+    "tools",
+)
+# Root-level shell pages with embeds (not covered by DISCOVERY_ROOTS globs).
+DISCOVERY_FILES = (
+    "index.qmd",
+)
 MARIMO_VERSION = "0.23.9"
 PYTHON_FENCE = re.compile(
     r"^```(?:\{python\}|python)\s*$\n(.*?)^```\s*$",
@@ -106,15 +115,80 @@ def _privacy_plot_spec(call: ast.Call) -> InteractiveSpec:
     return PrivacyPlot(**arguments).spec()
 
 
+def _privacy_plot_embed_warning(relative_path: str, node: ast.Call) -> str | None:
+    if not _is_supported_privacy_plot_embed(node):
+        return None
+    constructor = node.func.value
+    assert isinstance(constructor, ast.Call)
+    try:
+        _privacy_plot_spec(constructor)
+    except ValueError:
+        return (
+            f"{relative_path}: PrivacyPlot(...).embed() uses non-literal arguments; "
+            "register the app in a manifest instead "
+            f"({ast.unparse(node)})"
+        )
+    return None
+
+
+def _discovery_paths(site_root: Path) -> list[Path]:
+    paths: list[Path] = []
+    for relative in DISCOVERY_FILES:
+        path = site_root / relative
+        if path.is_file():
+            paths.append(path)
+    for root_name in DISCOVERY_ROOTS:
+        root = site_root / root_name
+        if not root.is_dir():
+            continue
+        paths.extend(sorted(path for path in root.glob("**/*.qmd") if path.is_file()))
+        paths.extend(sorted(path for path in root.glob("**/*.ipynb") if path.is_file()))
+    return paths
+
+
+def _is_supported_privacy_plot_embed(node: ast.Call) -> bool:
+    if not isinstance(node.func, ast.Attribute) or node.func.attr != "embed":
+        return False
+    constructor = node.func.value
+    if not isinstance(constructor, ast.Call):
+        return False
+    return _call_name(constructor.func) == "PrivacyPlot"
+
+
+def discover_unsupported_embeds(site_root: Path = SITE_ROOT) -> list[str]:
+    """Return warnings for ``.embed()`` calls that cannot be discovered statically."""
+
+    warnings: list[str] = []
+    for path in _discovery_paths(site_root):
+        relative = path.relative_to(site_root).as_posix()
+        for block in _python_blocks(path):
+            try:
+                tree = ast.parse(block)
+            except SyntaxError:
+                continue
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.Call):
+                    continue
+                if not isinstance(node.func, ast.Attribute) or node.func.attr != "embed":
+                    continue
+                privacy_plot_warning = _privacy_plot_embed_warning(relative, node)
+                if privacy_plot_warning is not None:
+                    warnings.append(privacy_plot_warning)
+                    continue
+                if _is_supported_privacy_plot_embed(node):
+                    continue
+                warnings.append(
+                    f"{relative}: unsupported .embed() call requires manifest registration "
+                    f"({ast.unparse(node)})"
+                )
+    return warnings
+
+
 def discover_interactives(site_root: Path = SITE_ROOT) -> list[InteractiveUse]:
-    """Find ``PrivacyPlot(...).embed()`` calls in lecture sources."""
+    """Find literal ``PrivacyPlot(...).embed()`` calls under lecture, blog, and tool sources."""
 
     uses: dict[tuple[Path, str], InteractiveUse] = {}
-    lecture_root = site_root / "lectures"
-    paths = sorted(lecture_root.glob("**/*.qmd")) + sorted(
-        lecture_root.glob("**/*.ipynb")
-    )
-    for path in paths:
+    for path in _discovery_paths(site_root):
         for block in _python_blocks(path):
             try:
                 tree = ast.parse(block)
@@ -124,17 +198,14 @@ def discover_interactives(site_root: Path = SITE_ROOT) -> list[InteractiveUse]:
             for node in ast.walk(tree):
                 if not isinstance(node, ast.Call):
                     continue
-                if (
-                    not isinstance(node.func, ast.Attribute)
-                    or node.func.attr != "embed"
-                ):
+                if not _is_supported_privacy_plot_embed(node):
                     continue
                 constructor = node.func.value
-                if not isinstance(constructor, ast.Call):
+                assert isinstance(constructor, ast.Call)
+                try:
+                    spec = _privacy_plot_spec(constructor)
+                except ValueError:
                     continue
-                if _call_name(constructor.func) != "PrivacyPlot":
-                    continue
-                spec = _privacy_plot_spec(constructor)
                 use = InteractiveUse(source=path, spec=spec)
                 uses[(path.parent, spec.artifact_name)] = use
     return list(uses.values())
@@ -270,6 +341,19 @@ def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
         )
 
 
+def _write_gallery(site_root: Path) -> Path:
+    _SCRIPTS_DIR = Path(__file__).resolve().parent
+    if str(_SCRIPTS_DIR) not in sys.path:
+        sys.path.insert(0, str(_SCRIPTS_DIR))
+    import content_model
+    import gallery
+
+    catalog = content_model.load_catalog()
+    entries = gallery.build_gallery_entries(catalog)
+    destination = GENERATED_ROOT / "gallery.json"
+    return gallery.write_gallery_json(entries, destination, site_root=site_root)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -279,22 +363,31 @@ def main() -> None:
     )
     arguments = parser.parse_args()
 
+    for warning in discover_unsupported_embeds():
+        print(f"WARNING: {warning}", file=sys.stderr)
+
     uses = discover_interactives()
-    if not uses:
-        print("No libdpy interactive embeds discovered.")
-        return
     if arguments.discover_only:
-        for use in uses:
-            print(f"{use.source.relative_to(SITE_ROOT)} -> {use.spec.artifact_name}")
+        if not uses:
+            print("No libdpy interactive embeds discovered.")
+        else:
+            for use in uses:
+                print(f"{use.source.relative_to(SITE_ROOT)} -> {use.spec.artifact_name}")
         return
 
-    wheel = build_libdpy_wheel(GENERATED_ROOT / "wheels")
-    for use in uses:
-        _export(use, wheel, site_root=SITE_ROOT)
-        print(
-            f"Built {use.spec.artifact_name} for "
-            f"{use.source.parent.relative_to(SITE_ROOT)}"
-        )
+    if uses:
+        wheel = build_libdpy_wheel(GENERATED_ROOT / "wheels")
+        for use in uses:
+            _export(use, wheel, site_root=SITE_ROOT)
+            print(
+                f"Built {use.spec.artifact_name} for "
+                f"{use.source.parent.relative_to(SITE_ROOT)}"
+            )
+    else:
+        print("No libdpy interactive embeds discovered.")
+
+    gallery_path = _write_gallery(SITE_ROOT)
+    print(f"Wrote gallery catalog: {gallery_path.relative_to(SITE_ROOT)}")
 
 
 if __name__ == "__main__":

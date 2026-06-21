@@ -1,0 +1,39 @@
+{
+  "description": "Public routes captured at migration baseline (Phase 0).",
+  "top_level": [
+    "index.html",
+    "schedule.html",
+    "lectures.html",
+    "assignments.html",
+    "tools.html",
+    "blog/index.html",
+    "syllabus.html",
+    "archive.html",
+    "about.html"
+  ],
+  "required_routes": [
+    "about.html",
+    "archive.html",
+    "assignments.html",
+    "blog/index.html",
+    "content/lectures/02-reconstruction/learn.html",
+    "content/lectures/02-reconstruction/notebook.html",
+    "content/lectures/03-hypothesis_testing/learn.html",
+    "content/lectures/03-hypothesis_testing/slides.html",
+    "index.html",
+    "lectures.html",
+    "lectures/02-reconstruction/apps/reconstruction-2d-slab/index.html",
+    "lectures/02-reconstruction/apps/reconstruction-3d-slabs/index.html",
+    "lectures/02-reconstruction/learn.html",
+    "lectures/02-reconstruction/notebook.html",
+    "lectures/02-reconstruction/slides.html",
+    "lectures/03-hypothesis_testing/apps/privacy-plot-norm-6197737a49/index.html",
+    "lectures/03-hypothesis_testing/apps/privacy-plot-norm-laplace-uniform-06b3767cd2/index.html",
+    "lectures/03-hypothesis_testing/learn.html",
+    "lectures/03-hypothesis_testing/slides.html",
+    "schedule.html",
+    "syllabus.html",
+    "tools.html"
+  ],
+  "legacy_redirect_count": 9
+}

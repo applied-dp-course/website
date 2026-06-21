@@ -2,7 +2,34 @@
 title: "Syllabus"
 ---
 
-::: {.callout-note}
-Placeholder. Topics, prerequisites, grading, and logistics go here as the site shell (Phase 1)
-is completed. See [PLAN.md](PLAN.md).
-:::
+## Topics
+
+1. Reconstruction attacks and sensitivity
+2. Differential privacy as hypothesis testing
+3. Mechanism design and composition
+4. Privacy-preserving machine learning (overview)
+
+Topics follow the shared [lecture catalog](lectures.qmd) and the current-term [schedule](schedule.qmd).
+
+## Prerequisites
+
+Familiarity with undergraduate probability, basic linear algebra, and Python. Prior exposure to
+machine learning is helpful but not required.
+
+## Grading and policies
+
+Grading breakdown, collaboration rules, and late-work policies are set by the instructor each term
+and announced on the course forum. See the generated logistics below for this offering's dates and
+meeting times.
+
+## Logistics (current offering)
+
+<!-- BEGIN AUTO-GENERATED SYLLABUS LOGISTICS -->
+### Fall 2026
+
+- **Dates:** 2026-10-20 – 2027-01-26
+- **Meeting:** Tuesdays 10:00–12:00
+- **Instructor(s):** [Course staff](https://github.com/applied-dp-course)
+<!-- END AUTO-GENERATED SYLLABUS LOGISTICS -->
+
+For past terms, see the [Archive](archive.qmd).

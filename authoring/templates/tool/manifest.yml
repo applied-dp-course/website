@@ -1,0 +1,8 @@
+# Rename this directory to a slug under tools/ (e.g. tools/my-tool/).
+title: Tool title
+summary: One-line description for the Tools gallery.
+entrypoint: index.qmd
+subjects:
+  - subject tag
+runtime: static
+gallery: true

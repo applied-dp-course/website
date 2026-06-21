@@ -1,0 +1,17 @@
+# Rename this directory to NN-slug (e.g. 04-mechanisms) under content/lectures/.
+title: Lecture title
+number: "04"
+subjects:
+  - subject tag
+status: planned
+surfaces:
+  learn: learn.ipynb
+  presentation: slides.qmd
+
+# Optional gallery apps (WASM exports are discovered from PrivacyPlot(...).embed() calls):
+# apps:
+#   - id: my-widget
+#     title: Interactive widget title
+#     path: apps/my-widget
+#     runtime: wasm-marimo
+#     gallery: true

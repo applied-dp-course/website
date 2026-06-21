@@ -2,16 +2,28 @@ project:
   type: website
   output-dir: _site
   pre-render:
-    - python scripts/sync_lectures.py
+    - python scripts/run_site_python.py scripts/content_model.py
+    - python scripts/run_site_python.py scripts/sync_content.py --phase catalog
     - python scripts/run_site_python.py scripts/build_interactives.py
+    - python scripts/run_site_python.py scripts/sync_content.py --phase gallery
+  post-render:
+    - python scripts/run_site_python.py scripts/write_redirects.py
+    - python scripts/run_site_python.py scripts/defer_wasm_embeds.py
+    - python scripts/run_site_python.py scripts/assert_private_content.py
   resources:
-    - "lectures/**/apps/**"
+    - "content/lectures/**/apps/**"
+    - "tools/**/apps/**"
+    - "blog/**/apps/**"
+    - "apps/**"
   render:
     - "*.qmd"
-    - "lectures/**/*.qmd"
-    - "lectures/**/learn.ipynb"
-    - "lectures/02-reconstruction/notebook.ipynb"
-    - "tutorials/**/*.ipynb"
+    - "content/lectures/**/*.qmd"
+    - "content/lectures/**/learn.ipynb"
+    - "content/lectures/02-reconstruction/notebook.ipynb"
+    - "content/assignments/**/*.ipynb"
+    - "!content/assignments/**/solution.ipynb"
+    - "blog/**/index.qmd"
+    - "tools/**/index.qmd"
 
 # Don't re-execute unchanged notebooks on render (v4 §3).
 execute:
@@ -24,12 +36,25 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: lectures.qmd
-        text: Lectures
       - href: schedule.qmd
         text: Schedule
-      - href: syllabus.qmd
-        text: Syllabus
+      - href: lectures.qmd
+        text: Lectures
+      - href: assignments.qmd
+        text: Assignments
+      - href: tools.qmd
+        text: Tools
+      - href: blog/index.qmd
+        text: Blog
+    right:
+      - text: Course
+        menu:
+          - href: syllabus.qmd
+            text: Syllabus
+          - href: archive.qmd
+            text: Archive
+          - href: about.qmd
+            text: About
   repo-url: https://github.com/applied-dp-course/website
   page-footer: "Built with Quarto. All computation imported from libdpy (pub_lib)."
 
@@ -38,5 +63,5 @@ website:
 # collide on index.html during the output-dir move (RevealJS is canonical for slides; v4 §7).
 format:
   html:
-    theme: cosmo
+    theme: [cosmo, theme/custom.scss]
     toc: true
