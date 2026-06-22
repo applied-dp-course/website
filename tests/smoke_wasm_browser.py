@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import contextlib
 import json
 import os
 import shutil
@@ -51,6 +52,7 @@ class DevTools:
         self.next_id = 1
         self.events: list[dict] = []
         self.enabled_sessions: set[str] = set()
+        self.page_target_id: str | None = None
 
     def call(
         self,
@@ -120,7 +122,7 @@ def _json_request(url: str, *, method: str = "GET"):
         return json.loads(response.read())
 
 
-def _wait_for_debugger(port: int, timeout: float = 10):
+def _wait_for_debugger(port: int, timeout: float = 30):
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         try:
@@ -149,6 +151,7 @@ def _attach_devtools(port: int, url: str, *, attempts: int = 4) -> DevTools:
                 method="PUT",
             )
             devtools = DevTools(target["webSocketDebuggerUrl"])
+            devtools.page_target_id = target.get("id")
             for domain in ("Page", "Runtime", "Log", "Network"):
                 devtools.call(f"{domain}.enable")
             return devtools
@@ -226,6 +229,58 @@ def _chrome_launch_command(profile: str, port: int) -> list[str]:
         ]
     )
     return command
+
+
+@contextlib.contextmanager
+def chrome_session(port: int | None = None):
+    """Launch one Chrome with the debugger up and yield its port; terminate on exit.
+
+    Reused across every app in a run. Relaunching Chrome per app is unstable on CI
+    runners — it surfaces as "Chrome remote debugger did not start" or "Connection
+    timed out", and gets worse for the 3rd/4th launch — so we pay the launch cost
+    once and open a fresh tab per app instead (see _attach_devtools / _close_tab).
+    The shared user-data-dir also lets the Pyodide/CDN cache warm across apps.
+    """
+    if not CHROME.exists():
+        raise RuntimeError(f"Chrome not found at {CHROME}")
+    port = _free_port() if port is None else port
+    with tempfile.TemporaryDirectory(prefix="libdpy-chrome-") as profile, \
+            tempfile.TemporaryFile(prefix="libdpy-chrome-stderr-") as chrome_err:
+        # Capture Chrome's stderr to a file (not a PIPE, which could deadlock on a
+        # long session) so a failed launch surfaces a real message.
+        process = subprocess.Popen(
+            _chrome_launch_command(profile, port),
+            stdout=subprocess.DEVNULL,
+            stderr=chrome_err,
+        )
+        try:
+            try:
+                _wait_for_debugger(port)
+            except RuntimeError as exc:
+                if process.poll() is not None:
+                    chrome_err.seek(0)
+                    err = chrome_err.read().decode("utf-8", "replace")
+                    tail = "\n".join(err.strip().splitlines()[-8:])
+                    raise RuntimeError(
+                        f"{exc} (Chrome exited {process.returncode}): {tail}"
+                    ) from exc
+                raise
+            yield port
+        finally:
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+
+
+def _close_tab(port: int, devtools: DevTools) -> None:
+    """Close the app's tab so its kernel/memory is released between apps."""
+    target_id = devtools.page_target_id
+    if not target_id:
+        return
+    with contextlib.suppress(Exception):
+        _json_request(f"http://127.0.0.1:{port}/json/close/{target_id}")
 
 
 _PLOT_HELPERS_JS = """
@@ -391,36 +446,19 @@ def _browser_errors(devtools: DevTools) -> list[str]:
 
 
 def smoke_test(url: str, *, port: int | None = None, timeout: float | None = None) -> None:
-    if not CHROME.exists():
-        raise RuntimeError(f"Chrome not found at {CHROME}")
-
+    """Smoke-test a WASM app. With ``port`` set, reuse that running Chrome; otherwise
+    launch a throwaway Chrome for this one app (standalone / CLI use)."""
     timeout = default_wasm_timeout() if timeout is None else timeout
-    port = _free_port() if port is None else port
+    if port is None:
+        with chrome_session() as session_port:
+            _run_wasm_test(session_port, url, timeout)
+    else:
+        _run_wasm_test(port, url, timeout)
 
-    with tempfile.TemporaryDirectory(prefix="libdpy-wasm-chrome-") as profile, \
-            tempfile.TemporaryFile(prefix="libdpy-wasm-chrome-stderr-") as chrome_err:
-        # Capture Chrome's stderr to a file (not a PIPE, which could deadlock on a
-        # long session) so a failed launch surfaces a real message instead of an
-        # opaque "debugger did not start".
-        process = subprocess.Popen(
-            _chrome_launch_command(profile, port),
-            stdout=subprocess.DEVNULL,
-            stderr=chrome_err,
-        )
-        devtools = None
-        try:
-            try:
-                _wait_for_debugger(port)
-            except RuntimeError as exc:
-                if process.poll() is not None:
-                    chrome_err.seek(0)
-                    err = chrome_err.read().decode("utf-8", "replace")
-                    tail = "\n".join(err.strip().splitlines()[-8:])
-                    raise RuntimeError(
-                        f"{exc} (Chrome exited {process.returncode}): {tail}"
-                    ) from exc
-                raise
-            devtools = _attach_devtools(port, url)
+
+def _run_wasm_test(port: int, url: str, timeout: float) -> None:
+    devtools = _attach_devtools(port, url)
+    try:
             devtools.call(
                 "Target.setAutoAttach",
                 {
@@ -518,14 +556,9 @@ def smoke_test(url: str, *, port: int | None = None, timeout: float | None = Non
             print(
                 "WASM smoke test passed: two sliders rendered and updated the Plotly figure."
             )
-        finally:
-            if devtools is not None:
-                devtools.close()
-            process.terminate()
-            try:
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
+    finally:
+        _close_tab(port, devtools)
+        devtools.close()
 
 
 def main() -> None:

@@ -25,7 +25,11 @@ import build_interactives  # noqa: E402
 import content_model  # noqa: E402
 import gallery  # noqa: E402
 from smoke_canvas_browser import smoke_test as smoke_canvas  # noqa: E402
-from smoke_wasm_browser import default_wasm_timeout, smoke_test as smoke_wasm  # noqa: E402
+from smoke_wasm_browser import (  # noqa: E402
+    chrome_session,
+    default_wasm_timeout,
+    smoke_test as smoke_wasm,
+)
 
 # When the same marimo export is copied to home, blog, tools, and lectures, smoke-test
 # one canonical deployment per artifact id (prefer lecture paths).
@@ -153,17 +157,21 @@ def main() -> None:
         threading.Thread(target=httpd.serve_forever, daemon=True).start()
 
         failures: list[str] = []
-        for relative in relative_urls:
-            url = f"http://127.0.0.1:{port}/{relative}/index.html"
-            smoke = smoke_canvas if relative in canvas_urls else smoke_wasm
-            label = "canvas" if relative in canvas_urls else "wasm"
-            print(f"== smoke-testing {label} {relative} ==", flush=True)
-            try:
-                timeout = default_wasm_timeout() if label == "wasm" else 60
-                smoke(url, timeout=timeout)
-            except Exception as error:  # noqa: BLE001 - aggregate and report all
-                print(f"FAIL {relative}: {error}", flush=True)
-                failures.append(relative)
+        # Launch Chrome once and open a tab per app. Relaunching Chrome per app is
+        # unstable on CI ("debugger did not start" / "Connection timed out", worsening
+        # for later launches); one long-lived browser is reliable and faster.
+        with chrome_session() as chrome_port:
+            for relative in relative_urls:
+                url = f"http://127.0.0.1:{port}/{relative}/index.html"
+                smoke = smoke_canvas if relative in canvas_urls else smoke_wasm
+                label = "canvas" if relative in canvas_urls else "wasm"
+                print(f"== smoke-testing {label} {relative} ==", flush=True)
+                try:
+                    timeout = default_wasm_timeout() if label == "wasm" else 60
+                    smoke(url, port=chrome_port, timeout=timeout)
+                except Exception as error:  # noqa: BLE001 - aggregate and report all
+                    print(f"FAIL {relative}: {error}", flush=True)
+                    failures.append(relative)
         httpd.shutdown()
 
     if failures:

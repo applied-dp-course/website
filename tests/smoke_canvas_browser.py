@@ -6,20 +6,15 @@ from __future__ import annotations
 import argparse
 import base64
 import json
-import subprocess
-import tempfile
-import time
 from pathlib import Path
 
 from smoke_wasm_browser import (
-    CHROME,
     DevTools,
     _attach_devtools,
     _browser_errors,
-    _chrome_launch_command,
-    _free_port,
+    _close_tab,
     _wait_for,
-    _wait_for_debugger,
+    chrome_session,
 )
 
 
@@ -43,33 +38,18 @@ def _canvas_signature(devtools: DevTools) -> str:
 
 
 def smoke_test(url: str, *, port: int | None = None, timeout: float = 60) -> None:
-    if not CHROME.exists():
-        raise RuntimeError(f"Chrome not found at {CHROME}")
+    """Smoke-test a canvas app. With ``port`` set, reuse that running Chrome; otherwise
+    launch a throwaway Chrome for this one app (standalone / CLI use)."""
+    if port is None:
+        with chrome_session() as session_port:
+            _run_canvas_test(session_port, url, timeout)
+    else:
+        _run_canvas_test(port, url, timeout)
 
-    port = _free_port() if port is None else port
 
-    with tempfile.TemporaryDirectory(prefix="libdpy-canvas-chrome-") as profile, \
-            tempfile.TemporaryFile(prefix="libdpy-canvas-chrome-stderr-") as chrome_err:
-        process = subprocess.Popen(
-            _chrome_launch_command(profile, port),
-            stdout=subprocess.DEVNULL,
-            stderr=chrome_err,
-        )
-        devtools = None
-        try:
-            try:
-                _wait_for_debugger(port)
-            except RuntimeError as exc:
-                if process.poll() is not None:
-                    chrome_err.seek(0)
-                    err = chrome_err.read().decode("utf-8", "replace")
-                    tail = "\n".join(err.strip().splitlines()[-8:])
-                    raise RuntimeError(
-                        f"{exc} (Chrome exited {process.returncode}): {tail}"
-                    ) from exc
-                raise
-            devtools = _attach_devtools(port, url)
-
+def _run_canvas_test(port: int, url: str, timeout: float) -> None:
+    devtools = _attach_devtools(port, url)
+    try:
             ready = _wait_for(
                 devtools,
                 "(function () {"
@@ -139,14 +119,9 @@ def smoke_test(url: str, *, port: int | None = None, timeout: float = 60) -> Non
             print(
                 "Canvas smoke test passed: canvas rendered and responded to the alpha slider."
             )
-        finally:
-            if devtools is not None:
-                devtools.close()
-            process.terminate()
-            try:
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
+    finally:
+        _close_tab(port, devtools)
+        devtools.close()
 
 
 def main() -> None:
