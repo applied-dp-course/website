@@ -143,7 +143,12 @@ def main() -> None:
         return
 
     handler = functools.partial(_SiteHandler, directory=str(output_root))
-    with socketserver.TCPServer(("127.0.0.1", 0), handler) as httpd:
+    # Threaded: a headed CI browser opens many parallel connections (marimo assets
+    # plus the multi-MB libdpy wheel the figure cell's micropip.install blocks on).
+    # A single-threaded server serializes those, which can stall the WASM boot on a
+    # slow runner even though it keeps up locally.
+    with socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler) as httpd:
+        httpd.daemon_threads = True
         port = httpd.server_address[1]
         threading.Thread(target=httpd.serve_forever, daemon=True).start()
 

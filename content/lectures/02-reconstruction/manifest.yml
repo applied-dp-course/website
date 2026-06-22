@@ -53,4 +53,4 @@ smoke_tests:                         # v4 §8
 # Library state: all reconstruction modules are already public on pub_lib's origin/main
 # (geometry.py, instances.py, reconstruction_lecture_visualization.py,
 # reconstruction_3d_visualization.py). Remaining library-side gap is the hosted browser
-# wheel for micropip (v4 §1.1) — a packaging/release task, not new code. See ../../STATUS.md.
+# wheel for micropip — a packaging/release task, not new code.

@@ -36,12 +36,11 @@ TOP_LEVEL_ROUTES = (
     "about.html",
 )
 
+# Maintainer-facing root docs that must never render into the published site.
 FORBIDDEN_PUBLISHED_NAMES = (
+    "README.md",
+    "TODO.md",
     "STATUS.md",
-    "PLAN.md",
-    "WEBSITE_PLAN.md",
-    "WEBSITE_IMPLEMENTATION_PLAN.md",
-    "LECTURE_WORKFLOW.md",
 )
 
 COLAB_URL_PATTERN = re.compile(

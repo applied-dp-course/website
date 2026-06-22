@@ -1,13 +1,5 @@
-# Design rationale doc (kept locally, not tracked)
-applied-dp-course-website-plan.md
-
-# Volatile planning/status notes — local only (durable docs live in dev/plan/)
-PLAN.md
-STATUS.md
-INTERACTIVITY_DECISION.md
-LECTURE_WORKFLOW.md
-interactive-widgets-design-v2.md
-interactive-widgets-proposal.md
+# Local working checklist — not tracked
+TODO.md
 
 # Lecture source materials — kept locally for reference, not published
 /content/lectures/03-hypothesis_testing/lecture_presentation.pdf

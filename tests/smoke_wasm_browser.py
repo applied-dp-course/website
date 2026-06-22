@@ -273,6 +273,7 @@ def _wait_for_plot(devtools: DevTools, timeout: float) -> bool:
     deadline = time.monotonic() + timeout
     next_log = time.monotonic() + 15.0
     next_nudge = time.monotonic() + 8.0
+    reported_errors: set[str] = set()
     while time.monotonic() < deadline:
         try:
             if devtools.evaluate("window.__plotHasTraceData()"):
@@ -289,7 +290,21 @@ def _wait_for_plot(devtools: DevTools, timeout: float) -> bool:
                 pass
             next_nudge = now + 8.0
         if now >= next_log:
+            # The Pyodide kernel runs in a Web Worker; its exceptions (a failed
+            # micropip install, a missing wheel dependency, an import error) never
+            # reach the page. Surface kernel state + any *new* worker/page errors
+            # each interval so a stalled boot is diagnosable from the CI log
+            # instead of an opaque 8-minute "still waiting" silence.
             print("  still waiting for Plotly trace data...", flush=True)
+            try:
+                for line in _plot_diagnostics(devtools).splitlines():
+                    print(f"    {line}", flush=True)
+            except Exception:
+                pass
+            for error in _browser_errors(devtools):
+                if error not in reported_errors:
+                    reported_errors.add(error)
+                    print(f"    browser error: {error}", flush=True)
             next_log = now + 15.0
         time.sleep(0.5)
     return False

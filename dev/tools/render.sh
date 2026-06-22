@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Full site render — same recipe as CI and WEBSITE_IMPLEMENTATION_PLAN.md §7.
+# Full site render — same recipe as CI (see README.md "Build & preview locally").
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"

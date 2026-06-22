@@ -153,13 +153,12 @@ See the tutorial notebook for slide boundaries, CSS hooks, and the edit → rend
 These paths are for authors and developers only — they are excluded from `_quarto.yml` render globs:
 
 - `authoring/` — templates and tutorials
-- `dev/` — planning docs and local helper scripts
+- `dev/` — local helper scripts and test fixtures
 
 Private assignment solutions (`content/assignments/**/solution.ipynb`) are git-ignored and blocked
 from `_site/` by `scripts/assert_private_content.py`.
 
-Planning notes such as `STATUS.md` and `PLAN.md` stay local (see `.gitignore`). Durable design docs
-live in `dev/plan/`.
+Project overview lives in [`README.md`](../README.md).
 
 ---
 

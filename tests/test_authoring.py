@@ -25,11 +25,12 @@ class AuthoringKitTest(unittest.TestCase):
         for name in ("lecture", "assignment", "tool", "blog", "offering"):
             self.assertTrue((TEMPLATES / name).is_dir(), f"missing template {name}")
 
-    def test_plan_docs_live_under_dev_plan(self) -> None:
-        plan_dir = SITE_ROOT / "dev" / "plan"
-        self.assertTrue((plan_dir / "WEBSITE_PLAN.md").is_file())
-        self.assertTrue((plan_dir / "WEBSITE_IMPLEMENTATION_PLAN.md").is_file())
-        self.assertFalse((SITE_ROOT / "WEBSITE_PLAN.md").exists())
+    def test_project_docs_present_and_design_plans_removed(self) -> None:
+        # The one tracked maintainer doc is README.md; the sprawling design/plan/status
+        # docs were retired (TODO.md is a local-only working checklist, git-ignored).
+        self.assertTrue((SITE_ROOT / "README.md").is_file())
+        self.assertFalse((SITE_ROOT / "dev" / "plan" / "WEBSITE_PLAN.md").exists())
+        self.assertFalse((SITE_ROOT / "PLAN.md").exists())
 
     def test_slide_authoring_tutorial_moved(self) -> None:
         tutorial = SITE_ROOT / "authoring" / "tutorials" / "slide-authoring" / "tutorial.ipynb"
