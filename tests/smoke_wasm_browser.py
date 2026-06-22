@@ -224,6 +224,13 @@ window.__nudgeSlider = () => {
   thumb.focus();
   return true;
 };
+window.__deepText = () => {
+  const parts = [document.body ? document.body.innerText : ''];
+  window.__deepAll(document, []).forEach((e) => {
+    if (e.shadowRoot) parts.push(e.shadowRoot.textContent || '');
+  });
+  return parts.join('\\n').replace(/\\n{3,}/g, '\\n\\n').slice(-4000);
+};
 true;
 """
 
@@ -406,7 +413,7 @@ def smoke_test(url: str, *, port: int | None = None, timeout: float | None = Non
             )
             if not sliders_ready:
                 errors = _browser_errors(devtools)
-                visible_text = devtools.evaluate("document.body.innerText.slice(-3000)")
+                visible_text = devtools.evaluate("window.__deepText()")
                 raise RuntimeError(
                     "interactive did not finish loading two marimo sliders\n"
                     f"{_plot_diagnostics(devtools)}\n"
@@ -418,7 +425,7 @@ def smoke_test(url: str, *, port: int | None = None, timeout: float | None = Non
             plot_ready = _wait_for_plot(devtools, plot_timeout)
             if not plot_ready:
                 errors = _browser_errors(devtools)
-                visible_text = devtools.evaluate("document.body.innerText.slice(-3000)")
+                visible_text = devtools.evaluate("window.__deepText()")
                 raise RuntimeError(
                     "interactive did not finish loading a Plotly figure with trace data\n"
                     f"{_plot_diagnostics(devtools)}\n"

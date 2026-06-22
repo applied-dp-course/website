@@ -288,6 +288,21 @@ def build_libdpy_wheel(output_directory: Path) -> Path:
     return wheel_path
 
 
+def _enable_tracebacks(index_html: Path) -> None:
+    """Flip the exported marimo app's ``show_tracebacks`` config to ``true``.
+
+    marimo defaults it to ``false``, so a kernel error in the install/import/figure
+    chain is swallowed: the app hangs with no output and no console error (the Pyodide
+    kernel runs in a Web Worker, so the exception never reaches the page). Enabling it
+    makes a failed widget render its traceback instead of spinning forever — a visible
+    error in production, and the signal the WASM smoke test needs to diagnose a stall.
+    """
+    text = index_html.read_text(encoding="utf-8")
+    updated = text.replace('"show_tracebacks": false', '"show_tracebacks": true', 1)
+    if updated != text:
+        index_html.write_text(updated, encoding="utf-8")
+
+
 def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
     source_directory = GENERATED_ROOT / "interactives_src" / use.spec.artifact_name
     public_directory = source_directory / "public"
@@ -326,6 +341,7 @@ def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
         cwd=site_root,
         check=True,
     )
+    _enable_tracebacks(output_directory / "index.html")
     (output_directory / ".libdpy-interactive").write_text(
         f"{use.spec.name}\n{use.spec.artifact_name}\n",
         encoding="utf-8",
