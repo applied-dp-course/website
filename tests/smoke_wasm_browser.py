@@ -130,6 +130,44 @@ def _wait_for_debugger(port: int, timeout: float = 10):
     raise RuntimeError("Chrome remote debugger did not start")
 
 
+def _attach_devtools(port: int, url: str, *, attempts: int = 4) -> DevTools:
+    """Open a fresh tab for ``url`` and return a DevTools session with the core
+    domains enabled.
+
+    Retries the new-tab + websocket-connect handshake. On a loaded CI runner the
+    connect to Chrome's debugger is flaky — a tight timeout surfaces as
+    "Connection timed out" — and it gets worse for the 3rd/4th Chrome launched in
+    a run, which is why the canvas tests (run after the WASM ones) failed while the
+    WASM tests passed. Each retry opens a new tab on the *same* Chrome process.
+    """
+    last_error: Exception | None = None
+    for attempt in range(1, attempts + 1):
+        devtools = None
+        try:
+            target = _json_request(
+                f"http://127.0.0.1:{port}/json/new?{url}",
+                method="PUT",
+            )
+            devtools = DevTools(target["webSocketDebuggerUrl"])
+            for domain in ("Page", "Runtime", "Log", "Network"):
+                devtools.call(f"{domain}.enable")
+            return devtools
+        except Exception as error:  # noqa: BLE001 - retry transient connect failures
+            last_error = error
+            if devtools is not None:
+                try:
+                    devtools.close()
+                except Exception:
+                    pass
+            if attempt < attempts:
+                print(
+                    f"  devtools attach attempt {attempt} failed ({error}); retrying...",
+                    flush=True,
+                )
+                time.sleep(2.0)
+    raise RuntimeError(f"could not attach DevTools to {url}: {last_error}")
+
+
 def _wait_for(
     devtools: DevTools,
     expression: str,
@@ -382,13 +420,7 @@ def smoke_test(url: str, *, port: int | None = None, timeout: float | None = Non
                         f"{exc} (Chrome exited {process.returncode}): {tail}"
                     ) from exc
                 raise
-            target = _json_request(
-                f"http://127.0.0.1:{port}/json/new?{url}",
-                method="PUT",
-            )
-            devtools = DevTools(target["webSocketDebuggerUrl"])
-            for domain in ("Page", "Runtime", "Log", "Network"):
-                devtools.call(f"{domain}.enable")
+            devtools = _attach_devtools(port, url)
             devtools.call(
                 "Target.setAutoAttach",
                 {

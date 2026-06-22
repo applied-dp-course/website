@@ -14,10 +14,10 @@ from pathlib import Path
 from smoke_wasm_browser import (
     CHROME,
     DevTools,
+    _attach_devtools,
     _browser_errors,
     _chrome_launch_command,
     _free_port,
-    _json_request,
     _wait_for,
     _wait_for_debugger,
 )
@@ -68,13 +68,7 @@ def smoke_test(url: str, *, port: int | None = None, timeout: float = 60) -> Non
                         f"{exc} (Chrome exited {process.returncode}): {tail}"
                     ) from exc
                 raise
-            target = _json_request(
-                f"http://127.0.0.1:{port}/json/new?{url}",
-                method="PUT",
-            )
-            devtools = DevTools(target["webSocketDebuggerUrl"])
-            for domain in ("Page", "Runtime", "Log", "Network"):
-                devtools.call(f"{domain}.enable")
+            devtools = _attach_devtools(port, url)
 
             ready = _wait_for(
                 devtools,
