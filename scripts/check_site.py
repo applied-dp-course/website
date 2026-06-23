@@ -21,20 +21,22 @@ import assert_private_content
 import colab
 import content_model
 import gallery
-import write_redirects
 
 
-TOP_LEVEL_ROUTES = (
-    "index.html",
-    "schedule.html",
-    "lectures.html",
-    "assignments.html",
-    "tools.html",
-    "blog/index.html",
-    "syllabus.html",
-    "archive.html",
-    "about.html",
+REQUIRED_PAGE_ROUTES = (
+    "pages/index.html",
+    "pages/schedule.html",
+    "pages/lectures.html",
+    "pages/assignments.html",
+    "pages/tools.html",
+    "pages/blog.html",
+    "pages/syllabus.html",
+    "pages/archive.html",
+    "pages/about.html",
 )
+
+# Backwards-compatible alias for tests and fixtures.
+TOP_LEVEL_ROUTES = REQUIRED_PAGE_ROUTES
 
 # Maintainer-facing root docs that must never render into the published site.
 FORBIDDEN_PUBLISHED_NAMES = (
@@ -63,19 +65,22 @@ class _LinkExtractor(HTMLParser):
 
 
 def required_routes(catalog: content_model.ContentCatalog) -> tuple[str, ...]:
-    routes = list(TOP_LEVEL_ROUTES)
-    for legacy_path, _target in write_redirects.collect_legacy_redirects(
-        catalog,
-        output_root=content_model.SITE_ROOT / "_site",
+    routes = list(REQUIRED_PAGE_ROUTES)
+    for collection in (
+        catalog.lecture_presentations,
+        catalog.blog_posts,
+        catalog.class_assignments,
+        catalog.home_assignments,
     ):
-        routes.append(legacy_path.relative_to(content_model.SITE_ROOT / "_site").as_posix())
-    for lecture in catalog.lectures:
-        base = f"{content_model.LECTURES_URL_PREFIX}/{lecture.slug}"
-        for surface in (lecture.surfaces.learn, lecture.surfaces.presentation):
-            stem = Path(surface).stem
-            routes.append(f"{base}/{stem}.html")
-    deduped = sorted(set(routes))
-    return tuple(deduped)
+        for item in collection:
+            routes.append(Path(item.public_path).with_suffix(".html").as_posix())
+    for tool in catalog.tools:
+        routes.append(f"content/tools/{tool.slug}/index.html")
+    site_posts_dir = content_model.SITE_POSTS_DIR
+    if site_posts_dir.is_dir():
+        for post_dir in sorted(path for path in site_posts_dir.iterdir() if path.is_dir()):
+            routes.append(f"content/site-posts/{post_dir.name}/index.html")
+    return tuple(sorted(set(routes)))
 
 
 def _is_external_href(href: str) -> bool:
@@ -124,9 +129,6 @@ def check_internal_links(site_root: Path) -> list[str]:
     errors: list[str] = []
     site_root = site_root.resolve()
     for html_path in sorted(site_root.rglob("*.html")):
-        if write_redirects.REDIRECT_MARKER in html_path.read_text(encoding="utf-8"):
-            continue
-
         parser = _LinkExtractor()
         parser.feed(html_path.read_text(encoding="utf-8"))
         for _kind, href in parser.links:
@@ -152,28 +154,6 @@ def check_required_routes_local(site_root: Path, routes: Iterable[str]) -> list[
     return errors
 
 
-def check_legacy_redirects_local(
-    catalog: content_model.ContentCatalog,
-    site_root: Path,
-) -> list[str]:
-    errors: list[str] = []
-    for legacy_path, target_path in write_redirects.collect_legacy_redirects(
-        catalog,
-        output_root=site_root,
-    ):
-        rel_legacy = legacy_path.relative_to(site_root).as_posix()
-        if not legacy_path.is_file():
-            errors.append(f"missing legacy redirect page: {rel_legacy}")
-            continue
-        if write_redirects.REDIRECT_MARKER not in legacy_path.read_text(encoding="utf-8"):
-            errors.append(f"legacy route is not a generated redirect: {rel_legacy}")
-            continue
-        if not target_path.is_file():
-            rel_target = target_path.relative_to(site_root).as_posix()
-            errors.append(f"legacy redirect target missing: {rel_legacy} -> {rel_target}")
-    return errors
-
-
 def check_forbidden_artifacts(site_root: Path) -> list[str]:
     errors: list[str] = []
     published = assert_private_content.check_site(site_root)
@@ -195,29 +175,16 @@ def expected_colab_urls(catalog: content_model.ContentCatalog) -> list[str]:
 
     repo = catalog.course.repo
     urls: list[str] = []
-    for lecture in catalog.lectures:
-        notebook_path = (
-            f"{content_model.LECTURES_URL_PREFIX}/{lecture.slug}/{lecture.surfaces.learn}"
-        )
+    notebook_items = (
+        catalog.blog_posts + catalog.class_assignments + catalog.home_assignments
+    )
+    for item in notebook_items:
         urls.append(
             colab.notebook_url(
                 owner=repo.owner,
                 name=repo.name,
                 branch=repo.branch,
-                repo_relative_path=notebook_path,
-            )
-        )
-    for assignment in catalog.assignments:
-        notebook_path = (
-            f"{content_model.ASSIGNMENTS_URL_PREFIX}/{assignment.slug}/"
-            f"{assignment.notebook}"
-        )
-        urls.append(
-            colab.notebook_url(
-                owner=repo.owner,
-                name=repo.name,
-                branch=repo.branch,
-                repo_relative_path=notebook_path,
+                repo_relative_path=item.public_path,
             )
         )
     return urls
@@ -238,25 +205,19 @@ def check_colab_links(site_root: Path, catalog: content_model.ContentCatalog) ->
     if not found:
         return ["no Colab notebook URLs found in rendered HTML"]
 
-    if not found:
-        return ["no Colab notebook URLs found in rendered HTML"]
-
     if not any(url in found for url in expected):
         return ["no expected Colab notebook URLs found in rendered HTML"]
     return []
 
 
 def check_gallery_hrefs(site_root: Path) -> list[str]:
-    gallery_path = content_model.SITE_ROOT / "generated" / "gallery.json"
+    gallery_path = content_model.GENERATED_DIR / "gallery.json"
     if not gallery_path.is_file():
-        return ["generated/gallery.json is missing (run build_interactives.py first)"]
+        return ["_generated/gallery.json is missing (run build_interactives.py first)"]
 
     errors: list[str] = []
     for entry in gallery.load_gallery_json(gallery_path):
-        if entry.source_kind == "standalone":
-            target = site_root / entry.href.strip("/") / "index.html"
-        else:
-            target = site_root / entry.href.strip("/") / "index.html"
+        target = site_root / entry.href.strip("/") / "index.html"
         if not target.is_file():
             errors.append(
                 f"gallery entry {entry.id!r} missing rendered target: "
@@ -274,7 +235,6 @@ def check_local_site(site_root: Path | None = None) -> list[str]:
     routes = required_routes(catalog)
     errors: list[str] = []
     errors.extend(check_required_routes_local(site_root, routes))
-    errors.extend(check_legacy_redirects_local(catalog, site_root))
     errors.extend(check_forbidden_artifacts(site_root))
     errors.extend(check_colab_links(site_root, catalog))
     errors.extend(check_gallery_hrefs(site_root))
@@ -299,36 +259,8 @@ def check_remote_routes(base_url: str, routes: Iterable[str]) -> list[str]:
     return errors
 
 
-def check_remote_legacy_redirects(
-    base_url: str,
-    catalog: content_model.ContentCatalog,
-) -> list[str]:
-    errors: list[str] = []
-    base = base_url.rstrip("/") + "/"
-    for legacy_path, target_path in write_redirects.collect_legacy_redirects(
-        catalog,
-        output_root=content_model.SITE_ROOT / "_site",
-    ):
-        rel_legacy = legacy_path.relative_to(content_model.SITE_ROOT / "_site").as_posix()
-        rel_target = target_path.relative_to(content_model.SITE_ROOT / "_site").as_posix()
-        url = urljoin(base, rel_legacy)
-        request = urllib.request.Request(url, method="GET")
-        try:
-            with urllib.request.urlopen(request, timeout=60) as response:
-                body = response.read().decode("utf-8", errors="replace")
-        except Exception as error:  # noqa: BLE001
-            errors.append(f"{url}: {error}")
-            continue
-        if write_redirects.REDIRECT_MARKER not in body:
-            errors.append(f"{url}: response is not a generated legacy redirect")
-            continue
-        if rel_target not in body and Path(rel_target).name not in body:
-            errors.append(f"{url}: redirect body does not reference {rel_target}")
-    return errors
-
-
 def check_remote_colab_presence(base_url: str) -> list[str]:
-    assignments_url = urljoin(base_url.rstrip("/") + "/", "assignments.html")
+    assignments_url = urljoin(base_url.rstrip("/") + "/", "pages/assignments.html")
     request = urllib.request.Request(assignments_url, method="GET")
     try:
         with urllib.request.urlopen(request, timeout=60) as response:
@@ -350,7 +282,6 @@ def check_deployed_site(base_url: str) -> list[str]:
     routes = required_routes(catalog)
     errors: list[str] = []
     errors.extend(check_remote_routes(base_url, routes))
-    errors.extend(check_remote_legacy_redirects(base_url, catalog))
     errors.extend(check_remote_colab_presence(base_url))
     return errors
 

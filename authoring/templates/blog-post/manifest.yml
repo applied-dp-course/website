@@ -1,0 +1,6 @@
+# Rename this directory to an unnumbered name under content/blog-posts/.
+title: Blog post title
+entrypoint: post.ipynb
+subjects:
+  - subject tag
+status: draft

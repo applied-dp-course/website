@@ -25,15 +25,18 @@ from libdpy.visualization.privacy_plots import PrivacyPlot
 from scipy import stats
 
 SITE_ROOT = Path(__file__).resolve().parents[1]
-GENERATED_ROOT = SITE_ROOT / "generated"
+GENERATED_ROOT = SITE_ROOT / "_generated"
 DISCOVERY_ROOTS = (
-    "content/lectures",
-    "blog",
-    "tools",
+    "content/lecture-presentations",
+    "content/blog-posts",
+    "content/class-assignments",
+    "content/home-assignments",
+    "content/tools",
+    "content/site-posts",
 )
 # Root-level shell pages with embeds (not covered by DISCOVERY_ROOTS globs).
 DISCOVERY_FILES = (
-    "index.qmd",
+    "pages/index.qmd",
 )
 MARIMO_VERSION = "0.23.9"
 PYTHON_FENCE = re.compile(
@@ -54,7 +57,14 @@ class InteractiveUse:
 
     @property
     def output_directory(self) -> Path:
-        return self.source.parent / "apps" / self.spec.artifact_name
+        return output_directory_for(self, SITE_ROOT)
+
+
+def output_directory_for(use: InteractiveUse, site_root: Path) -> Path:
+    relative_parent = use.source.parent.relative_to(site_root)
+    if relative_parent.parts and relative_parent.parts[0] == "content":
+        relative_parent = Path(*relative_parent.parts[1:])
+    return site_root / "_generated" / "apps" / relative_parent / use.spec.artifact_name
 
 
 def _python_blocks(path: Path) -> list[str]:
@@ -320,7 +330,7 @@ def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
         encoding="utf-8",
     )
 
-    output_directory = use.output_directory
+    output_directory = output_directory_for(use, site_root)
     if output_directory.exists():
         shutil.rmtree(output_directory)
     output_directory.parent.mkdir(parents=True, exist_ok=True)

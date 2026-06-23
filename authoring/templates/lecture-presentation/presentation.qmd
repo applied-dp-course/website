@@ -1,0 +1,20 @@
+---
+title: "Lecture title"
+subtitle: "Applied Differential Privacy"
+format:
+  revealjs:
+    theme: white
+    slide-number: true
+    embed-resources: false
+    code-overflow: wrap
+    scrollable: true
+execute:
+  warning: false
+  message: false
+  echo: false
+jupyter: python3
+---
+
+## First slide
+
+Presentation deck source. A same-named blog post may exist, but offerings reference it separately.

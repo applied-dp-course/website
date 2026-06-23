@@ -7,24 +7,24 @@ project:
     - python scripts/run_site_python.py scripts/build_interactives.py
     - python scripts/run_site_python.py scripts/sync_content.py --phase gallery
   post-render:
-    - python scripts/run_site_python.py scripts/write_redirects.py
+    - python scripts/run_site_python.py scripts/clear_content_outputs.py
     - python scripts/run_site_python.py scripts/defer_wasm_embeds.py
     - python scripts/run_site_python.py scripts/assert_private_content.py
   resources:
-    - "content/lectures/**/apps/**"
-    - "tools/**/apps/**"
-    - "blog/**/apps/**"
     - "apps/**"
+    - "_generated/apps/**"
+    - "content/tools/**/apps/**"
+    - "content/site-posts/**/apps/**"
   render:
-    # Leading / anchors globs to the project root (Quarto globs recurse by default).
-    - "/*.qmd"
-    - "content/lectures/**/*.qmd"
-    - "content/lectures/**/learn.ipynb"
-    - "content/lectures/02-reconstruction/notebook.ipynb"
-    - "content/assignments/**/*.ipynb"
-    - "!content/assignments/**/solution.ipynb"
-    - "/blog/**/index.qmd"
-    - "/tools/**/index.qmd"
+    - "/pages/*.qmd"
+    - "content/lecture-presentations/**/*.qmd"
+    - "content/blog-posts/**/*.ipynb"
+    - "content/class-assignments/**/*.ipynb"
+    - "content/home-assignments/**/*.ipynb"
+    - "!content/class-assignments/**/solution.ipynb"
+    - "!content/home-assignments/**/solution.ipynb"
+    - "content/site-posts/**/index.qmd"
+    - "content/tools/**/index.qmd"
     - "!authoring/**"
     - "!dev/**"
 
@@ -37,26 +37,26 @@ website:
   description: "Course site — slides, interactive lectures, and notebooks."
   navbar:
     left:
-      - href: index.qmd
+      - href: pages/index.qmd
         text: Home
-      - href: schedule.qmd
+      - href: pages/schedule.qmd
         text: Schedule
-      - href: lectures.qmd
+      - href: pages/lectures.qmd
         text: Lectures
-      - href: assignments.qmd
+      - href: pages/assignments.qmd
         text: Assignments
-      - href: tools.qmd
+      - href: pages/tools.qmd
         text: Tools
-      - href: blog/index.qmd
+      - href: pages/blog.qmd
         text: Blog
     right:
       - text: Course
         menu:
-          - href: syllabus.qmd
+          - href: pages/syllabus.qmd
             text: Syllabus
-          - href: archive.qmd
+          - href: pages/archive.qmd
             text: Archive
-          - href: about.qmd
+          - href: pages/about.qmd
             text: About
   repo-url: https://github.com/applied-dp-course/website
   page-footer: "Built with Quarto. All computation imported from libdpy (pub_lib)."

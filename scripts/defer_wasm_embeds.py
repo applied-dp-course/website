@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 from pathlib import Path
@@ -147,7 +148,11 @@ def process_site(site_root: Path) -> int:
     embeds_upgraded = 0
     for path in sorted(site_root.rglob("*.html")):
         original = path.read_text(encoding="utf-8")
-        cleaned = _strip_legacy_click_script(_strip_legacy_click_gate(original))
+        cleaned = _rewrite_generated_app_paths(
+            _strip_legacy_click_script(_strip_legacy_click_gate(original)),
+            page=path,
+            site_root=site_root,
+        )
         updated, count = upgrade_embed_html(cleaned)
         if 'data-libdpy-src="' in updated:
             updated = _ensure_auto_load_handler(updated)
@@ -157,6 +162,27 @@ def process_site(site_root: Path) -> int:
         pages_upgraded += 1
         embeds_upgraded += count
     return embeds_upgraded if pages_upgraded else 0
+
+
+def _rewrite_generated_app_paths(html: str, *, page: Path, site_root: Path) -> str:
+    """Point source-relative ``apps/<id>`` embeds at generated app resources."""
+
+    relative_page = page.relative_to(site_root)
+    source_parent = relative_page.parent
+    if source_parent.parts and source_parent.parts[0] == "content":
+        source_parent = Path(*source_parent.parts[1:])
+
+    def replace(match: re.Match[str]) -> str:
+        artifact = match.group(1)
+        target = site_root / "_generated" / "apps" / source_parent / artifact / "index.html"
+        relative_target = os.path.relpath(target, start=page.parent).replace("\\", "/")
+        return f'src="{relative_target}"'
+
+    return re.sub(
+        r'src="apps/([a-z0-9][a-z0-9-]*)/index\.html"',
+        replace,
+        html,
+    )
 
 
 def main(argv: list[str] | None = None) -> None:

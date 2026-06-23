@@ -18,17 +18,17 @@ class BuildInteractivesTest(unittest.TestCase):
     def test_discovers_and_deduplicates_privacy_plot_embed(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            lecture = root / "content" / "lectures" / "03-test"
+            lecture = root / "content" / "lecture-presentations" / "test"
             lecture.mkdir(parents=True)
             code = (
                 "PrivacyPlot(distribution_types=[norm, laplace], "
                 "sensitivity=1, std=1.5).embed(mode='deck')"
             )
-            (lecture / "slides.qmd").write_text(
+            (lecture / "presentation.qmd").write_text(
                 f"```{{python}}\n{code}\n```\n",
                 encoding="utf-8",
             )
-            (lecture / "learn.ipynb").write_text(
+            (lecture / "notes.ipynb").write_text(
                 json.dumps(
                     {
                         "cells": [
@@ -51,7 +51,7 @@ class BuildInteractivesTest(unittest.TestCase):
     def test_discovers_privacy_plot_embed_under_tools(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            tool = root / "tools" / "privacy-tradeoff-explorer"
+            tool = root / "content" / "tools" / "privacy-tradeoff-explorer"
             tool.mkdir(parents=True)
             code = (
                 "PrivacyPlot(distribution_types=[norm], "
@@ -66,7 +66,7 @@ class BuildInteractivesTest(unittest.TestCase):
 
             self.assertEqual(len(uses), 1)
             self.assertTrue(
-                uses[0].source.relative_to(root).as_posix().startswith("tools/")
+                uses[0].source.relative_to(root).as_posix().startswith("content/tools/")
             )
 
     def test_discovers_privacy_plot_embed_on_home_page(self) -> None:
@@ -76,7 +76,8 @@ class BuildInteractivesTest(unittest.TestCase):
                 "PrivacyPlot(distribution_types=[norm], "
                 "sensitivity=1, std=1.5).embed()"
             )
-            (root / "index.qmd").write_text(
+            (root / "pages").mkdir()
+            (root / "pages" / "index.qmd").write_text(
                 f"```{{python}}\n{code}\n```\n",
                 encoding="utf-8",
             )
@@ -85,14 +86,17 @@ class BuildInteractivesTest(unittest.TestCase):
 
             self.assertEqual(len(uses), 1)
             self.assertEqual(uses[0].source.name, "index.qmd")
-            self.assertEqual(uses[0].output_directory, root / "apps" / uses[0].spec.artifact_name)
+            self.assertEqual(
+                build_interactives.output_directory_for(uses[0], root),
+                root / "_generated" / "apps" / "pages" / uses[0].spec.artifact_name,
+            )
 
     def test_unsupported_embed_produces_warning(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            lecture = root / "content" / "lectures" / "04-test"
+            lecture = root / "content" / "lecture-presentations" / "test"
             lecture.mkdir(parents=True)
-            (lecture / "slides.qmd").write_text(
+            (lecture / "presentation.qmd").write_text(
                 "```python\nDynamicWidget().embed()\n```\n",
                 encoding="utf-8",
             )
@@ -106,9 +110,9 @@ class BuildInteractivesTest(unittest.TestCase):
     def test_dynamic_privacy_plot_embed_produces_manifest_warning(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            lecture = root / "content" / "lectures" / "04-test"
+            lecture = root / "content" / "lecture-presentations" / "test"
             lecture.mkdir(parents=True)
-            (lecture / "slides.qmd").write_text(
+            (lecture / "presentation.qmd").write_text(
                 "\n".join(
                     [
                         "```python",

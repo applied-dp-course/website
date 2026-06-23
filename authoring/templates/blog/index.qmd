@@ -1,8 +1,0 @@
----
-title: "Post title"
-description: "Short summary for the blog listing."
-date: 2026-01-01
-categories: [differential privacy]
----
-
-Post body. Posts are listed automatically from `blog/posts/` via `blog/index.qmd`.

@@ -7,6 +7,7 @@ cd "$ROOT"
 
 QUARTO_BIN="${QUARTO_BIN:-$HOME/.local/quarto-1.6/bin/quarto}"
 QUARTO_PYTHON="${QUARTO_PYTHON:-$ROOT/.venv/bin/python}"
+export QUARTO_PYTHON
 
 # Align the local libdpy with CI (fresh from pub_lib main) before the pre-render hook
 # builds the WASM wheel from it. Set LIBDPY_SYNC=0 to skip (offline / intentional pin).

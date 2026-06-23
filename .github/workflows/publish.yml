@@ -59,7 +59,7 @@ jobs:
           MPLBACKEND: Agg
         run: quarto render --execute
 
-      - name: Verify rendered routes, redirects, and internal links
+      - name: Verify rendered routes and internal links
         run: ./.venv/bin/python scripts/check_site.py
 
       - name: WASM and canvas browser smoke tests

@@ -1,0 +1,9 @@
+# Rename this directory to an unnumbered name under content/class-assignments/.
+title: Assignment title
+entrypoint: assignment.ipynb
+subjects:
+  - subject tag
+estimated_time: 90 minutes
+related:
+  - mechanisms
+status: published

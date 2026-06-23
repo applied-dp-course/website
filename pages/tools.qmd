@@ -1,0 +1,26 @@
+---
+title: "Tools"
+---
+
+Interactive widgets from the course catalog and standalone explorations.
+
+<!-- BEGIN AUTO-GENERATED TOOLS -->
+### differential privacy
+
+- **[Gaussian privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-6197737a49/)** — from DP as Hypothesis Testing
+- **[Multi-distribution privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-laplace-uniform-06b3767cd2/)** — from DP as Hypothesis Testing
+- **[Privacy Tradeoff Explorer](../content/tools/privacy-tradeoff-explorer/)** — standalone — Explore how noise scale and distribution shape the privacy tradeoff curve.
+- **[Reconstruction 2-D slab](../apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab/)** — from Reconstruction Attacks
+- **[Reconstruction 3-D slabs](../apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs/)** — from Reconstruction Attacks
+
+### hypothesis testing
+
+- **[Gaussian privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-6197737a49/)** — from DP as Hypothesis Testing
+- **[Multi-distribution privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-laplace-uniform-06b3767cd2/)** — from DP as Hypothesis Testing
+- **[Privacy Tradeoff Explorer](../content/tools/privacy-tradeoff-explorer/)** — standalone — Explore how noise scale and distribution shape the privacy tradeoff curve.
+
+### reconstruction attacks
+
+- **[Reconstruction 2-D slab](../apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab/)** — from Reconstruction Attacks
+- **[Reconstruction 3-D slabs](../apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs/)** — from Reconstruction Attacks
+<!-- END AUTO-GENERATED TOOLS -->

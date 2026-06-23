@@ -31,13 +31,14 @@ from smoke_wasm_browser import (  # noqa: E402
     smoke_test as smoke_wasm,
 )
 
-# When the same marimo export is copied to home, blog, tools, and lectures, smoke-test
+# When the same marimo export is copied to home, site posts, tools, and lectures, smoke-test
 # one canonical deployment per artifact id (prefer lecture paths).
 _WASM_SMOKE_PATH_PRIORITY = (
-    "content/lectures/",
-    "tools/",
-    "blog/",
-    "apps/",
+    "_generated/apps/lecture-presentations/",
+    "_generated/apps/blog-posts/",
+    "content/tools/",
+    "content/site-posts/",
+    "_generated/apps/",
 )
 
 
@@ -72,7 +73,7 @@ def discover_smoke_targets(
 ) -> tuple[list[str], list[str]]:
     """Return ``(wasm_paths, canvas_paths)`` relative to ``output_root``.
 
-    Browser-native apps come from ``generated/gallery.json``. WASM apps are the union of
+    Browser-native apps come from ``_generated/gallery.json``. WASM apps are the union of
     gallery-declared lecture apps and every ``PrivacyPlot(...).embed()`` export discovered
     in site sources (home page, blog posts, standalone tools, etc.).
     """
@@ -80,7 +81,7 @@ def discover_smoke_targets(
     wasm_paths: set[str] = set()
     canvas_paths: set[str] = set()
 
-    gallery_path = site_root / "generated" / "gallery.json"
+    gallery_path = site_root / "_generated" / "gallery.json"
     if gallery_path.is_file():
         for entry in gallery.load_gallery_json(gallery_path):
             relative = entry.href.strip("/")
@@ -95,7 +96,9 @@ def discover_smoke_targets(
                 wasm_paths.add(relative)
 
     for use in build_interactives.discover_interactives(site_root):
-        relative = use.output_directory.relative_to(site_root).as_posix()
+        relative = build_interactives.output_directory_for(use, site_root).relative_to(
+            site_root
+        ).as_posix()
         index = output_root / relative / "index.html"
         if not index.is_file():
             raise SystemExit(f"expected built WASM app missing: {index}")

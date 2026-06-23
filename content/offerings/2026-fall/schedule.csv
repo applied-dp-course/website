@@ -1,4 +1,4 @@
-week,date,topic,lecture,presentation,assignment,notes
-1,2026-10-20,Reconstruction attacks,02-reconstruction,02-reconstruction,,
-2,2026-10-27,DP as hypothesis testing,03-hypothesis_testing,03-hypothesis_testing,hypothesis-testing-hw,
-3,2026-11-03,Reading week,,,,No class
+week,date,topic,blog_post,lecture_presentation,class_assignment,home_assignment,notes
+1,2026-10-20,Reconstruction attacks,reconstruction-attacks,reconstruction-attacks,,,
+2,2026-10-27,DP as hypothesis testing,hypothesis-testing,hypothesis-testing,hypothesis-testing,,
+3,2026-11-03,Reading week,,,,,No class

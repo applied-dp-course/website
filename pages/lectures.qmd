@@ -1,0 +1,50 @@
+---
+title: "Course content"
+---
+
+Course content is authored in independent collections, all built from the course library
+[`libdpy`](https://github.com/applied-dp-course/pub_lib):
+
+- **lecture presentations** are QMD RevealJS decks; and
+- **blog posts** are self-learning notebooks that can be read locally or opened in Colab.
+
+Offerings reference each item independently by its unnumbered name.
+
+<!-- BEGIN AUTO-GENERATED LECTURES -->
+## Lecture presentations
+
+### differential privacy
+
+- **DP as Hypothesis Testing** — [DP as Hypothesis Testing](../content/lecture-presentations/hypothesis-testing/presentation.qmd) · apps: [Gaussian privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-6197737a49/), [Multi-distribution privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-laplace-uniform-06b3767cd2/)
+- **Reconstruction Attacks** — [Reconstruction Attacks](../content/lecture-presentations/reconstruction-attacks/presentation.qmd) · apps: [Reconstruction 2-D slab](../apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab/), [Reconstruction 3-D slabs](../apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs/)
+
+### hypothesis testing
+
+- **DP as Hypothesis Testing** — [DP as Hypothesis Testing](../content/lecture-presentations/hypothesis-testing/presentation.qmd) · apps: [Gaussian privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-6197737a49/), [Multi-distribution privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-laplace-uniform-06b3767cd2/)
+
+### reconstruction attacks
+
+- **Reconstruction Attacks** — [Reconstruction Attacks](../content/lecture-presentations/reconstruction-attacks/presentation.qmd) · apps: [Reconstruction 2-D slab](../apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab/), [Reconstruction 3-D slabs](../apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs/)
+
+## Blog posts
+
+### differential privacy
+
+- **DP as Hypothesis Testing** — [DP as Hypothesis Testing](../content/blog-posts/hypothesis-testing/post.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb)
+- **Privacy Auditing** — [Privacy Auditing](../content/blog-posts/privacy-auditing/post.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb)
+- **Reconstruction Attacks** — [Reconstruction Attacks](../content/blog-posts/reconstruction-attacks/post.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb)
+
+### hypothesis testing
+
+- **DP as Hypothesis Testing** — [DP as Hypothesis Testing](../content/blog-posts/hypothesis-testing/post.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb)
+
+### privacy auditing
+
+- **Privacy Auditing** — [Privacy Auditing](../content/blog-posts/privacy-auditing/post.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb)
+
+### reconstruction attacks
+
+- **Reconstruction Attacks** — [Reconstruction Attacks](../content/blog-posts/reconstruction-attacks/post.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb)
+<!-- END AUTO-GENERATED LECTURES -->
+
+See the [schedule](schedule.qmd) for the current term's selected content.

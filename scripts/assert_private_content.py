@@ -15,9 +15,12 @@ import content_model
 
 
 PRIVATE_ASSIGNMENT_GLOBS = (
-    "content/assignments/**/solution.html",
-    "content/assignments/**/solution.ipynb",
-    "content/assignments/**/solution_files",
+    "content/class-assignments/**/solution.html",
+    "content/class-assignments/**/solution.ipynb",
+    "content/class-assignments/**/solution_files",
+    "content/home-assignments/**/solution.html",
+    "content/home-assignments/**/solution.ipynb",
+    "content/home-assignments/**/solution_files",
 )
 
 # Authoring kit and dev helpers must never ship on the public site.

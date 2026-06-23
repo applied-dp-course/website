@@ -1,4 +1,4 @@
-"""Validate the Phase 0 baseline route fixture against the live catalog."""
+"""Validate the baseline route fixture against the live catalog."""
 
 from __future__ import annotations
 
@@ -22,7 +22,6 @@ sys.modules[SPEC.name] = check_site
 SPEC.loader.exec_module(check_site)
 
 content_model = check_site.content_model
-write_redirects = check_site.write_redirects
 
 BASELINE_PATH = SITE_ROOT / "dev" / "plan" / "baseline-routes.json"
 
@@ -35,17 +34,8 @@ class BaselineRoutesTest(unittest.TestCase):
         payload = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
         catalog = content_model.load_catalog()
         routes = check_site.required_routes(catalog)
-        self.assertEqual(payload["top_level"], list(check_site.TOP_LEVEL_ROUTES))
+        self.assertEqual(payload["page_routes"], list(check_site.REQUIRED_PAGE_ROUTES))
         self.assertEqual(set(payload["required_routes"]), set(routes))
-
-    def test_baseline_legacy_redirect_count(self) -> None:
-        payload = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
-        catalog = content_model.load_catalog()
-        pairs = write_redirects.collect_legacy_redirects(
-            catalog,
-            output_root=content_model.SITE_ROOT / "_site",
-        )
-        self.assertEqual(payload["legacy_redirect_count"], len(pairs))
 
 
 if __name__ == "__main__":

@@ -1,12 +1,9 @@
 # Local working checklist — not tracked
 TODO.md
 
-# Lecture source materials — kept locally for reference, not published
-/content/lectures/03-hypothesis_testing/lecture_presentation.pdf
-/content/lectures/03-hypothesis_testing/lecture_dp_as_hypothesis_testing.ipynb
-
 # Private assignment solutions — never published
-/content/assignments/**/solution.ipynb
+/content/class-assignments/**/solution.ipynb
+/content/home-assignments/**/solution.ipynb
 
 # Python env
 .venv/
@@ -17,27 +14,23 @@ __pycache__/
 /_site/
 /.quarto/
 /_freeze/
-/generated/
-/content/lectures/**/apps/privacy-plot-*/
-/tools/**/apps/privacy-plot-*/
-/blog/**/apps/privacy-plot-*/
+/_generated/
+/_generated/apps/
+/content/tools/**/apps/privacy-plot-*/
+/content/site-posts/**/apps/privacy-plot-*/
 /apps/privacy-plot-*/
-/content/lectures/**/.jupyter_cache/
+/content/**/.jupyter_cache/
 .jupyter_cache/
 
 # Quarto in-place render artifacts. The project renders to _site/; these only appear when
 # something previews in place (e.g. the VS Code Quarto extension on an open .qmd). They must
 # never be committed — the hand-written apps/**/index.html files are source and are NOT matched.
-/*.html
+/pages/*.html
 /site_libs/
-/content/lectures/**/slides.html
-/content/lectures/**/notebook.html
-/content/lectures/**/learn.html
-/content/lectures/**/*_files/
+/content/**/*.html
+/content/**/*_files/
 /authoring/tutorials/**/*.html
 /authoring/tutorials/**/*_files/
-/blog/**/*.html
-/blog/**/*_files/
 
 # OS
 .DS_Store

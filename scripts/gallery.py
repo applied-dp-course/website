@@ -27,12 +27,13 @@ class GalleryEntry:
 
 
 def _lecture_app_href(slug: str, app_path: str) -> str:
+    del slug
     normalized = app_path.replace("\\", "/").strip("/")
-    return f"{content_model.LECTURES_URL_PREFIX}/{slug}/{normalized}/"
+    return f"{normalized}/"
 
 
 def _standalone_tool_href(slug: str) -> str:
-    return f"tools/{slug}/"
+    return f"content/tools/{slug}/"
 
 
 def build_gallery_entries(catalog: content_model.ContentCatalog) -> tuple[GalleryEntry, ...]:
@@ -49,7 +50,7 @@ def build_gallery_entries(catalog: content_model.ContentCatalog) -> tuple[Galler
                     summary="",
                     source_kind="lecture",
                     source_title=lecture.title,
-                    source_lecture_number=lecture.number,
+                    source_lecture_number=None,
                     subjects=lecture.subjects,
                     runtime=app.runtime,
                     href=_lecture_app_href(lecture.slug, app.path),
@@ -97,7 +98,7 @@ def validate_entrypoints_exist(
     missing: list[str] = []
     for entry in entries:
         if entry.source_kind == "standalone":
-            entrypoint = site_root / "tools" / entry.id / "index.qmd"
+            entrypoint = site_root / "content" / "tools" / entry.id / "index.qmd"
             if not entrypoint.is_file():
                 missing.append(f"{entry.id}: missing {entrypoint.relative_to(site_root).as_posix()}")
             continue
@@ -149,7 +150,7 @@ def write_gallery_json(
 
 
 def load_gallery_json(source: Path | None = None) -> tuple[GalleryEntry, ...]:
-    source = source or content_model.SITE_ROOT / "generated" / "gallery.json"
+    source = source or content_model.GENERATED_DIR / "gallery.json"
     if not source.exists():
         raise GalleryError(f"gallery file does not exist: {source}")
 

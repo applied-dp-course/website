@@ -1,9 +1,0 @@
-# Rename this directory to a slug (e.g. mechanisms-hw) under content/assignments/.
-title: Assignment title
-subjects:
-  - subject tag
-estimated_time: 90 minutes
-notebook: assignment.ipynb
-related_lectures:
-  - 04-mechanisms
-status: published
