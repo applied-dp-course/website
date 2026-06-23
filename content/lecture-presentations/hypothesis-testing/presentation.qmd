@@ -1,6 +1,6 @@
 ---
 title: "DP as Hypothesis Testing"
-subtitle: "Applied Data Privacy — Lecture 3"
+subtitle: "Applied Differential Privacy"
 format:
   revealjs:
     theme: white

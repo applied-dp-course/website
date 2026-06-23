@@ -159,6 +159,31 @@ def validate_content_source_tree() -> None:
                 notebook = json.loads(path.read_text(encoding="utf-8"))
                 if any(cell.get("outputs") for cell in notebook.get("cells", [])):
                     _fail(path, "outputs", path.name, "notebook outputs must be cleared before commit")
+                kernelspec = notebook.get("metadata", {}).get("kernelspec", {})
+                if not isinstance(kernelspec, dict):
+                    _fail(path, "kernelspec", kernelspec, "expected a mapping")
+                kernel_name = kernelspec.get("name")
+                if kernel_name != "python3":
+                    _fail(
+                        path,
+                        "kernelspec.name",
+                        kernel_name,
+                        "content notebooks must use the python3 kernel for CI rendering",
+                    )
+                if "path" in kernelspec:
+                    _fail(
+                        path,
+                        "kernelspec.path",
+                        kernelspec["path"],
+                        "local kernel paths must not be committed in content notebooks",
+                    )
+                if "widgets" in notebook.get("metadata", {}):
+                    _fail(
+                        path,
+                        "metadata.widgets",
+                        "present",
+                        "notebook widget state must be cleared before commit",
+                    )
 
 
 @dataclass(frozen=True)

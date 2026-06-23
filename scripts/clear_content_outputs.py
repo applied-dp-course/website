@@ -21,6 +21,10 @@ def clear_notebook(path: Path) -> bool:
         if cell.get("execution_count") is not None:
             cell["execution_count"] = None
             changed = True
+    metadata = notebook.get("metadata", {})
+    if isinstance(metadata, dict) and metadata.pop("widgets", None) is not None:
+        notebook["metadata"] = metadata
+        changed = True
     if changed:
         path.write_text(json.dumps(notebook, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
     return changed

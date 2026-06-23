@@ -60,7 +60,7 @@ site only presents and wires it together.
 ## Featured interactive
 
 ::: {.featured-interactive}
-Explore the Gaussian privacy tradeoff (same widget as Lecture 3). The plot loads automatically
+Explore the Gaussian privacy tradeoff (same widget as the hypothesis-testing deck). The plot loads automatically
 after the page is ready; the first load downloads a Python runtime (~34 MB).
 
 ```{python}

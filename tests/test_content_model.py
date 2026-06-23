@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from scripts import content_model
 
@@ -66,6 +67,30 @@ class ContentModelTest(unittest.TestCase):
             forbidden.extend(root.rglob("*.html"))
             forbidden.extend(root.rglob("*.quarto_ipynb"))
         self.assertEqual(forbidden, [])
+
+    def test_content_notebooks_use_portable_python3_kernelspec(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory) / "blog-posts" / "topic"
+            root.mkdir(parents=True)
+            (root / "post.ipynb").write_text(
+                '{"cells":[],"metadata":{"kernelspec":{"name":"libdpy-base-local"}},"nbformat":4,"nbformat_minor":5}\n',
+                encoding="utf-8",
+            )
+            with mock.patch.object(content_model, "BLOG_POSTS_DIR", root.parent):
+                with self.assertRaises(content_model.ContentValidationError):
+                    content_model.validate_content_source_tree()
+
+    def test_content_notebooks_reject_widget_state(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory) / "blog-posts" / "topic"
+            root.mkdir(parents=True)
+            (root / "post.ipynb").write_text(
+                '{"cells":[],"metadata":{"kernelspec":{"name":"python3"},"widgets":{}},"nbformat":4,"nbformat_minor":5}\n',
+                encoding="utf-8",
+            )
+            with mock.patch.object(content_model, "BLOG_POSTS_DIR", root.parent):
+                with self.assertRaises(content_model.ContentValidationError):
+                    content_model.validate_content_source_tree()
 
 
 if __name__ == "__main__":
