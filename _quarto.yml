@@ -5,6 +5,7 @@ project:
     - python scripts/run_site_python.py scripts/content_model.py
     - python scripts/run_site_python.py scripts/sync_content.py --phase catalog
     - python scripts/run_site_python.py scripts/build_interactives.py
+    - python scripts/run_site_python.py scripts/build_animations.py
     - python scripts/run_site_python.py scripts/sync_content.py --phase gallery
   post-render:
     - python scripts/run_site_python.py scripts/clear_content_outputs.py
@@ -13,6 +14,7 @@ project:
   resources:
     - "apps/**"
     - "_generated/apps/**"
+    - "_generated/animations/**"
     - "content/tools/**/apps/**"
     - "content/site-posts/**/apps/**"
   render:

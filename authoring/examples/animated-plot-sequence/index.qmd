@@ -1,0 +1,84 @@
+---
+title: "Animated plot sequences"
+subtitle: "Authoring reference — not published"
+format:
+  html:
+    toc: false
+---
+
+Animations are produced by the build, not by content. You write **a function that returns a
+sequence of plots** in a sidecar module; the pre-render hook
+[`scripts/build_animations.py`](../../../scripts/build_animations.py) combines the frames into an
+artifact while the site renders, and your page embeds that artifact. The notebook/slide imports
+nothing — so it also stays Colab-safe.
+
+## 1. Write the sidecar
+
+Create `content/<collection>/<item>/animations/<name>.py`. It imports only numpy/matplotlib —
+never the build:
+
+```python
+# content/blog-posts/my-post/animations/wave.py
+import numpy as np
+import matplotlib.pyplot as plt
+
+FPS = 10
+OUTPUTS = ("player",)          # any of: "player", "gif", "mp4"  -- the selection knob
+
+def frames():                   # a generator keeps one figure open at a time
+    x = np.linspace(0, 2 * np.pi, 200)
+    for i in range(20):
+        fig, ax = plt.subplots(figsize=(6, 3))
+        ax.plot(x, np.sin(x - 0.3 * i))
+        ax.set_ylim(-1.1, 1.1)
+        ax.set_title(f"frame {i}")
+        yield fig
+```
+
+Every frame must rasterise to the same pixel size (consistent `figsize`/`dpi`). Instead of
+`frames()` you may define `make_figure(i)` plus a module-level `FRAMES` count.
+
+## 2. Choose the output(s) with `OUTPUTS`
+
+The same function renders different artifacts depending on how it's declared:
+
+| `OUTPUTS` | Artifact under `_generated/animations/<collection>/<item>/` | Use it for |
+|---|---|---|
+| `("player",)` | `<name>.html` — interactive player | Embed in a post/slide; step Prev/Next or press play |
+| `("gif",)` | `<name>.gif` | Drop on another page as a tool, or external slides |
+| `("mp4",)` | `<name>.mp4` (needs system ffmpeg) | A real video file |
+| `("player", "gif")` | both | In-page player **and** a downloadable file |
+
+## 3. Embed the artifact
+
+The page references the generated **file** (relative path from the rendered page to
+`_generated/`), never the helper.
+
+Interactive player (post or RevealJS slide):
+
+```html
+<iframe src="../../../_generated/animations/blog-posts/my-post/wave.html"
+        width="100%" height="430" style="border:0"
+        onload="this.style.height=this.contentWindow.document.documentElement.scrollHeight+'px'"></iframe>
+```
+
+The `onload` sizes the iframe to the player's content height (same-origin) so the control bar is
+never clipped; the player image scales to the iframe width.
+
+Flat gif as a tool on some other page:
+
+```markdown
+![Wave](../../../_generated/animations/blog-posts/my-post/wave.gif)
+```
+
+## Preview while authoring
+
+`_generated/` is rebuilt on every render. To build just the animations without a full site render:
+
+```bash
+./.venv/bin/python scripts/build_animations.py            # build all sidecars
+./.venv/bin/python scripts/build_animations.py --discover-only   # list them
+```
+
+A live example ships in the privacy-auditing post:
+[`content/blog-posts/privacy-auditing/animations/threshold-sweep.py`](../../../content/blog-posts/privacy-auditing/animations/threshold-sweep.py).

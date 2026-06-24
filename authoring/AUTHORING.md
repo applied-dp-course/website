@@ -78,6 +78,59 @@ Each content cell contains an item name, for example:
 
 Blank cells are valid. Set `current_offering` in `content/course.yml` to switch the live term.
 
+## Animated plot sequences (player / gif / video)
+
+Animations are produced by the **build**, not by content. You write a function that returns a
+sequence of plots in a *sidecar* module; the pre-render hook `scripts/build_animations.py` combines
+the frames while the site renders, and your page embeds the generated artifact. The notebook/slide
+imports nothing, so it stays Colab-safe. Full walkthrough:
+`authoring/examples/animated-plot-sequence/index.qmd`.
+
+**1. Sidecar** — `content/<collection>/<item>/animations/<name>.py` (numpy/matplotlib only):
+
+```python
+import numpy as np, matplotlib.pyplot as plt
+
+FPS = 10
+OUTPUTS = ("player",)        # any of: "player", "gif", "mp4"  -- the selection knob
+
+def frames():                # a generator keeps one figure open at a time
+    x = np.linspace(0, 2 * np.pi, 200)
+    for i in range(20):
+        fig, ax = plt.subplots(figsize=(6, 3))
+        ax.plot(x, np.sin(x - 0.3 * i)); ax.set_ylim(-1.1, 1.1)
+        yield fig
+```
+
+(Alternatively define `make_figure(i)` plus a module-level `FRAMES` count.)
+
+**2. `OUTPUTS`** selects what the build writes to
+`_generated/animations/<collection>/<item>/<name>.<ext>`: `player` → an interactive `.html`
+(Prev/Next stepping + Play at the fixed `FPS`); `gif`/`mp4` → a flat file (mp4 needs system ffmpeg).
+List several to emit more than one.
+
+**3. Embed the artifact** (relative path from the rendered page; the page references the file, never
+the engine). Player — in a post or RevealJS slide (controls are mouse-driven, so they don't clash
+with slide arrow keys):
+
+```html
+<iframe src="../../../_generated/animations/blog-posts/my-post/wave.html"
+        width="100%" height="430" style="border:0"
+        onload="this.style.height=this.contentWindow.document.documentElement.scrollHeight+'px'"></iframe>
+```
+
+Flat gif as a tool on another page: `![Wave](../../../_generated/animations/blog-posts/my-post/wave.gif)`.
+
+Notes:
+
+- Build/preview just the animations with `./.venv/bin/python scripts/build_animations.py`
+  (`--discover-only` to list sidecars). `_generated/` is git-ignored and rebuilt each render.
+- Stepping is via Prev/Next buttons; the frame rate is fixed at build time (`FPS`) — no scrubber or
+  runtime speed slider.
+- Every frame must rasterise to the **same pixel size** (consistent `figsize`/`dpi`). Frames are
+  inlined as base64 PNGs, so keep `frames × dpi` modest.
+- Live example: `content/blog-posts/privacy-auditing/animations/threshold-sweep.py`.
+
 ## Validation
 
 ```bash

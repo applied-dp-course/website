@@ -18,3 +18,20 @@ jupyter: python3
 ## First slide
 
 Presentation deck source. A same-named blog post may exist, but offerings reference it separately.
+
+## Animated example
+
+A playable plot sequence on a slide. Use the on-screen **Prev / Next** buttons to step through,
+or press **play** to run it at the configured frame rate. The controls are mouse-driven, so RevealJS
+arrow-key slide navigation keeps working.
+
+The frames come from a build sidecar `animations/<name>.py` (a `frames()` generator + `FPS`/`OUTPUTS`);
+the build writes the player and the slide just embeds it — no imports in the deck:
+
+```{=html}
+<iframe src="../../../_generated/animations/lecture-presentations/<this-folder>/<name>.html"
+        width="100%" height="430" style="border:0"
+        onload="this.style.height=this.contentWindow.document.documentElement.scrollHeight+'px'"></iframe>
+```
+
+See `authoring/examples/animated-plot-sequence/` and `authoring/AUTHORING.md`.

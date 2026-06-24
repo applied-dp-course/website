@@ -1,6 +1,9 @@
 # Local working checklist — not tracked
 TODO.md
 
+# Local IDE config
+.claude/
+
 # Private assignment solutions — never published
 /content/class-assignments/**/solution.ipynb
 /content/home-assignments/**/solution.ipynb
@@ -31,6 +34,8 @@ __pycache__/
 /content/**/*_files/
 /authoring/tutorials/**/*.html
 /authoring/tutorials/**/*_files/
+/authoring/examples/**/*.html
+/authoring/examples/**/*_files/
 
 # OS
 .DS_Store
