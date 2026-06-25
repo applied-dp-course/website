@@ -127,7 +127,7 @@ class BuildInteractivesTest(unittest.TestCase):
 
             self.assertEqual(len(warnings), 1)
             self.assertIn("non-literal arguments", warnings[0])
-            self.assertIn("register the app in a manifest", warnings[0])
+            self.assertIn("use literals", warnings[0])
 
     def test_builds_importable_pure_python_wheel(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
