@@ -16,12 +16,20 @@ import shutil
 import subprocess
 import sys
 import zipfile
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
 import libdpy
+from libdpy.assignment_specific.privacy_auditing.visualizations import (
+    NaiveSafeEpsilonHistogram,
+)
 from libdpy.visualization.interactive import InteractiveSpec, marimo_app_source
 from libdpy.visualization.privacy_plots import PrivacyPlot
+from libdpy.visualization.roc_plots import (
+    EmpiricalEpsilonFromDeltaVisualizer,
+    TheoryROCVisualizer,
+)
 from scipy import stats
 
 SITE_ROOT = Path(__file__).resolve().parents[1]
@@ -111,34 +119,57 @@ def _distribution_types(node: ast.expr):
     return result
 
 
-def _privacy_plot_spec(call: ast.Call) -> InteractiveSpec:
-    if call.args:
-        raise ValueError("PrivacyPlot discovery currently requires keyword arguments")
+# Constructors whose ``Ctor(...).embed()`` calls the build can export to WASM apps.
+# Each builder takes the literal keyword arguments parsed from the embed call and
+# returns the backend-neutral InteractiveSpec. The spec-construction logic lives in
+# libdpy (the website stays import-only); ``auto_display=False`` keeps the visualizer
+# wrappers from trying to display a live widget during the build.
+_SPEC_BUILDERS: dict[str, Callable[[dict], InteractiveSpec]] = {
+    "PrivacyPlot": lambda kwargs: PrivacyPlot(**kwargs).spec(),
+    "TheoryROCVisualizer": (
+        lambda kwargs: TheoryROCVisualizer(**{"auto_display": False, **kwargs}).spec()
+    ),
+    "EmpiricalEpsilonFromDeltaVisualizer": (
+        lambda kwargs: EmpiricalEpsilonFromDeltaVisualizer(
+            **{"auto_display": False, **kwargs}
+        ).spec()
+    ),
+    "NaiveSafeEpsilonHistogram": lambda kwargs: NaiveSafeEpsilonHistogram(**kwargs).spec(),
+}
+
+
+def _embed_kwargs(constructor: ast.Call) -> dict:
+    if constructor.args:
+        raise ValueError("interactive embeds currently require keyword arguments")
     arguments = {}
-    for keyword in call.keywords:
+    for keyword in constructor.keywords:
         if keyword.arg is None:
-            raise ValueError("PrivacyPlot discovery does not support **kwargs")
+            raise ValueError("interactive embeds do not support **kwargs")
         if keyword.arg == "distribution_types":
             arguments[keyword.arg] = _distribution_types(keyword.value)
         else:
             arguments[keyword.arg] = _literal(keyword.value)
-    return PrivacyPlot(**arguments).spec()
+    return arguments
 
 
-def _privacy_plot_embed_warning(relative_path: str, node: ast.Call) -> str | None:
-    if not _is_supported_privacy_plot_embed(node):
+def _embed_constructor_name(node: ast.Call) -> str | None:
+    """Return the constructor name if ``node`` is a supported ``Ctor(...).embed()`` call."""
+
+    if not isinstance(node.func, ast.Attribute) or node.func.attr != "embed":
         return None
     constructor = node.func.value
+    if not isinstance(constructor, ast.Call):
+        return None
+    name = _call_name(constructor.func)
+    return name if name in _SPEC_BUILDERS else None
+
+
+def _spec_from_embed(node: ast.Call) -> InteractiveSpec:
+    name = _embed_constructor_name(node)
+    assert name is not None
+    constructor = node.func.value
     assert isinstance(constructor, ast.Call)
-    try:
-        _privacy_plot_spec(constructor)
-    except ValueError:
-        return (
-            f"{relative_path}: PrivacyPlot(...).embed() uses non-literal arguments; "
-            "register the app in a manifest instead "
-            f"({ast.unparse(node)})"
-        )
-    return None
+    return _SPEC_BUILDERS[name](_embed_kwargs(constructor))
 
 
 def _discovery_paths(site_root: Path) -> list[Path]:
@@ -154,15 +185,6 @@ def _discovery_paths(site_root: Path) -> list[Path]:
         paths.extend(sorted(path for path in root.glob("**/*.qmd") if path.is_file()))
         paths.extend(sorted(path for path in root.glob("**/*.ipynb") if path.is_file()))
     return paths
-
-
-def _is_supported_privacy_plot_embed(node: ast.Call) -> bool:
-    if not isinstance(node.func, ast.Attribute) or node.func.attr != "embed":
-        return False
-    constructor = node.func.value
-    if not isinstance(constructor, ast.Call):
-        return False
-    return _call_name(constructor.func) == "PrivacyPlot"
 
 
 def discover_unsupported_embeds(site_root: Path = SITE_ROOT) -> list[str]:
@@ -181,21 +203,24 @@ def discover_unsupported_embeds(site_root: Path = SITE_ROOT) -> list[str]:
                     continue
                 if not isinstance(node.func, ast.Attribute) or node.func.attr != "embed":
                     continue
-                privacy_plot_warning = _privacy_plot_embed_warning(relative, node)
-                if privacy_plot_warning is not None:
-                    warnings.append(privacy_plot_warning)
+                if _embed_constructor_name(node) is None:
+                    warnings.append(
+                        f"{relative}: unsupported .embed() call requires registration "
+                        f"in _SPEC_BUILDERS ({ast.unparse(node)})"
+                    )
                     continue
-                if _is_supported_privacy_plot_embed(node):
-                    continue
-                warnings.append(
-                    f"{relative}: unsupported .embed() call requires manifest registration "
-                    f"({ast.unparse(node)})"
-                )
+                try:
+                    _spec_from_embed(node)
+                except ValueError:
+                    warnings.append(
+                        f"{relative}: {_embed_constructor_name(node)}(...).embed() uses "
+                        f"non-literal arguments; use literals ({ast.unparse(node)})"
+                    )
     return warnings
 
 
 def discover_interactives(site_root: Path = SITE_ROOT) -> list[InteractiveUse]:
-    """Find literal ``PrivacyPlot(...).embed()`` calls under lecture, blog, and tool sources."""
+    """Find literal ``Ctor(...).embed()`` calls under lecture, blog, and tool sources."""
 
     uses: dict[tuple[Path, str], InteractiveUse] = {}
     for path in _discovery_paths(site_root):
@@ -208,12 +233,10 @@ def discover_interactives(site_root: Path = SITE_ROOT) -> list[InteractiveUse]:
             for node in ast.walk(tree):
                 if not isinstance(node, ast.Call):
                     continue
-                if not _is_supported_privacy_plot_embed(node):
+                if _embed_constructor_name(node) is None:
                     continue
-                constructor = node.func.value
-                assert isinstance(constructor, ast.Call)
                 try:
-                    spec = _privacy_plot_spec(constructor)
+                    spec = _spec_from_embed(node)
                 except ValueError:
                     continue
                 use = InteractiveUse(source=path, spec=spec)

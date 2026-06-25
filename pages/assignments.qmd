@@ -8,7 +8,7 @@ Class and home assignments are separate collections. Due dates come from the cur
 <!-- BEGIN AUTO-GENERATED ASSIGNMENTS -->
 ## Class assignments
 
-- **Hypothesis Testing Assignment** — [notebook](../content/class-assignments/hypothesis-testing/assignment.ipynb) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/class-assignments/hypothesis-testing/assignment.ipynb) · due Week 2 (2026-10-27) · est. 120 minutes · related: hypothesis-testing
+- **Hypothesis Testing Assignment** — [notebook](../content/class-assignments/hypothesis-testing/assignment.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/class-assignments/hypothesis-testing/assignment.ipynb) · due Week 2 (2026-10-27) · est. 120 minutes · related: hypothesis-testing
 
 ## Home assignments
 

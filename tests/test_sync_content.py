@@ -25,7 +25,8 @@ class SyncContentSiteTest(unittest.TestCase):
         self.assertEqual(before, after)
         schedule = (SITE_ROOT / "pages" / "schedule.qmd").read_text(encoding="utf-8")
         self.assertIn("Blog post", schedule)
-        self.assertIn("reconstruction-attacks/post.ipynb", schedule)
+        self.assertIn("reconstruction-attacks/post.html", schedule)
+        self.assertIn("content/blog-posts/reconstruction-attacks/post.ipynb", schedule)
 
     def test_sync_is_idempotent(self) -> None:
         sync_content.run_phase("catalog")

@@ -11,7 +11,7 @@ class ContentModelTest(unittest.TestCase):
         catalog = content_model.load_catalog()
         self.assertEqual(
             {item.name for item in catalog.lecture_presentations},
-            {"reconstruction-attacks", "hypothesis-testing"},
+            {"reconstruction-attacks", "hypothesis-testing", "privacy-auditing"},
         )
         self.assertEqual(
             {item.name for item in catalog.blog_posts},
@@ -28,6 +28,8 @@ class ContentModelTest(unittest.TestCase):
         self.assertEqual(schedule.rows[0].blog_post, "reconstruction-attacks")
         self.assertEqual(schedule.rows[0].lecture_presentation, "reconstruction-attacks")
         self.assertEqual(schedule.rows[1].class_assignment, "hypothesis-testing")
+        self.assertEqual(schedule.rows[3].blog_post, "privacy-auditing")
+        self.assertEqual(schedule.rows[3].lecture_presentation, "privacy-auditing")
 
     def test_numbered_content_name_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

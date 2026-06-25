@@ -15,6 +15,7 @@ project:
     - "apps/**"
     - "_generated/apps/**"
     - "_generated/animations/**"
+    - "_generated/inline-animations/**"
     - "content/tools/**/apps/**"
     - "content/site-posts/**/apps/**"
   render:

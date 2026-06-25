@@ -1,0 +1,394 @@
+---
+title: "Privacy Auditing"
+subtitle: "From ROC geometry to empirical lower bounds"
+format:
+  revealjs:
+    theme: white
+    slide-number: true
+    embed-resources: false
+    code-overflow: wrap
+    scrollable: true
+    css: slides.css
+execute:
+  warning: false
+  message: false
+  echo: false
+jupyter: python3
+---
+
+```{python}
+#| echo: false
+#| output: false
+#| include: false
+try:
+    ip = get_ipython()
+    if "autoreload" not in ip.extension_manager.loaded:
+        ip.run_line_magic("load_ext", "autoreload")
+        ip.run_line_magic("autoreload", "2")
+except Exception:
+    pass
+
+try:
+    import libdpy
+except ImportError:
+    %pip install -q "libdpy @ git+https://github.com/applied-dp-course/pub_lib.git"
+    import libdpy
+
+%matplotlib inline
+```
+
+```{python}
+#| echo: false
+#| output: false
+#| include: false
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+from libdpy.assignment_specific.privacy_auditing.lecture_figures import (
+    make_two_logistic_samplers,
+    plot_audit_confusion_matrix,
+    plot_confidence_rectangle,
+    plot_epsilon_histogram_naive_safe,
+    plot_repeated_audit_points,
+    plot_sampled_densities,
+    plot_threshold_event,
+)
+from libdpy.assignment_specific.privacy_auditing.utils import (
+    audit_point,
+    reference_point_two_logistic,
+    selected_threshold_from_empirical_roc,
+)
+from libdpy.visualization.privacy_plots import PrivacyPlot
+from libdpy.visualization.roc_plots import TheoryROCVisualizer
+
+# Lecture contract — same seeds as post.ipynb
+delta_default = 1e-2
+seed_empirical_roc = 4
+n_empirical_roc = 500
+alpha_total_default = 0.05
+scale = 1.0
+
+sampler_neg, sampler_pos = make_two_logistic_samplers(scale1=1.0)
+rng_roc = np.random.default_rng(seed_empirical_roc)
+samples_neg_roc = sampler_neg(n=n_empirical_roc, rng=rng_roc)
+samples_pos_roc = sampler_pos(n=n_empirical_roc, rng=rng_roc)
+tau_star, governing_point, _ = selected_threshold_from_empirical_roc(
+    samples_neg_roc,
+    samples_pos_roc,
+    delta_default,
+)
+audit_main = audit_point(
+    samples_neg_roc,
+    samples_pos_roc,
+    tau_star,
+    delta_default,
+    alpha_total=alpha_total_default,
+)
+```
+
+# Privacy Auditing
+
+## From ROC geometry to empirical lower bounds
+
+## Where we are
+
+- Last lecture: DP as a hypothesis-testing / ROC constraint.
+- This lecture: what happens when the ROC is only accessible through samples?
+- Proofs give **upper bounds**; audits give **lower bounds**.
+
+## Recall: the adversary's ROC
+
+$$
+H_0: M(D'),\qquad H_1: M(D)
+$$
+
+$$
+\mathrm{FPR}=Q(S),\qquad \mathrm{TPR}=P(S).
+$$
+
+```{python}
+PrivacyPlot(
+    sensitivity=1,
+    std=1.5,
+    distribution_types=[stats.norm, stats.laplace],
+    epsilon=1.2,
+    delta=0.05,
+).embed(mode="deck")
+```
+
+## Recall: DP line
+
+::: {.fragment}
+$(\varepsilon,\delta)$-DP implies
+$$
+\mathrm{TPR} \le e^{\varepsilon}\,\mathrm{FPR}+\delta.
+$$
+:::
+
+::: {.fragment}
+We keep this one-sided direction throughout the lecture.
+:::
+
+::: {.fragment}
+ROC points above the line falsify the claimed $\varepsilon$ at this $\delta$.
+:::
+
+## Flip side: exact inversion
+
+$$
+\varepsilon \ge \log\left(\frac{\mathrm{TPR}-\delta}{\mathrm{FPR}}\right).
+$$
+
+If the ROC is known and $\delta$ is fixed, we can read off the smallest $\varepsilon$ line that contains it.
+
+::: {.fragment}
+This is still **exact privacy-profile geometry**, not empirical auditing.
+:::
+
+## Laplace
+
+```{python}
+TheoryROCVisualizer(
+    distribution="Laplace",
+    scale=1.0,
+    delta=1e-15,
+    auto_display=False,
+    selectable_distribution=False,
+).embed(mode="deck")
+```
+
+::: {.notes}
+In the Laplace case, the tight line corresponds to familiar pure-DP behavior when $\delta=0$, and to the approximate-DP profile when $\delta>0$.
+:::
+
+## Gaussian
+
+```{python}
+TheoryROCVisualizer(
+    distribution="Gaussian",
+    scale=1.0,
+    delta=1e-2,
+    auto_display=False,
+    selectable_distribution=False,
+).embed(mode="deck")
+```
+
+::: {.notes}
+Gaussian noise is useful here because $\delta$ visibly matters; the intercept absorbs tail events.
+:::
+
+## Logistic
+
+```{python}
+TheoryROCVisualizer(
+    distribution="Logistic",
+    scale=1.0,
+    delta=1e-15,
+    auto_display=False,
+    selectable_distribution=False,
+).embed(mode="deck")
+```
+
+The exact machinery is not hard-coded to Laplace or Gaussian. Add a new analytic distribution, compute its ROC, and the same line-fitting view applies.
+
+## When the mechanism is a sampler
+
+$$
+Z=Z_1+Z_2,\qquad Z_i \sim \mathrm{Logistic}(0,s_i).
+$$
+
+$$
+H_0: X=Z,\qquad H_1: X=1+Z.
+$$
+
+Sampling is easy. Exact ROC calculation is no longer part of the lecture. From here on, we behave like auditors.
+
+## Two-logistic samples
+
+```{python}
+fig = plot_sampled_densities(samples_neg_roc, samples_pos_roc)
+plt.show()
+```
+
+::: {.notes}
+The two distributions are still just neighboring outputs. The difference is what information the analyst has: samples, not formulas.
+:::
+
+## Empirical ROC
+
+The empirical ROC is an estimate built from finite samples.
+
+Check **Compute ε** in the self-study notebook to highlight the governing point and threshold $\tau_\star$.
+
+## Compute ε selects a threshold
+
+With seed `4` and $n=500$ per class, the lecture selects a fixed threshold and governing ROC point. We reuse that exact $\tau_\star$ in every audit figure below.
+
+```{python}
+print(
+    f"tau_star = {tau_star:.6f}\\n"
+    f"governing point (FPR, TPR) = ({governing_point[0]:.3f}, {governing_point[1]:.3f})"
+)
+```
+
+## Same mechanism, different ROC estimate
+
+Resampling changes the empirical ROC even when the mechanism does not.
+
+See the self-study notebook for the interactive empirical ROC explorer.
+
+## Auditing one event
+
+$$
+S_{\tau_\star}=\{x>\tau_\star\}.
+$$
+
+$$
+\widehat{\mathrm{FPR}}=\frac{\mathrm{FP}}{\mathrm{FP}+\mathrm{TN}},
+\qquad
+\widehat{\mathrm{TPR}}=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}.
+$$
+
+::: {.notes}
+We are not estimating the entire privacy profile yet. We freeze the threshold selected from the seeded empirical ROC and validate one distinguishing event.
+:::
+
+## Threshold and ROC point
+
+```{python}
+fig = plot_threshold_event(samples_neg_roc, samples_pos_roc, tau_star)
+plt.show()
+```
+
+## Confusion matrix
+
+```{python}
+fig = plot_audit_confusion_matrix(audit_main)
+plt.show()
+```
+
+::: {.fragment}
+$$
+\widehat{\varepsilon}_{\mathrm{plug}}
+=
+\log\left(
+\frac{\widehat{\mathrm{TPR}}-\delta}
+{\widehat{\mathrm{FPR}}}
+\right)
+$$
+:::
+
+## The empirical ROC is an estimate
+
+Frame by frame, the empirical ROC fills in as paired samples accumulate — jagged early, settling toward the true curve. A different sample would trace a different curve.
+
+![Empirical ROC accumulating over 200 samples.](../../../_generated/animations/lecture-presentations/privacy-auditing/empirical-roc.gif){width="70%" fig-align="center"}
+
+## One run is not a certificate
+
+Same mechanism, same threshold, same fixed-event reference value; different finite samples.
+
+```{python}
+rng = np.random.default_rng(456)
+runs = []
+for _ in range(40):
+    neg = sampler_neg(n=500, rng=rng)
+    pos = sampler_pos(n=500, rng=rng)
+    runs.append(audit_point(neg, pos, tau_star, delta_default))
+reference_point = reference_point_two_logistic(tau_star, delta_default, seed=999)
+fig = plot_repeated_audit_points(runs, reference=reference_point)
+plt.show()
+```
+
+## Why tail bounds appear
+
+$$
+\mathrm{TP}\sim \mathrm{Binomial}(n_1,\mathrm{TPR}),
+\qquad
+\mathrm{FP}\sim \mathrm{Binomial}(n_0,\mathrm{FPR}).
+$$
+
+We need simultaneous confidence bounds on two binomial proportions, so the total failure probability is split across them.
+
+## Safe direction
+
+$$
+\mathrm{TPR}_{L}\le \mathrm{TPR},
+\qquad
+\mathrm{FPR}\le \mathrm{FPR}_{U}.
+$$
+
+Use $\alpha/2$ for each one-sided interval when $\alpha$ is the declared total failure probability.
+
+Then
+
+$$
+\varepsilon_{\mathrm{audit}}
+=
+\log\left(
+\frac{\max\{\mathrm{TPR}_{L}-\delta,0\}}
+{\mathrm{FPR}_{U}}
+\right).
+$$
+
+To avoid overstating privacy loss, move the empirical ROC point **down** and **right**.
+
+## Confidence rectangle
+
+```{python}
+fig = plot_confidence_rectangle(audit_main)
+plt.show()
+```
+
+## Naive versus safe
+
+```{python}
+rng = np.random.default_rng(457)
+plug_vals = []
+safe_vals = []
+for _ in range(200):
+    neg = sampler_neg(n=500, rng=rng)
+    pos = sampler_pos(n=500, rng=rng)
+    result = audit_point(
+        neg,
+        pos,
+        tau_star,
+        delta_default,
+        alpha_total=alpha_total_default,
+    )
+    plug_vals.append(result.eps_plug)
+    safe_vals.append(result.eps_audit)
+reference_eps = reference_point_two_logistic(tau_star, delta_default, seed=999)[2]
+fig = plot_epsilon_histogram_naive_safe(plug_vals, safe_vals, reference_eps)
+plt.show()
+```
+
+::: {.notes}
+The safe lower bound is intentionally conservative. That is the price of making a statistical claim.
+:::
+
+## What the audit proves
+
+- It does **not** prove the mechanism is DP.
+- It proves a one-sided lower bound for the fixed event: any valid $\varepsilon$ at this $\delta$ in this ROC direction must be at least the audited value, with high probability.
+- It can reveal bugs or overly optimistic claims.
+
+## Extra complications
+
+- Threshold selection and re-selecting the threshold on each empirical ROC sample.
+- Multiple tests and multiple neighboring pairs.
+- Dependence between samples.
+- Computationally stronger distinguishers.
+
+Keep these as caveats only.
+
+## Summary
+
+- DP bounds the ROC curve.
+- Known ROC + fixed $\delta$ gives exact $\varepsilon$.
+- A sampler gives an empirical ROC.
+- The seeded empirical ROC selects a threshold $\tau_\star$, which is then frozen.
+- A fixed event gives $(\widehat{\mathrm{FPR}}, \widehat{\mathrm{TPR}})$.
+- Raw plug-in $\widehat{\varepsilon}$ is random and can overshoot.
+- Confidence bounds turn the estimate into a valid audited lower bound.

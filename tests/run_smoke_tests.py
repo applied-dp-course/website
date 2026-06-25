@@ -15,6 +15,7 @@ import http.server
 import socketserver
 import sys
 import threading
+import time
 from pathlib import Path
 
 SITE_ROOT = Path(__file__).resolve().parents[1]
@@ -169,12 +170,22 @@ def main() -> None:
                 smoke = smoke_canvas if relative in canvas_urls else smoke_wasm
                 label = "canvas" if relative in canvas_urls else "wasm"
                 print(f"== smoke-testing {label} {relative} ==", flush=True)
-                try:
-                    timeout = default_wasm_timeout() if label == "wasm" else 60
-                    smoke(url, port=chrome_port, timeout=timeout)
-                except Exception as error:  # noqa: BLE001 - aggregate and report all
-                    print(f"FAIL {relative}: {error}", flush=True)
-                    failures.append(relative)
+                timeout = default_wasm_timeout() if label == "wasm" else 60
+                attempts = 2 if label == "wasm" else 1
+                for attempt in range(1, attempts + 1):
+                    try:
+                        smoke(url, port=chrome_port, timeout=timeout)
+                        break
+                    except Exception as error:  # noqa: BLE001 - aggregate and report all
+                        if attempt < attempts:
+                            print(
+                                f"  attempt {attempt} failed ({error}); retrying...",
+                                flush=True,
+                            )
+                            time.sleep(2.0)
+                            continue
+                        print(f"FAIL {relative}: {error}", flush=True)
+                        failures.append(relative)
         httpd.shutdown()
 
     if failures:

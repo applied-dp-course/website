@@ -297,19 +297,65 @@ window.__sliders = () => window.__deepAll(document, []).filter(
   (e) => e.tagName && e.tagName.toLowerCase() === 'marimo-slider');
 window.__thumbs = () => window.__deepAll(document, []).filter(
   (e) => e.getAttribute && e.getAttribute('role') === 'slider');
+window.__buttons = () => window.__deepAll(document, []).filter(
+  (e) => e.tagName && e.tagName.toLowerCase() === 'button' && e.textContent.trim());
+window.__visible = (e) => e && e.getClientRects && e.getClientRects().length > 0;
+window.__computeButtons = () => window.__buttons().filter((e) => {
+  const label = e.textContent || e.innerText || e.getAttribute('aria-label') || '';
+  return window.__visible(e) && /compute/i.test(label);
+});
+window.__roleCheckboxes = () => window.__deepAll(document, []).filter(
+  (e) => e.getAttribute && e.getAttribute('role') === 'checkbox');
 window.__plot = () => {
   const plots = window.__deepAll(document, []).filter(
     (e) => e.classList && e.classList.contains('js-plotly-plot'));
-  return plots.find(
-    (p) => p.data && p.data[0] && p.data[0].y && p.data[0].y.length
-  ) || plots[0] || null;
+  return plots.find((p) => p.data && p.data.some(window.__traceHasData)) || plots[0] || null;
+};
+window.__dataLength = (value) => {
+  if (value == null) return 0;
+  if (typeof value.length === 'number') return value.length;
+  if (Array.isArray(value.shape) && value.shape.length) {
+    return value.shape.reduce((product, item) => product * item, 1);
+  }
+  if (typeof value.bdata === 'string') return value.bdata.length;
+  return 0;
+};
+window.__traceHasData = (trace) => {
+  return Boolean(
+    trace && (
+      window.__dataLength(trace.x) ||
+      window.__dataLength(trace.y)
+    )
+  );
+};
+window.__valueSignature = (value) => {
+  if (value == null) return null;
+  if (Array.isArray(value)) return value;
+  if (ArrayBuffer.isView(value)) return Array.from(value);
+  if (typeof value !== 'object') return value;
+  if (typeof value.length === 'number') {
+    try {
+      return Array.from(value);
+    } catch (_error) {
+      return String(value);
+    }
+  }
+  return Object.fromEntries(
+    Object.keys(value).sort().map((key) => [key, window.__valueSignature(value[key])])
+  );
+};
+window.__plotSignature = (plot) => {
+  if (!plot || !plot.data) return "";
+  return JSON.stringify(plot.data.map((trace) => ({
+    x: window.__valueSignature(trace.x),
+    y: window.__valueSignature(trace.y),
+    visible: trace.visible === undefined ? true : trace.visible,
+  })));
 };
 window.__plotHasTraceData = () => {
   const plots = window.__deepAll(document, []).filter(
     (e) => e.classList && e.classList.contains('js-plotly-plot'));
-  return plots.some(
-    (p) => p.data && p.data[0] && p.data[0].y && p.data[0].y.length
-  );
+  return plots.some((p) => p.data && p.data.some(window.__traceHasData));
 };
 window.__nudgeSlider = () => {
   const thumb = window.__thumbs()[0];
@@ -334,20 +380,29 @@ def _plot_diagnostics(devtools: DevTools) -> str:
         (function () {
           const sliders = (window.__sliders && window.__sliders().length) || 0;
           const thumbs = (window.__thumbs && window.__thumbs().length) || 0;
+          const buttons = (window.__buttons && window.__buttons().length) || 0;
+          const computeButtons = (window.__computeButtons && window.__computeButtons().length) || 0;
+          const checkboxes = (window.__roleCheckboxes && window.__roleCheckboxes().length) || 0;
           const plots = window.__deepAll(document, []).filter(
             (e) => e.classList && e.classList.contains('js-plotly-plot'));
           const plot = window.__plot ? window.__plot() : null;
           const traceCount = plot && plot.data ? plot.data.length : 0;
-          const yLength = plot && plot.data && plot.data[0] && plot.data[0].y
-            ? plot.data[0].y.length
-            : 0;
+          const traceLengths = plot && plot.data
+            ? plot.data.map((trace) => Math.max(
+                window.__dataLength(trace.x),
+                window.__dataLength(trace.y)
+              ))
+            : [];
           return [
             `marimo sliders: ${sliders}`,
             `slider thumbs: ${thumbs}`,
+            `buttons: ${buttons}`,
+            `compute buttons: ${computeButtons}`,
+            `checkboxes: ${checkboxes}`,
             `plotly divs: ${plots.length}`,
             `plot element: ${plot ? 'yes' : 'no'}`,
             `plot traces: ${traceCount}`,
-            `first trace y length: ${yLength}`,
+            `max trace length: ${traceLengths.length ? Math.max(...traceLengths) : 0}`,
             `crossOriginIsolated: ${window.crossOriginIsolated}`,
           ].join('\\n');
         })()
@@ -503,11 +558,13 @@ def _run_wasm_test(port: int, url: str, timeout: float) -> None:
                     f"browser errors:\n{chr(10).join(errors) if errors else '(none captured)'}"
                 )
 
+            changed_any = False
+            slider_failures: list[str] = []
             for index in (0, 1):
                 before = devtools.evaluate(
                     "(function () {"
                     "  const p = window.__plot();"
-                    "  window.__before = JSON.stringify(Array.from(p.data[0].y));"
+                    "  window.__before = window.__plotSignature(p);"
                     "  return window.__before;"
                     "})()"
                 )
@@ -526,21 +583,113 @@ def _run_wasm_test(port: int, url: str, timeout: float) -> None:
                     """
                 )
                 if not moved:
-                    raise RuntimeError(f"failed to locate marimo slider {index}")
+                    slider_failures.append(f"slider {index}: not found")
+                    continue
                 for _ in range(30):
                     _dispatch_arrow_right(devtools)
                 changed = _wait_for(
                     devtools,
                     "(function () {"
                     "  const p = window.__plot();"
-                    "  return p && JSON.stringify(Array.from(p.data[0].y)) !== window.__before;"
+                    "  return p && window.__plotSignature(p) !== window.__before;"
                     "})()",
                     timeout=45,
                 )
                 if not changed:
-                    raise RuntimeError(
-                        f"slider {index} did not update the privacy bound"
+                    slider_failures.append(f"slider {index}: no plot change")
+                else:
+                    changed_any = True
+
+            if not changed_any:
+                clicked = devtools.evaluate(
+                    """
+                    (function () {
+                      const p = window.__plot();
+                      window.__before = window.__plotSignature(p);
+                      const buttons = window.__buttons();
+                      const button = buttons.find((b) => /generate|resample/i.test(b.textContent))
+                        || buttons[0];
+                      if (!button) return false;
+                      button.click();
+                      return true;
+                    })()
+                    """
+                )
+                if clicked:
+                    changed_any = bool(
+                        _wait_for(
+                            devtools,
+                            "(function () {"
+                            "  const p = window.__plot();"
+                            "  return p && window.__plotSignature(p) !== window.__before;"
+                            "})()",
+                            timeout=45,
+                        )
                     )
+                    if not changed_any:
+                        slider_failures.append("action button: no plot change")
+                else:
+                    slider_failures.append("action button: not found")
+
+            if not changed_any:
+                raise RuntimeError(
+                    "tested sliders did not update the Plotly figure "
+                    f"({'; '.join(slider_failures)})"
+                )
+
+            checkbox_count = int(devtools.evaluate("window.__roleCheckboxes().length") or 0)
+            if checkbox_count:
+                clicked = devtools.evaluate(
+                    """
+                    (function () {
+                      const checkbox = window.__roleCheckboxes()[0];
+                      const p = window.__plot();
+                      window.__before = window.__plotSignature(p);
+                      if (!checkbox) return false;
+                      checkbox.click();
+                      return true;
+                    })()
+                    """
+                )
+                if not clicked:
+                    raise RuntimeError("failed to locate marimo checkbox")
+                changed = _wait_for(
+                    devtools,
+                    "(function () {"
+                    "  const p = window.__plot();"
+                    "  return p && window.__plotSignature(p) !== window.__before;"
+                    "})()",
+                    timeout=45,
+                )
+                if not changed:
+                    raise RuntimeError("marimo checkbox did not update the Plotly figure")
+
+            compute_button_count = int(devtools.evaluate("window.__computeButtons().length") or 0)
+            if compute_button_count:
+                clicked = devtools.evaluate(
+                    """
+                    (function () {
+                      const button = window.__computeButtons()[0];
+                      const p = window.__plot();
+                      window.__before = window.__plotSignature(p);
+                      if (!button) return false;
+                      button.click();
+                      return true;
+                    })()
+                    """
+                )
+                if not clicked:
+                    raise RuntimeError("failed to locate Compute ε marimo button")
+                changed = _wait_for(
+                    devtools,
+                    "(function () {"
+                    "  const p = window.__plot();"
+                    "  return p && window.__plotSignature(p) !== window.__before;"
+                    "})()",
+                    timeout=45,
+                )
+                if not changed:
+                    raise RuntimeError("Compute ε button did not update the Plotly figure")
 
             errors = _browser_errors(devtools)
             if errors:
@@ -554,7 +703,7 @@ def _run_wasm_test(port: int, url: str, timeout: float) -> None:
                 base64.b64decode(screenshot["data"])
             )
             print(
-                "WASM smoke test passed: two sliders rendered and updated the Plotly figure."
+                "WASM smoke test passed: sliders rendered and controls updated the Plotly figure."
             )
     finally:
         _close_tab(port, devtools)

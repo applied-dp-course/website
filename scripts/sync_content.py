@@ -80,8 +80,21 @@ def escape_markdown_table_cell(value: str) -> str:
     return value.replace("|", "\\|").replace("\n", " ")
 
 
-def _item_link(item: content_model.ContentItem, label: str | None = None) -> str:
-    return f"[{escape_markdown_table_cell(label or item.title)}](../{item.public_path})"
+def _rendered_public_path(item: content_model.ContentItem) -> str:
+    path = Path(item.public_path)
+    if path.suffix in {".ipynb", ".qmd"}:
+        return path.with_suffix(".html").as_posix()
+    return path.as_posix()
+
+
+def _item_link(
+    item: content_model.ContentItem,
+    label: str | None = None,
+    *,
+    rendered: bool = True,
+) -> str:
+    path = _rendered_public_path(item) if rendered else item.public_path
+    return f"[{escape_markdown_table_cell(label or item.title)}](../{path})"
 
 
 def _app_link(app: content_model.ContentApp) -> str:

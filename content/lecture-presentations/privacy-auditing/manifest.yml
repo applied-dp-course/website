@@ -1,5 +1,5 @@
 title: Privacy Auditing
-entrypoint: post.ipynb
+entrypoint: presentation.qmd
 subjects:
   - privacy auditing
   - differential privacy
