@@ -12,5 +12,5 @@ PYTHON="${PYTHON:-$ROOT/.venv/bin/python}"
 
 echo "Reinstalling libdpy from pub_lib main ..."
 "$PIP" install --quiet --upgrade --force-reinstall --no-deps \
-  "libdpy @ git+https://github.com/applied-dp-course/pub_lib.git"
+  "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git"
 "$PYTHON" -c "import libdpy; print('libdpy', libdpy.__version__, '->', libdpy.__file__)"

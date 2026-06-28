@@ -7,7 +7,7 @@ import json
 import re
 from pathlib import Path
 
-LIBDPY_GIT_INSTALL = 'libdpy @ git+https://github.com/applied-dp-course/pub_lib.git'
+LIBDPY_GIT_INSTALL = 'libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git'
 PIP_INSTALL_PATTERN = re.compile(
     r"""^%pip install -q "(.+)"$""",
 )

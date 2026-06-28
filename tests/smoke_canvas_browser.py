@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Headless-Chrome smoke test for browser-native canvas lecture apps."""
+"""Headless-Chrome smoke test for external-app canvas lecture apps."""
 
 from __future__ import annotations
 

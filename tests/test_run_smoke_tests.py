@@ -31,7 +31,7 @@ class SmokeTargetTest(unittest.TestCase):
         entries = run_smoke_tests.gallery.build_gallery_entries(
             run_smoke_tests.content_model.load_catalog()
         )
-        canvas = [entry for entry in entries if entry.runtime == "browser-native"]
+        canvas = [entry for entry in entries if entry.runtime in {"external-app", "browser-native"}]
         self.assertEqual(len(canvas), 2)
         self.assertTrue(all(entry.href.startswith("apps/") for entry in canvas))
 
@@ -45,6 +45,24 @@ class SmokeTargetTest(unittest.TestCase):
         wasm, canvas = run_smoke_tests.discover_smoke_targets(root, output)
         self.assertEqual(len(canvas), 2)
         self.assertGreaterEqual(len(wasm), 2)
+
+    def test_full_page_wasm_routes_are_exposed(self) -> None:
+        routes = run_smoke_tests.discover_full_page_wasm_routes()
+        self.assertIn("pages/index.html", routes)
+        self.assertIn(
+            "content/blog-posts/privacy-auditing/post.html",
+            routes,
+        )
+
+    def test_resolve_iframe_url_normalizes_parent_segments(self) -> None:
+        from smoke_full_page_wasm import _resolve_iframe_url
+
+        page = "http://127.0.0.1:8080/content/blog-posts/privacy-auditing/post.html"
+        iframe = "../../../_generated/apps/blog-posts/privacy-auditing/demo/index.html"
+        self.assertEqual(
+            _resolve_iframe_url(page, iframe),
+            "http://127.0.0.1:8080/_generated/apps/blog-posts/privacy-auditing/demo/index.html",
+        )
 
 
 if __name__ == "__main__":

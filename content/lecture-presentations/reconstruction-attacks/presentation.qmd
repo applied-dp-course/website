@@ -32,7 +32,7 @@ except Exception:
 try:
     import libdpy
 except ImportError:
-    %pip install -q "libdpy @ git+https://github.com/applied-dp-course/pub_lib.git"
+    %pip install -q "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git"
     import libdpy
 
 # Register inline figures for Quarto/RevealJS export.
@@ -47,7 +47,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from libdpy.assignment_specific.reconstruction.reconstruction_utilities import QueryMechanism, run_simulation, \
     compute_average_error_for_noise_scale, perform_reconstruction_attack_mechanizm
-from libdpy.assignment_specific.reconstruction.reconstruction_visualization import plot_reconstruction_error_as_noise_function
+from libdpy.assignment_specific.reconstruction.reconstruction_visualization import make_reconstruction_error_figure
 from libdpy.attacks.reconstruction.reconstruction_attacks import choose_random_subset
 from libdpy.attacks.reconstruction.solvers import lin_prog_reconstruction, lin_reg_reconstruction
 from libdpy.attacks.reconstruction.instances import (
@@ -55,8 +55,8 @@ from libdpy.attacks.reconstruction.instances import (
     compute_candidate_elimination,
 )
 from libdpy.assignment_specific.reconstruction.reconstruction_lecture_visualization import (
-    plot_query_matrix_overview,
-    plot_candidate_elimination_panels,
+    make_query_matrix_overview_figure,
+    make_candidate_elimination_panels_figure,
 )
 
 # Fixed seed so the small worked examples below are reproducible.
@@ -170,7 +170,7 @@ b = baseline_mechanism.get_true_response_for_compression_only().to_numpy()
 exact = baseline_mechanism.exact_query_for_compression_only(queries)
 r = baseline_mechanism.noisy_query(queries, noise=2)
 
-plot_query_matrix_overview(Q, b, r, exact=exact)
+make_query_matrix_overview_figure(Q, b, r, exact=exact)
 ```
 
 
@@ -201,7 +201,7 @@ b = Laplace_mechanism.get_true_response_for_compression_only().to_numpy()
 exact = Laplace_mechanism.exact_query_for_compression_only(queries)
 r = Laplace_mechanism.noisy_query(queries, noise=2)
 
-plot_query_matrix_overview(Q, b, r, exact=exact)
+make_query_matrix_overview_figure(Q, b, r, exact=exact)
 ```
 
 
@@ -221,14 +221,38 @@ Before turning to algorithms, it pays to picture what the queries do geometrical
 
 With two records the cube is the unit square. Pick a true corner (which fixes the released answer), then add queries to watch each exact line thicken into an accuracy slab, see its normal vector, and check which Boolean corners remain feasible.
 
-<iframe src="../../../apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab/index.html" width="100%" height="640" style="border:0" loading="lazy" title="Interactive 2-D reconstruction slab explorer"></iframe>
+```{python}
+#| echo: false
+#| output: asis
+from libdpy.visualization.external_app_embed import external_app_iframe
+
+print(
+    external_app_iframe(
+        "apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab",
+        height=640,
+        title="Interactive 2-D reconstruction slab explorer",
+    )
+)
+```
 
 
 ## Slabs in three dimensions
 
 With three records the database is one of the eight corners of the cube $[0,1]^3$. Choose a true corner, then toggle queries to see the planes thicken into slabs and watch the set of feasible corners shrink.
 
-<iframe src="../../../apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs/index.html" width="100%" height="660" style="border:0" loading="lazy" title="Interactive 3-D reconstruction slab explorer"></iframe>
+```{python}
+#| echo: false
+#| output: asis
+from libdpy.visualization.external_app_embed import external_app_iframe
+
+print(
+    external_app_iframe(
+        "apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs",
+        height=660,
+        title="Interactive 3-D reconstruction slab explorer",
+    )
+)
+```
 
 
 ## Option 1: brute force
@@ -307,7 +331,7 @@ n_feasible = int(elim['feasible'].sum())
 print(f"feasible candidates: {n_feasible} / {2 ** demo_meta['n']} "
       f"({100 * n_feasible / 2 ** demo_meta['n']:.2f}%; {n_feasible - 1} wrong + true b)")
 
-plot_candidate_elimination_panels(
+make_candidate_elimination_panels_figure(
     elim['hamming_dist'],
     elim['max_residual'],
     elim['feasible'],
@@ -498,7 +522,7 @@ rand_lr_error_arr = run_simulation(data_size, baseline_mechanism, num_experiment
 rand_lp_error_arr = run_simulation(data_size, baseline_mechanism, num_experiments, lin_prog_reconstruction,choose_random_subset, noise_range, num_queries)
 
 errors = [(rand_lr_error_arr, "LR"), (rand_lp_error_arr, "LP")]
-plot_reconstruction_error_as_noise_function(errors, noise_range)
+make_reconstruction_error_figure(errors, noise_range)
 ```
 
 

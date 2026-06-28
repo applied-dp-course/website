@@ -1,6 +1,6 @@
 """Deferred Marimo/WASM entrypoint for the 3-D feasible-region slabs widget.
 
-The shipped web lecture currently embeds the browser-native app at
+The shipped web lecture currently embeds the external-app at
 ``apps/reconstruction-3d-slabs/index.html``. Keep this file as the future
 Python/WASM route once a hosted ``libdpy`` wheel exists.
 
@@ -21,9 +21,9 @@ def _():
     import micropip  # noqa: F401  (browser only)
     # await micropip.install("<hosted libdpy wheel URL>")   # hosted wheel (v4 §1.1)
     from libdpy.assignment_specific.reconstruction.reconstruction_3d_visualization import (
-        interactive_3d_slabs,
+        Reconstruction3DSlabsPlot,
     )
-    interactive_3d_slabs()
+    Reconstruction3DSlabsPlot().show()
     return
 
 

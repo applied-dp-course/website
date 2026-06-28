@@ -32,7 +32,7 @@ class GalleryBuildTest(unittest.TestCase):
         entries = tuple(
             entry
             for entry in gallery.build_gallery_entries(content_model.load_catalog())
-            if entry.runtime == "browser-native" or entry.source_kind == "standalone"
+            if entry.runtime in {"external-app", "browser-native"} or entry.source_kind == "standalone"
         )
         gallery.validate_entrypoints_exist(entries, content_model.SITE_ROOT)
 

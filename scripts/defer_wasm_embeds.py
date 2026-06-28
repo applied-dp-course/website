@@ -36,7 +36,8 @@ _LOADING_WATCH = (
 
 _EMBED_BLOCK = re.compile(
     r'(<div class="libdpy-interactive"[^>]*>)'
-    r'(<iframe\b[^>]*\bsrc="([^"]+)"[^>]*></iframe>)'
+    # Match eager ``src`` only — not the ``src`` inside ``data-libdpy-src``.
+    r'(<iframe\b(?![^>]*\bdata-libdpy-src=)[^>]*\bsrc="([^"]+)"[^>]*></iframe>)'
     r'(<div class="libdpy-interactive-loading"[^>]*style=")([^"]*)(")',
     re.DOTALL,
 )
@@ -58,7 +59,12 @@ def upgrade_embed_html(html: str) -> tuple[str, int]:
         loading_suffix = match.group(6)
 
         iframe_tag = re.sub(r'\sloading="lazy"', "", iframe_tag)
-        iframe_tag = iframe_tag.replace(f'src="{src}"', f'data-libdpy-src="{src}"')
+        iframe_tag = re.sub(
+            r'(?<!data-libdpy-)\bsrc="' + re.escape(src) + r'"',
+            f'data-libdpy-src="{src}"',
+            iframe_tag,
+            count=1,
+        )
         if "onload=" not in iframe_tag:
             iframe_tag = iframe_tag.replace(
                 "></iframe>",
@@ -73,11 +79,14 @@ def upgrade_embed_html(html: str) -> tuple[str, int]:
     return _EMBED_BLOCK.sub(_replace, html), upgraded
 
 
-_EAGER_IFRAME_SRC = re.compile(r'<iframe\b[^>]*\ssrc="')
-
-
 def has_eager_wasm_iframe_src(html: str) -> bool:
-    return _EAGER_IFRAME_SRC.search(html) is not None
+    """Return True if a ``.libdpy-interactive`` block still has an eager iframe ``src``.
+
+    Animation player iframes from ``animation_player_iframe(...)`` use eager ``src``
+    attributes outside ``.libdpy-interactive`` and are intentionally excluded.
+    """
+
+    return _EMBED_BLOCK.search(html) is not None
 
 
 _AUTO_LOAD_SCRIPT = """\
@@ -140,6 +149,11 @@ def _strip_legacy_click_script(html: str) -> str:
     )
 
 
+def _repair_doubled_defer_attrs(html: str) -> str:
+    """Undo a prior buggy pass that prefixed ``data-libdpy-`` twice."""
+    return html.replace("data-libdpy-data-libdpy-src=", "data-libdpy-src=")
+
+
 def process_site(site_root: Path) -> int:
     if not site_root.is_dir():
         raise SystemExit(f"site output directory not found: {site_root}")
@@ -149,7 +163,7 @@ def process_site(site_root: Path) -> int:
     for path in sorted(site_root.rglob("*.html")):
         original = path.read_text(encoding="utf-8")
         cleaned = _rewrite_generated_app_paths(
-            _strip_legacy_click_script(_strip_legacy_click_gate(original)),
+            _strip_legacy_click_script(_strip_legacy_click_gate(_repair_doubled_defer_attrs(original))),
             page=path,
             site_root=site_root,
         )

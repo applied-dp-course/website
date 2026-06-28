@@ -405,6 +405,13 @@ def load_offering(term: str) -> Offering:
     )
 
 
+def _normalize_app_runtime(raw_runtime: Any) -> str:
+    runtime = str(raw_runtime or "external-app").strip()
+    if runtime == "browser-native":
+        return "external-app"
+    return runtime
+
+
 def _load_apps(source: Path, raw: Any) -> tuple[ContentApp, ...]:
     if raw is None:
         return ()
@@ -419,7 +426,7 @@ def _load_apps(source: Path, raw: Any) -> tuple[ContentApp, ...]:
                 id=_nonempty_string(source, f"apps[{index}].id", entry.get("id")),
                 title=_nonempty_string(source, f"apps[{index}].title", entry.get("title")),
                 path=_nonempty_string(source, f"apps[{index}].path", entry.get("path")),
-                runtime=str(entry.get("runtime") or "browser-native").strip(),
+                runtime=_normalize_app_runtime(entry.get("runtime")),
                 gallery=_parse_bool(source, f"apps[{index}].gallery", entry.get("gallery"), default=True),
             )
         )

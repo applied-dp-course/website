@@ -21,15 +21,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import libdpy
-from libdpy.assignment_specific.privacy_auditing.visualizations import (
-    NaiveSafeEpsilonHistogram,
-)
 from libdpy.visualization.interactive import InteractiveSpec, marimo_app_source
-from libdpy.visualization.privacy_plots import PrivacyPlot
-from libdpy.visualization.roc_plots import (
-    EmpiricalEpsilonFromDeltaVisualizer,
-    TheoryROCVisualizer,
-)
+from libdpy.visualization.registry import embed_spec_builders
 from scipy import stats
 
 SITE_ROOT = Path(__file__).resolve().parents[1]
@@ -120,22 +113,8 @@ def _distribution_types(node: ast.expr):
 
 
 # Constructors whose ``Ctor(...).embed()`` calls the build can export to WASM apps.
-# Each builder takes the literal keyword arguments parsed from the embed call and
-# returns the backend-neutral InteractiveSpec. The spec-construction logic lives in
-# libdpy (the website stays import-only); ``auto_display=False`` keeps the visualizer
-# wrappers from trying to display a live widget during the build.
-_SPEC_BUILDERS: dict[str, Callable[[dict], InteractiveSpec]] = {
-    "PrivacyPlot": lambda kwargs: PrivacyPlot(**kwargs).spec(),
-    "TheoryROCVisualizer": (
-        lambda kwargs: TheoryROCVisualizer(**{"auto_display": False, **kwargs}).spec()
-    ),
-    "EmpiricalEpsilonFromDeltaVisualizer": (
-        lambda kwargs: EmpiricalEpsilonFromDeltaVisualizer(
-            **{"auto_display": False, **kwargs}
-        ).spec()
-    ),
-    "NaiveSafeEpsilonHistogram": lambda kwargs: NaiveSafeEpsilonHistogram(**kwargs).spec(),
-}
+# Registry lives in libdpy so website discovery and library policy share one source.
+_SPEC_BUILDERS: dict[str, Callable[[dict], InteractiveSpec]] = embed_spec_builders()
 
 
 def _embed_kwargs(constructor: ast.Call) -> dict:
@@ -403,6 +382,26 @@ def _write_gallery(site_root: Path) -> Path:
     return gallery.write_gallery_json(entries, destination, site_root=site_root)
 
 
+def _remove_stale_generated_apps(uses: list[InteractiveUse], *, site_root: Path) -> None:
+    """Delete generated app bundles that no longer correspond to discovered embeds."""
+
+    apps_root = site_root / "_generated" / "apps"
+    if not apps_root.is_dir():
+        return
+    expected = {output_directory_for(use, site_root) for use in uses}
+    stale_directories: list[Path] = []
+    for marker in apps_root.rglob(".libdpy-interactive"):
+        app_directory = marker.parent
+        if app_directory not in expected:
+            stale_directories.append(app_directory)
+    for app_directory in stale_directories:
+        shutil.rmtree(app_directory)
+        print(
+            f"Removed stale generated app: {app_directory.relative_to(site_root)}",
+            file=sys.stderr,
+        )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -425,6 +424,7 @@ def main() -> None:
         return
 
     if uses:
+        _remove_stale_generated_apps(uses, site_root=SITE_ROOT)
         wheel = build_libdpy_wheel(GENERATED_ROOT / "wheels")
         for use in uses:
             _export(use, wheel, site_root=SITE_ROOT)

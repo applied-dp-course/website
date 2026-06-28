@@ -1,3 +1,4 @@
+from IPython.display import display
 ---
 title: "DP as Hypothesis Testing"
 subtitle: "Applied Differential Privacy"
@@ -36,7 +37,7 @@ except Exception:
 try:
     import libdpy
 except ImportError:
-    %pip install -q "libdpy @ git+https://github.com/applied-dp-course/pub_lib.git"
+    %pip install -q "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git"
     import libdpy
 
 # Register inline figures for Quarto/RevealJS export.
@@ -48,7 +49,7 @@ except ImportError:
 #| output: false
 #| include: false
 from libdpy.visualization.privacy_plots import PrivacyPlot
-from libdpy.visualization.roc_plots import ROC_and_distributions_visualization, ComparisonType
+from libdpy.visualization.roc_plots import make_roc_decision_declarative_figure, ComparisonType
 from libdpy.assignment_specific.dp_as_hypothesis_testing.utils import desicion_rule_params
 from scipy.stats import norm, laplace, uniform
 from scipy.stats import rv_continuous as Distribution
@@ -306,14 +307,14 @@ plt.show()
 Sweeping the threshold traces a curve in the ROC plane.
 
 ```{python}
-ROC_and_distributions_visualization(desicion_rule_params, dist_neg, dist_pos, True).show()
+display(make_roc_decision_declarative_figure(desicion_rule_params, dist_neg, dist_pos, True))
 ```
 
 ## Connecting the threshold to the ROC
 ### Uniform distributions
 
 ```{python}
-ROC_and_distributions_visualization(desicion_rule_params, uniform(0, 3), uniform(1, 3), True).show()
+display(make_roc_decision_declarative_figure(desicion_rule_params, uniform(0, 3), uniform(1, 3), True))
 ```
 
 ## Neyman–Pearson lemma
@@ -322,7 +323,7 @@ Every optimal decision rule is a threshold on the log probability ratio.
 If the log probability ratio is monotonic in $x$, a threshold on the value itself is optimal.
 
 ```{python}
-ROC_and_distributions_visualization(desicion_rule_params, dist_neg, dist_pos, False).show()
+display(make_roc_decision_declarative_figure(desicion_rule_params, dist_neg, dist_pos, False))
 ```
 
 ## Privacy as a bound on the ROC curve

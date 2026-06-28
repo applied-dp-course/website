@@ -109,17 +109,25 @@ def frames():                # a generator keeps one figure open at a time
 (Prev/Next stepping + Play at the fixed `FPS`); `gif`/`mp4` → a flat file (mp4 needs system ffmpeg).
 List several to emit more than one.
 
-**3. Embed the artifact** (relative path from the rendered page; the page references the file, never
-the engine). Player — in a post or RevealJS slide (controls are mouse-driven, so they don't clash
-with slide arrow keys):
+**3. Embed the artifact** (use ``libdpy.visualization.animation_embed`` so content does not
+hand-write ``_generated/animations/...`` paths). Player — in a post or RevealJS slide
+(controls are mouse-driven, so they don't clash with slide arrow keys):
 
-```html
-<iframe src="../../../_generated/animations/blog-posts/my-post/wave.html"
-        width="100%" height="430" style="border:0"
-        onload="this.style.height=this.contentWindow.document.documentElement.scrollHeight+'px'"></iframe>
+```{python}
+#| echo: false
+#| output: asis
+from libdpy.visualization.animation_embed import animation_player_iframe
+print(animation_player_iframe("blog-posts", "my-post", "wave"))
 ```
 
-Flat gif as a tool on another page: `![Wave](../../../_generated/animations/blog-posts/my-post/wave.gif)`.
+Flat gif in a post or slide:
+
+```{python}
+#| echo: false
+#| output: asis
+from libdpy.visualization.animation_embed import animation_markdown_image
+print(animation_markdown_image("blog-posts", "my-post", "wave", alt="Wave"))
+```
 
 Notes:
 
@@ -129,7 +137,7 @@ Notes:
   runtime speed slider.
 - Every frame must rasterise to the **same pixel size** (consistent `figsize`/`dpi`). Frames are
   inlined as base64 PNGs, so keep `frames × dpi` modest.
-- Live example: `content/blog-posts/privacy-auditing/animations/threshold-sweep.py`.
+- Live example: `content/blog-posts/privacy-auditing/animations/empirical-roc.py`.
 
 ## Validation
 
@@ -144,3 +152,30 @@ references that do not match an authored content name.
 
 Private `solution.ipynb` files under class or home assignments are ignored and blocked from the
 rendered site.
+
+## Plotting policy
+
+Course visuals use three author-facing paths.
+
+**Static figures** — prefer library `make_*_figure(...)` factories that return a Matplotlib or
+Plotly figure without calling `show()`. In notebooks and QMD, let Jupyter/Quarto capture the
+returned figure.
+
+**Interactives** — use plot wrapper classes with `Plot(...).show()` in live notebooks/Colab and
+`Plot(...).embed(mode="page"|"deck")` in website sources. The build discovers registered
+constructors and exports marimo WASM apps to `_generated/apps/`. Colab falls back to live widgets
+inside `embed()`; do not monkeypatch `AbstractInteractivePlot.embed` in content.
+
+**Animations** — use `content/**/animations/<name>.py` sidecars only. Embed generated artifacts
+with `libdpy.visualization.animation_embed` helpers (GIF, player, or MP4 per `OUTPUTS`).
+
+**Exceptions** — hand-written browser apps are allowed only with manifest `runtime:
+external-app`, smoke tests, and a documented reason. Embed them with
+`libdpy.visualization.external_app_embed.external_app_iframe` (not raw `<iframe>` tags).
+Generated WASM bundles must not live under `content/**/apps/` or legacy top-level
+`website/apps/` copies.
+
+Phase 0 inventory checks live in `libdpy.visualization.plot_inventory`. Pre-render strict checks
+fail in `website/tests/test_plot_inventory_scan.py` and
+`code_base_dev/tests/test_plot_inventory_scan.py`; post-render checks (doubled defer attributes,
+full-page WASM route coverage) run after `quarto render`.

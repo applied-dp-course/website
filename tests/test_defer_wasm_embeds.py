@@ -25,6 +25,12 @@ SAMPLE_EMBED = (
     "</div>"
 )
 
+SAMPLE_ANIMATION_IFRAME = (
+    '<iframe src="../../../_generated/animations/blog-posts/privacy-auditing/'
+    'fixed-threshold-audit-same-sample.html" width="100%" height="430" style="border:0">'
+    "</iframe>"
+)
+
 
 class DeferWasmEmbedsTest(unittest.TestCase):
     def test_upgrade_removes_eager_iframe_src(self) -> None:
@@ -32,8 +38,37 @@ class DeferWasmEmbedsTest(unittest.TestCase):
         self.assertEqual(count, 1)
         self.assertNotRegex(updated, r'<iframe\b[^>]*\ssrc="')
         self.assertIn('data-libdpy-src="apps/privacy-plot-norm-6197737a49/index.html"', updated)
+        self.assertNotIn("data-libdpy-data-libdpy-src", updated)
         self.assertNotIn("libdpy-interactive-gate", updated)
         self.assertIn("display:flex", updated)
+
+    def test_upgrade_is_idempotent(self) -> None:
+        once, count = defer_wasm_embeds.upgrade_embed_html(SAMPLE_EMBED)
+        self.assertEqual(count, 1)
+        twice, again = defer_wasm_embeds.upgrade_embed_html(once)
+        self.assertEqual(again, 0)
+        self.assertEqual(twice, once)
+        self.assertNotIn("data-libdpy-data-libdpy-src", twice)
+
+    def test_animation_iframe_is_not_eager_wasm_iframe(self) -> None:
+        html = f"<html><body>{SAMPLE_ANIMATION_IFRAME}</body></html>"
+        self.assertFalse(defer_wasm_embeds.has_eager_wasm_iframe_src(html))
+
+    def test_process_site_repairs_doubled_defer_attributes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            site_root = Path(temporary_directory)
+            page = site_root / "pages" / "index.html"
+            page.parent.mkdir(parents=True)
+            page.write_text(
+                '<html><body><div class="libdpy-interactive">'
+                '<iframe data-libdpy-data-libdpy-src="apps/demo/index.html"></iframe>'
+                "</div></body></html>",
+                encoding="utf-8",
+            )
+            defer_wasm_embeds.process_site(site_root)
+            rendered = page.read_text(encoding="utf-8")
+            self.assertIn("data-libdpy-src=", rendered)
+            self.assertNotIn("data-libdpy-data-libdpy-src", rendered)
 
     def test_process_site_upgrades_rendered_pages(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

@@ -3,7 +3,7 @@
 
 Discovers:
 - marimo WASM apps from ``PrivacyPlot(...).embed()`` calls in lecture sources;
-- browser-native canvas apps declared in lecture manifests.
+- external-app canvas apps declared in lecture manifests.
 
 Exits non-zero if any interactive fails to render or respond to its controls.
 """
@@ -31,6 +31,9 @@ from smoke_wasm_browser import (  # noqa: E402
     default_wasm_timeout,
     smoke_test as smoke_wasm,
 )
+
+from libdpy.visualization.plot_inventory import FULL_PAGE_WASM_SMOKE_ROUTES  # noqa: E402
+from smoke_full_page_wasm import smoke_test_page  # noqa: E402
 
 # When the same marimo export is copied to home, site posts, tools, and lectures, smoke-test
 # one canonical deployment per artifact id (prefer lecture paths).
@@ -87,7 +90,7 @@ def discover_smoke_targets(
         for entry in gallery.load_gallery_json(gallery_path):
             relative = entry.href.strip("/")
             index = output_root / relative / "index.html"
-            if entry.runtime == "browser-native":
+            if entry.runtime in {"external-app", "browser-native"}:
                 if not index.is_file():
                     raise SystemExit(f"expected built canvas app missing: {index}")
                 canvas_paths.add(relative)
@@ -139,6 +142,12 @@ class _SiteHandler(http.server.SimpleHTTPRequestHandler):
         return
 
 
+def discover_full_page_wasm_routes() -> list[str]:
+    """Return rendered routes that should pass ``smoke_full_page_wasm``."""
+
+    return list(FULL_PAGE_WASM_SMOKE_ROUTES)
+
+
 def main() -> None:
     output_root = SITE_ROOT / "_site"
     if not output_root.is_dir():
@@ -146,53 +155,68 @@ def main() -> None:
 
     wasm_urls, canvas_urls = discover_smoke_targets(SITE_ROOT, output_root)
     relative_urls = wasm_urls + canvas_urls
-    if not relative_urls:
-        print("No lecture interactives discovered; nothing to smoke-test.")
+    page_routes = discover_full_page_wasm_routes()
+    if not relative_urls and not page_routes:
+        print("No lecture interactives or full-page WASM routes discovered; nothing to smoke-test.")
         return
 
     handler = functools.partial(_SiteHandler, directory=str(output_root))
-    # Threaded: a headed CI browser opens many parallel connections (marimo assets
-    # plus the multi-MB libdpy wheel the figure cell's micropip.install blocks on).
-    # A single-threaded server serializes those, which can stall the WASM boot on a
-    # slow runner even though it keeps up locally.
+    failures: list[str] = []
+    page_failures: list[str] = []
+
     with socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler) as httpd:
         httpd.daemon_threads = True
         port = httpd.server_address[1]
         threading.Thread(target=httpd.serve_forever, daemon=True).start()
 
-        failures: list[str] = []
-        # Launch Chrome once and open a tab per app. Relaunching Chrome per app is
-        # unstable on CI ("debugger did not start" / "Connection timed out", worsening
-        # for later launches); one long-lived browser is reliable and faster.
         with chrome_session() as chrome_port:
-            for relative in relative_urls:
-                url = f"http://127.0.0.1:{port}/{relative}/index.html"
-                smoke = smoke_canvas if relative in canvas_urls else smoke_wasm
-                label = "canvas" if relative in canvas_urls else "wasm"
-                print(f"== smoke-testing {label} {relative} ==", flush=True)
-                timeout = default_wasm_timeout() if label == "wasm" else 60
-                attempts = 2 if label == "wasm" else 1
-                for attempt in range(1, attempts + 1):
-                    try:
-                        smoke(url, port=chrome_port, timeout=timeout)
-                        break
-                    except Exception as error:  # noqa: BLE001 - aggregate and report all
-                        if attempt < attempts:
-                            print(
-                                f"  attempt {attempt} failed ({error}); retrying...",
-                                flush=True,
-                            )
-                            time.sleep(2.0)
-                            continue
-                        print(f"FAIL {relative}: {error}", flush=True)
-                        failures.append(relative)
+            if relative_urls:
+                for relative in relative_urls:
+                    url = f"http://127.0.0.1:{port}/{relative}/index.html"
+                    smoke = smoke_canvas if relative in canvas_urls else smoke_wasm
+                    label = "canvas" if relative in canvas_urls else "wasm"
+                    print(f"== smoke-testing {label} {relative} ==", flush=True)
+                    timeout = default_wasm_timeout() if label == "wasm" else 60
+                    attempts = 2 if label == "wasm" else 1
+                    for attempt in range(1, attempts + 1):
+                        try:
+                            smoke(url, port=chrome_port, timeout=timeout)
+                            break
+                        except Exception as error:  # noqa: BLE001 - aggregate and report all
+                            if attempt < attempts:
+                                print(
+                                    f"  attempt {attempt} failed ({error}); retrying...",
+                                    flush=True,
+                                )
+                                time.sleep(2.0)
+                                continue
+                            print(f"FAIL {relative}: {error}", flush=True)
+                            failures.append(relative)
+
+            for route in page_routes:
+                page_path = output_root / route
+                if not page_path.is_file():
+                    page_failures.append(f"{route} (missing rendered page)")
+                    continue
+                url = f"http://127.0.0.1:{port}/{route}"
+                print(f"== smoke-testing full-page wasm {route} ==", flush=True)
+                try:
+                    smoke_test_page(url, timeout=default_wasm_timeout(), chrome_port=chrome_port)
+                except Exception as error:  # noqa: BLE001 - aggregate and report all
+                    print(f"FAIL full-page {route}: {error}", flush=True)
+                    page_failures.append(route)
+
         httpd.shutdown()
+
+    failures.extend(page_failures)
 
     if failures:
         raise SystemExit(f"{len(failures)} interactive(s) failed: {failures}")
+    page_count = len(page_routes)
     print(
-        f"All {len(relative_urls)} interactive(s) passed smoke tests "
-        f"({len(wasm_urls)} WASM, {len(canvas_urls)} canvas)."
+        f"All smoke tests passed: {len(relative_urls)} interactive(s) "
+        f"({len(wasm_urls)} WASM, {len(canvas_urls)} canvas)"
+        f"{f', {page_count} full-page WASM route(s)' if page_count else ''}."
     )
 
 

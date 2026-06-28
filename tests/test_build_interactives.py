@@ -141,6 +141,36 @@ class BuildInteractivesTest(unittest.TestCase):
             self.assertIn("_plotly_utils/importers.py", names)
             self.assertTrue(any(name.endswith(".dist-info/RECORD") for name in names))
 
+    def test_removes_stale_generated_app_directories(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            lecture = root / "content" / "lecture-presentations" / "test"
+            lecture.mkdir(parents=True)
+            code = (
+                "PrivacyPlot(distribution_types=[norm], "
+                "sensitivity=1, std=1.5).embed(mode='deck')"
+            )
+            (lecture / "presentation.qmd").write_text(
+                f"```{{python}}\n{code}\n```\n",
+                encoding="utf-8",
+            )
+            uses = build_interactives.discover_interactives(root)
+            stale = (
+                root
+                / "_generated"
+                / "apps"
+                / "blog"
+                / "posts"
+                / "demo"
+                / "privacy-plot-norm-deadbeef"
+            )
+            stale.mkdir(parents=True)
+            (stale / ".libdpy-interactive").write_text("PrivacyPlot\nprivacy-plot-norm-deadbeef\n")
+
+            build_interactives._remove_stale_generated_apps(uses, site_root=root)
+
+            self.assertFalse(stale.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

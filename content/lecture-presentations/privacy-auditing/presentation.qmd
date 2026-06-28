@@ -31,7 +31,7 @@ except Exception:
 try:
     import libdpy
 except ImportError:
-    %pip install -q "libdpy @ git+https://github.com/applied-dp-course/pub_lib.git"
+    %pip install -q "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git"
     import libdpy
 
 %matplotlib inline
@@ -47,12 +47,12 @@ from scipy import stats
 
 from libdpy.assignment_specific.privacy_auditing.lecture_figures import (
     make_two_logistic_samplers,
-    plot_audit_confusion_matrix,
-    plot_confidence_rectangle,
-    plot_epsilon_histogram_naive_safe,
-    plot_repeated_audit_points,
-    plot_sampled_densities,
-    plot_threshold_event,
+    make_audit_confusion_matrix_figure,
+    make_confidence_rectangle_figure,
+    make_epsilon_histogram_naive_safe_figure,
+    make_repeated_audit_points_figure,
+    make_sampled_densities_figure,
+    make_threshold_event_figure,
 )
 from libdpy.assignment_specific.privacy_auditing.utils import (
     audit_point,
@@ -153,7 +153,6 @@ TheoryROCVisualizer(
     distribution="Laplace",
     scale=1.0,
     delta=1e-15,
-    auto_display=False,
     selectable_distribution=False,
 ).embed(mode="deck")
 ```
@@ -169,7 +168,6 @@ TheoryROCVisualizer(
     distribution="Gaussian",
     scale=1.0,
     delta=1e-2,
-    auto_display=False,
     selectable_distribution=False,
 ).embed(mode="deck")
 ```
@@ -185,7 +183,6 @@ TheoryROCVisualizer(
     distribution="Logistic",
     scale=1.0,
     delta=1e-15,
-    auto_display=False,
     selectable_distribution=False,
 ).embed(mode="deck")
 ```
@@ -207,7 +204,7 @@ Sampling is easy. Exact ROC calculation is no longer part of the lecture. From h
 ## Two-logistic samples
 
 ```{python}
-fig = plot_sampled_densities(samples_neg_roc, samples_pos_roc)
+fig = make_sampled_densities_figure(samples_neg_roc, samples_pos_roc)
 plt.show()
 ```
 
@@ -257,15 +254,53 @@ We are not estimating the entire privacy profile yet. We freeze the threshold se
 ## Threshold and ROC point
 
 ```{python}
-fig = plot_threshold_event(samples_neg_roc, samples_pos_roc, tau_star)
+fig = make_threshold_event_figure(samples_neg_roc, samples_pos_roc, tau_star)
 plt.show()
+```
+
+## Fixed-threshold audit unfolding
+
+Same finite sample as the empirical ROC; experiments arrive one at a time. Plays once and stops on the governing audit point.
+
+```{python}
+#| echo: false
+#| output: asis
+from libdpy.visualization.animation_embed import animation_player_iframe
+
+print(
+    animation_player_iframe(
+        "lecture-presentations",
+        "privacy-auditing",
+        "fixed-threshold-audit-same-sample",
+        height=430,
+    )
+)
 ```
 
 ## Confusion matrix
 
 ```{python}
-fig = plot_audit_confusion_matrix(audit_main)
+fig = make_audit_confusion_matrix_figure(audit_main)
 plt.show()
+```
+
+## Fresh audit sample
+
+Same threshold; redraw the finite sample (audit seed 42).
+
+```{python}
+#| echo: false
+#| output: asis
+from libdpy.visualization.animation_embed import animation_player_iframe
+
+print(
+    animation_player_iframe(
+        "lecture-presentations",
+        "privacy-auditing",
+        "fixed-threshold-audit-seed-42",
+        height=430,
+    )
+)
 ```
 
 ::: {.fragment}
@@ -283,7 +318,21 @@ $$
 
 Frame by frame, the empirical ROC fills in as paired samples accumulate — jagged early, settling toward the true curve. A different sample would trace a different curve.
 
-![Empirical ROC accumulating over 200 samples.](../../../_generated/animations/lecture-presentations/privacy-auditing/empirical-roc.gif){width="70%" fig-align="center"}
+```{python}
+#| echo: false
+#| output: asis
+from libdpy.visualization.animation_embed import animation_artifact_path
+
+path = animation_artifact_path(
+    "lecture-presentations",
+    "privacy-auditing",
+    "empirical-roc",
+)
+print(
+    f'<p style="text-align:center"><img src="{path}" '
+    'alt="Empirical ROC accumulating over 200 samples." style="width:70%"></p>'
+)
+```
 
 ## One run is not a certificate
 
@@ -297,7 +346,7 @@ for _ in range(40):
     pos = sampler_pos(n=500, rng=rng)
     runs.append(audit_point(neg, pos, tau_star, delta_default))
 reference_point = reference_point_two_logistic(tau_star, delta_default, seed=999)
-fig = plot_repeated_audit_points(runs, reference=reference_point)
+fig = make_repeated_audit_points_figure(runs, reference=reference_point)
 plt.show()
 ```
 
@@ -337,7 +386,7 @@ To avoid overstating privacy loss, move the empirical ROC point **down** and **r
 ## Confidence rectangle
 
 ```{python}
-fig = plot_confidence_rectangle(audit_main)
+fig = make_confidence_rectangle_figure(audit_main)
 plt.show()
 ```
 
@@ -360,7 +409,7 @@ for _ in range(200):
     plug_vals.append(result.eps_plug)
     safe_vals.append(result.eps_audit)
 reference_eps = reference_point_two_logistic(tau_star, delta_default, seed=999)[2]
-fig = plot_epsilon_histogram_naive_safe(plug_vals, safe_vals, reference_eps)
+fig = make_epsilon_histogram_naive_safe_figure(plug_vals, safe_vals, reference_eps)
 plt.show()
 ```
 

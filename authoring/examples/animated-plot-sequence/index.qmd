@@ -51,24 +51,25 @@ The same function renders different artifacts depending on how it's declared:
 
 ## 3. Embed the artifact
 
-The page references the generated **file** (relative path from the rendered page to
-`_generated/`), never the helper.
+Use `libdpy.visualization.animation_embed` so content does not hand-write
+`_generated/animations/...` paths.
 
 Interactive player (post or RevealJS slide):
 
-```html
-<iframe src="../../../_generated/animations/blog-posts/my-post/wave.html"
-        width="100%" height="430" style="border:0"
-        onload="this.style.height=this.contentWindow.document.documentElement.scrollHeight+'px'"></iframe>
+```{python}
+#| echo: false
+#| output: asis
+from libdpy.visualization.animation_embed import animation_player_iframe
+print(animation_player_iframe("blog-posts", "my-post", "wave"))
 ```
-
-The `onload` sizes the iframe to the player's content height (same-origin) so the control bar is
-never clipped; the player image scales to the iframe width.
 
 Flat gif as a tool on some other page:
 
-```markdown
-![Wave](../../../_generated/animations/blog-posts/my-post/wave.gif)
+```{python}
+#| echo: false
+#| output: asis
+from libdpy.visualization.animation_embed import animation_markdown_image
+print(animation_markdown_image("blog-posts", "my-post", "wave", alt="Wave"))
 ```
 
 ## Preview while authoring
@@ -81,4 +82,4 @@ Flat gif as a tool on some other page:
 ```
 
 A live example ships in the privacy-auditing post:
-[`content/blog-posts/privacy-auditing/animations/threshold-sweep.py`](../../../content/blog-posts/privacy-auditing/animations/threshold-sweep.py).
+[`content/blog-posts/privacy-auditing/animations/empirical-roc.py`](../../../content/blog-posts/privacy-auditing/animations/empirical-roc.py).

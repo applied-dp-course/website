@@ -8,10 +8,10 @@ apps:
   - id: reconstruction-2d-slab
     title: Reconstruction 2-D slab
     path: apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab
-    runtime: browser-native
+    runtime: external-app
     gallery: true
   - id: reconstruction-3d-slabs
     title: Reconstruction 3-D slabs
     path: apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs
-    runtime: browser-native
+    runtime: external-app
     gallery: true
