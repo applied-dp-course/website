@@ -112,4 +112,12 @@ jobs:
       - name: Verify deployed GitHub Pages routes
         env:
           PAGES_BASE_URL: ${{ needs.deploy.outputs.page_url || env.PAGES_BASE_URL }}
-        run: ./.venv/bin/python scripts/check_site.py --base-url "$PAGES_BASE_URL"
+        run: |
+          for attempt in {1..12}; do
+            if ./.venv/bin/python scripts/check_site.py --base-url "$PAGES_BASE_URL"; then
+              exit 0
+            fi
+            echo "Deployed routes not ready yet; retrying in 30s ($attempt/12)."
+            sleep 30
+          done
+          ./.venv/bin/python scripts/check_site.py --base-url "$PAGES_BASE_URL"
