@@ -8,7 +8,8 @@ import unittest
 import warnings
 from pathlib import Path
 
-WORKSPACE = Path(__file__).resolve().parents[2]
+SITE_ROOT = Path(__file__).resolve().parents[1]
+WORKSPACE = SITE_ROOT.parent
 CODE_BASE = WORKSPACE / "code_base_dev"
 if str(CODE_BASE) not in sys.path:
     sys.path.insert(0, str(CODE_BASE))
@@ -22,8 +23,12 @@ from libdpy.visualization.registry import embed_spec_builders  # noqa: E402
 
 
 class PlotInventoryWebsiteTest(unittest.TestCase):
+    def _require_monorepo_inventory(self) -> None:
+        if not (CODE_BASE / "libdpy").is_dir():
+            self.skipTest("shared plot inventory scanner requires the course monorepo layout")
+
     def test_registry_matches_build_interactives(self) -> None:
-        script = WORKSPACE / "website" / "scripts" / "build_interactives.py"
+        script = SITE_ROOT / "scripts" / "build_interactives.py"
         spec = importlib.util.spec_from_file_location("build_interactives", script)
         assert spec is not None and spec.loader is not None
         build_interactives = importlib.util.module_from_spec(spec)
@@ -40,6 +45,7 @@ class PlotInventoryWebsiteTest(unittest.TestCase):
         )
 
     def test_inventory_scan_strict_pre_render(self) -> None:
+        self._require_monorepo_inventory()
         findings = collect_plot_inventory_findings(WORKSPACE, include_post_render=False)
         violations = strict_inventory_findings(findings, post_render=False)
         self.assertEqual(
@@ -49,7 +55,8 @@ class PlotInventoryWebsiteTest(unittest.TestCase):
         )
 
     def test_inventory_scan_strict_post_render(self) -> None:
-        site = WORKSPACE / "website" / "_site"
+        self._require_monorepo_inventory()
+        site = SITE_ROOT / "_site"
         if not site.is_dir():
             self.skipTest("website/_site not built; run quarto render first")
 
@@ -62,6 +69,7 @@ class PlotInventoryWebsiteTest(unittest.TestCase):
         )
 
     def test_inventory_scan_emits_warnings(self) -> None:
+        self._require_monorepo_inventory()
         with warnings.catch_warnings(record=True) as caught:
             warnings.simplefilter("always")
             findings = collect_plot_inventory_findings(WORKSPACE)
