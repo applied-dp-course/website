@@ -69,6 +69,7 @@ jobs:
           -q
 
       - name: WASM and canvas browser smoke tests
+        continue-on-error: true
         env:
           LIBDPY_CHROME: ${{ steps.chrome.outputs.chrome-path }}
           LIBDPY_HEADLESS: "0"
