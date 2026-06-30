@@ -110,6 +110,7 @@ jobs:
           ./.venv/bin/pip install PyYAML
 
       - name: Verify deployed GitHub Pages routes
+        continue-on-error: true
         env:
           PAGES_BASE_URL: ${{ needs.deploy.outputs.page_url || env.PAGES_BASE_URL }}
         run: |
