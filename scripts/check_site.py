@@ -25,9 +25,12 @@ import gallery
 
 REQUIRED_PAGE_ROUTES = (
     "pages/index.html",
+    "pages/course.html",
     "pages/schedule.html",
     "pages/lectures.html",
     "pages/assignments.html",
+    "pages/class-assignments.html",
+    "pages/home-assignments.html",
     "pages/tools.html",
     "pages/blog.html",
     "pages/syllabus.html",

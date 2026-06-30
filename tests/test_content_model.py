@@ -11,7 +11,13 @@ class ContentModelTest(unittest.TestCase):
         catalog = content_model.load_catalog()
         self.assertEqual(
             {item.name for item in catalog.lecture_presentations},
-            {"reconstruction-attacks", "hypothesis-testing", "privacy-auditing"},
+            {
+                "reconstruction-attacks",
+                "hypothesis-testing",
+                "privacy-auditing",
+                "private-estimation",
+                "private-search",
+            },
         )
         self.assertEqual(
             {item.name for item in catalog.blog_posts},
@@ -25,9 +31,10 @@ class ContentModelTest(unittest.TestCase):
 
     def test_offering_references_content_by_name(self) -> None:
         schedule = content_model.current_offering_schedule(content_model.load_catalog())
-        self.assertEqual(schedule.rows[0].blog_post, "reconstruction-attacks")
-        self.assertEqual(schedule.rows[0].lecture_presentation, "reconstruction-attacks")
-        self.assertEqual(schedule.rows[1].class_assignment, "hypothesis-testing")
+        self.assertIsNone(schedule.rows[0].blog_post)
+        self.assertEqual(schedule.rows[1].blog_post, "reconstruction-attacks")
+        self.assertEqual(schedule.rows[1].lecture_presentation, "reconstruction-attacks")
+        self.assertEqual(schedule.rows[2].class_assignment, "hypothesis-testing")
         self.assertEqual(schedule.rows[3].blog_post, "privacy-auditing")
         self.assertEqual(schedule.rows[3].lecture_presentation, "privacy-auditing")
 

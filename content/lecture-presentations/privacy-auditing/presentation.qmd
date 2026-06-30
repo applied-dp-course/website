@@ -46,34 +46,51 @@ import matplotlib.pyplot as plt
 from scipy import stats
 
 from libdpy.assignment_specific.privacy_auditing.lecture_figures import (
-    make_two_logistic_samplers,
-    make_audit_confusion_matrix_figure,
     make_confidence_rectangle_figure,
-    make_epsilon_histogram_naive_safe_figure,
-    make_repeated_audit_points_figure,
-    make_sampled_densities_figure,
-    make_threshold_event_figure,
 )
 from libdpy.assignment_specific.privacy_auditing.utils import (
     audit_point,
-    reference_point_two_logistic,
     selected_threshold_from_empirical_roc,
 )
+from libdpy.assignment_specific.privacy_auditing.visualizations import (
+    NaiveSafeEpsilonHistogram,
+)
+from libdpy.privacy_mechanisms.noise import sample_outputs, two_logistic_noise
 from libdpy.visualization.privacy_plots import PrivacyPlot
-from libdpy.visualization.roc_plots import TheoryROCVisualizer
+from libdpy.visualization.roc_plots import (
+    EmpiricalEpsilonFromDeltaVisualizer,
+    TheoryROCVisualizer,
+)
 
 # Lecture contract — same seeds as post.ipynb
 delta_default = 1e-2
 seed_empirical_roc = 4
 n_empirical_roc = 500
+n_audit = 1000
 alpha_total_default = 0.05
 scale = 1.0
+two_logistic_scale1 = 1.0
+two_logistic_scale2 = 0.4
 
-sampler_neg, sampler_pos = make_two_logistic_samplers(scale1=1.0)
+
+def two_logistic_sampler(mu, n, rng):
+    return sample_outputs(
+        lambda size, rng=rng: two_logistic_noise(
+            size=size,
+            scale1=two_logistic_scale1,
+            scale2=two_logistic_scale2,
+            rng=rng,
+        ),
+        mu,
+        n,
+        rng,
+    )
+
+
 rng_roc = np.random.default_rng(seed_empirical_roc)
-samples_neg_roc = sampler_neg(n=n_empirical_roc, rng=rng_roc)
-samples_pos_roc = sampler_pos(n=n_empirical_roc, rng=rng_roc)
-tau_star, governing_point, _ = selected_threshold_from_empirical_roc(
+samples_neg_roc = two_logistic_sampler(0.0, n_empirical_roc, rng_roc)
+samples_pos_roc = two_logistic_sampler(1.0, n_empirical_roc, rng_roc)
+tau_star, governing_point, eps_plug_roc = selected_threshold_from_empirical_roc(
     samples_neg_roc,
     samples_pos_roc,
     delta_default,
@@ -167,7 +184,7 @@ In the Laplace case, the tight line corresponds to familiar pure-DP behavior whe
 TheoryROCVisualizer(
     distribution="Gaussian",
     scale=1.0,
-    delta=1e-2,
+    delta=0.01,
     selectable_distribution=False,
 ).embed(mode="deck")
 ```
@@ -201,22 +218,18 @@ $$
 
 Sampling is easy. Exact ROC calculation is no longer part of the lecture. From here on, we behave like auditors.
 
-## Two-logistic samples
-
-```{python}
-fig = make_sampled_densities_figure(samples_neg_roc, samples_pos_roc)
-plt.show()
-```
-
-::: {.notes}
-The two distributions are still just neighboring outputs. The difference is what information the analyst has: samples, not formulas.
-:::
-
 ## Empirical ROC
 
-The empirical ROC is an estimate built from finite samples.
-
-Check **Compute ε** in the self-study notebook to highlight the governing point and threshold $\tau_\star$.
+```{python}
+EmpiricalEpsilonFromDeltaVisualizer(
+    n_samples=500,
+    distribution="Sum of logistic distributions",
+    scale=1.0,
+    delta=0.01,
+    random_seed=4,
+    selectable_distribution=False,
+).embed(mode="deck")
+```
 
 ## Compute ε selects a threshold
 
@@ -225,15 +238,10 @@ With seed `4` and $n=500$ per class, the lecture selects a fixed threshold and g
 ```{python}
 print(
     f"tau_star = {tau_star:.6f}\\n"
-    f"governing point (FPR, TPR) = ({governing_point[0]:.3f}, {governing_point[1]:.3f})"
+    f"governing point (FPR, TPR) = ({governing_point[0]:.3f}, {governing_point[1]:.3f})\\n"
+    f"plug-in epsilon from empirical ROC = {eps_plug_roc:.4f}"
 )
 ```
-
-## Same mechanism, different ROC estimate
-
-Resampling changes the empirical ROC even when the mechanism does not.
-
-See the self-study notebook for the interactive empirical ROC explorer.
 
 ## Auditing one event
 
@@ -250,13 +258,6 @@ $$
 ::: {.notes}
 We are not estimating the entire privacy profile yet. We freeze the threshold selected from the seeded empirical ROC and validate one distinguishing event.
 :::
-
-## Threshold and ROC point
-
-```{python}
-fig = make_threshold_event_figure(samples_neg_roc, samples_pos_roc, tau_star)
-plt.show()
-```
 
 ## Fixed-threshold audit unfolding
 
@@ -277,11 +278,14 @@ print(
 )
 ```
 
-## Confusion matrix
+## Confusion matrix audit
 
 ```{python}
-fig = make_audit_confusion_matrix_figure(audit_main)
-plt.show()
+print(
+    f"FP={audit_main.fp}, TN={audit_main.tn}, TP={audit_main.tp}, FN={audit_main.fn}\\n"
+    f"plug-in FPR={audit_main.fpr_hat:.4f}, TPR={audit_main.tpr_hat:.4f}, "
+    f"eps_plug={audit_main.eps_plug:.4f}"
+)
 ```
 
 ## Fresh audit sample
@@ -314,40 +318,17 @@ $$
 $$
 :::
 
-## The empirical ROC is an estimate
-
-Frame by frame, the empirical ROC fills in as paired samples accumulate — jagged early, settling toward the true curve. A different sample would trace a different curve.
-
-```{python}
-#| echo: false
-#| output: asis
-from libdpy.visualization.animation_embed import animation_artifact_path
-
-path = animation_artifact_path(
-    "lecture-presentations",
-    "privacy-auditing",
-    "empirical-roc",
-)
-print(
-    f'<p style="text-align:center"><img src="{path}" '
-    'alt="Empirical ROC accumulating over 200 samples." style="width:70%"></p>'
-)
-```
-
 ## One run is not a certificate
 
-Same mechanism, same threshold, same fixed-event reference value; different finite samples.
+Same mechanism, same threshold; different finite samples give different plug-in $\varepsilon$ values.
 
 ```{python}
 rng = np.random.default_rng(456)
-runs = []
-for _ in range(40):
-    neg = sampler_neg(n=500, rng=rng)
-    pos = sampler_pos(n=500, rng=rng)
-    runs.append(audit_point(neg, pos, tau_star, delta_default))
-reference_point = reference_point_two_logistic(tau_star, delta_default, seed=999)
-fig = make_repeated_audit_points_figure(runs, reference=reference_point)
-plt.show()
+for i in range(5):
+    neg = two_logistic_sampler(0.0, n_audit, rng)
+    pos = two_logistic_sampler(1.0, n_audit, rng)
+    run = audit_point(neg, pos, tau_star, delta_default)
+    print(f"run {i + 1}: eps_plug = {run.eps_plug:.4f}")
 ```
 
 ## Why tail bounds appear
@@ -393,24 +374,13 @@ plt.show()
 ## Naive versus safe
 
 ```{python}
-rng = np.random.default_rng(457)
-plug_vals = []
-safe_vals = []
-for _ in range(200):
-    neg = sampler_neg(n=500, rng=rng)
-    pos = sampler_pos(n=500, rng=rng)
-    result = audit_point(
-        neg,
-        pos,
-        tau_star,
-        delta_default,
-        alpha_total=alpha_total_default,
-    )
-    plug_vals.append(result.eps_plug)
-    safe_vals.append(result.eps_audit)
-reference_eps = reference_point_two_logistic(tau_star, delta_default, seed=999)[2]
-fig = make_epsilon_histogram_naive_safe_figure(plug_vals, safe_vals, reference_eps)
-plt.show()
+NaiveSafeEpsilonHistogram(
+    alpha_total=0.05,
+    delta=0.01,
+    n_audit=500,
+    n_repeats=500,
+    seed=457,
+).embed(mode="deck")
 ```
 
 ::: {.notes}
@@ -437,7 +407,6 @@ Keep these as caveats only.
 - DP bounds the ROC curve.
 - Known ROC + fixed $\delta$ gives exact $\varepsilon$.
 - A sampler gives an empirical ROC.
-- The seeded empirical ROC selects a threshold $\tau_\star$, which is then frozen.
-- A fixed event gives $(\widehat{\mathrm{FPR}}, \widehat{\mathrm{TPR}})$.
-- Raw plug-in $\widehat{\varepsilon}$ is random and can overshoot.
+- The seeded empirical ROC selects a threshold; replaying that same sample at the fixed test/event reproduces the governing point.
+- A fresh audit sample at the same threshold gives a plug-in lower bound on $\varepsilon$, but the plug-in value is random.
 - Confidence bounds turn the estimate into a valid audited lower bound.

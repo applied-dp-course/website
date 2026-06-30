@@ -1,0 +1,19 @@
+---
+title: "Class assignments"
+---
+
+In-class problem sets with interactive notebooks. Due dates come from the current term
+[syllabus](syllabus.qmd).
+
+<!-- BEGIN AUTO-GENERATED CLASS ASSIGNMENTS -->
+## Class assignments
+
+### Hypothesis Testing Assignment
+
+_Assignment explanation coming soon._
+
+- **Related lecture:** [DP as Hypothesis Testing](../content/lecture-presentations/hypothesis-testing/presentation.html)
+- **Notebook** — [notebook](../content/class-assignments/hypothesis-testing/assignment.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/class-assignments/hypothesis-testing/assignment.ipynb)
+- **Due:** Week 3
+- **Estimated time:** 120 minutes
+<!-- END AUTO-GENERATED CLASS ASSIGNMENTS -->

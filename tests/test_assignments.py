@@ -9,7 +9,9 @@ class AssignmentsPageTest(unittest.TestCase):
         rendered = sync_content.render_assignments_page(catalog)
         self.assertIn("## Class assignments", rendered)
         self.assertIn("Hypothesis Testing Assignment", rendered)
-        self.assertIn("Week 2 (2026-10-27)", rendered)
+        self.assertIn("Week 3", rendered)
+        self.assertNotIn("2026-11-03", rendered)
+        self.assertIn("Assignment explanation coming soon", rendered)
         self.assertIn("## Home assignments", rendered)
         self.assertIn("No home assignments are published", rendered)
 

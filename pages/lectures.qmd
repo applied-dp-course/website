@@ -1,55 +1,55 @@
 ---
-title: "Course content"
+title: "Lectures"
 ---
 
-Course content is authored in independent collections, all built from the course library
-[`libdpy`](https://github.com/applied-dp-course/pub_lib):
-
-- **lecture presentations** are QMD RevealJS decks; and
-- **blog posts** are self-learning notebooks that can be read locally or opened in Colab.
-
-Offerings reference each item independently by its unnumbered name.
+Each lecture pairs a self-study notebook with a slide deck. All computation is imported from the
+course library [`libdpy`](https://github.com/applied-dp-course/pub_lib). Order follows the current
+offering [syllabus](syllabus.qmd).
 
 <!-- BEGIN AUTO-GENERATED LECTURES -->
-## Lecture presentations
+## K-anonymity
 
-### differential privacy
+_Week 1_
 
-- **DP as Hypothesis Testing** — [DP as Hypothesis Testing](../content/lecture-presentations/hypothesis-testing/presentation.html) · apps: [Gaussian privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-6197737a49/), [Multi-distribution privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-laplace-uniform-06b3767cd2/)
-- **Privacy Auditing** — [Privacy Auditing](../content/lecture-presentations/privacy-auditing/presentation.html)
-- **Reconstruction Attacks** — [Reconstruction Attacks](../content/lecture-presentations/reconstruction-attacks/presentation.html) · apps: [Reconstruction 2-D slab](../apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab/), [Reconstruction 3-D slabs](../apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs/)
+_Short introduction coming soon._
 
-### hypothesis testing
 
-- **DP as Hypothesis Testing** — [DP as Hypothesis Testing](../content/lecture-presentations/hypothesis-testing/presentation.html) · apps: [Gaussian privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-6197737a49/), [Multi-distribution privacy tradeoff](../_generated/apps/lecture-presentations/hypothesis-testing/privacy-plot-norm-laplace-uniform-06b3767cd2/)
+## Reconstruction Attacks
 
-### privacy auditing
+_Week 2_
 
-- **Privacy Auditing** — [Privacy Auditing](../content/lecture-presentations/privacy-auditing/presentation.html)
+_Short introduction coming soon._
 
-### reconstruction attacks
+- **Blog post** — [Blog post](../content/blog-posts/reconstruction-attacks/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb)
+- **Presentation** — [Presentation](../content/lecture-presentations/reconstruction-attacks/presentation.html)
 
-- **Reconstruction Attacks** — [Reconstruction Attacks](../content/lecture-presentations/reconstruction-attacks/presentation.html) · apps: [Reconstruction 2-D slab](../apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab/), [Reconstruction 3-D slabs](../apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs/)
+## DP as Hypothesis Testing
 
-## Blog posts
+_Week 3_
 
-### differential privacy
+_Short introduction coming soon._
 
-- **DP as Hypothesis Testing** — [DP as Hypothesis Testing](../content/blog-posts/hypothesis-testing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb)
-- **Privacy Auditing** — [Privacy Auditing](../content/blog-posts/privacy-auditing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb)
-- **Reconstruction Attacks** — [Reconstruction Attacks](../content/blog-posts/reconstruction-attacks/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb)
+- **Blog post** — [Blog post](../content/blog-posts/hypothesis-testing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb)
+- **Presentation** — [Presentation](../content/lecture-presentations/hypothesis-testing/presentation.html)
 
-### hypothesis testing
+## Privacy Auditing
 
-- **DP as Hypothesis Testing** — [DP as Hypothesis Testing](../content/blog-posts/hypothesis-testing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb)
+_Week 4_
 
-### privacy auditing
+_Short introduction coming soon._
 
-- **Privacy Auditing** — [Privacy Auditing](../content/blog-posts/privacy-auditing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb)
+- **Blog post** — [Blog post](../content/blog-posts/privacy-auditing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb)
+- **Presentation** — [Presentation](../content/lecture-presentations/privacy-auditing/presentation.html)
 
-### reconstruction attacks
+## Private Estimation
 
-- **Reconstruction Attacks** — [Reconstruction Attacks](../content/blog-posts/reconstruction-attacks/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb)
+_Short introduction coming soon._
+
+- **Presentation** — [Presentation](../content/lecture-presentations/private-estimation/presentation.html)
+
+## Private Search
+
+_Short introduction coming soon._
+
+- **Presentation** — [Presentation](../content/lecture-presentations/private-search/presentation.html)
 <!-- END AUTO-GENERATED LECTURES -->
-
-See the [schedule](schedule.qmd) for the current term's selected content.

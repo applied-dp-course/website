@@ -23,16 +23,25 @@ class SyncContentSiteTest(unittest.TestCase):
         sync_content.run_phase("catalog")
         after = _content_digest()
         self.assertEqual(before, after)
-        schedule = (SITE_ROOT / "pages" / "schedule.qmd").read_text(encoding="utf-8")
-        self.assertIn("Blog post", schedule)
-        self.assertIn("reconstruction-attacks/post.html", schedule)
-        self.assertIn("content/blog-posts/reconstruction-attacks/post.ipynb", schedule)
+        syllabus = (SITE_ROOT / "pages" / "syllabus.qmd").read_text(encoding="utf-8")
+        self.assertIn("K-anonymity", syllabus)
+        self.assertIn("reconstruction-attacks/post.html", syllabus)
+        self.assertIn("content/blog-posts/reconstruction-attacks/post.ipynb", syllabus)
+        self.assertNotIn("| Date |", syllabus)
 
     def test_sync_is_idempotent(self) -> None:
         sync_content.run_phase("catalog")
         paths = [
             SITE_ROOT / "pages" / name
-            for name in ("index.qmd", "schedule.qmd", "lectures.qmd", "assignments.qmd", "archive.qmd")
+            for name in (
+                "index.qmd",
+                "course.qmd",
+                "syllabus.qmd",
+                "lectures.qmd",
+                "class-assignments.qmd",
+                "home-assignments.qmd",
+                "archive.qmd",
+            )
         ]
         first = {path: path.read_text(encoding="utf-8") for path in paths}
         sync_content.run_phase("catalog")
@@ -50,11 +59,19 @@ class SyncContentSiteTest(unittest.TestCase):
     def test_source_normalization_is_disabled(self) -> None:
         self.assertEqual(sync_content.normalize_lecture_sources(), 0)
 
-    def test_lectures_page_lists_independent_collections(self) -> None:
+    def test_lectures_page_follows_offering_order(self) -> None:
         rendered = sync_content.render_lectures_page(content_model.load_catalog())
-        self.assertIn("## Lecture presentations", rendered)
-        self.assertIn("## Blog posts", rendered)
-        self.assertIn("Privacy Auditing", rendered)
+        self.assertIn("Short introduction coming soon", rendered)
+        self.assertIn("**Blog post**", rendered)
+        self.assertIn("**Presentation**", rendered)
+        self.assertIn("K-anonymity", rendered)
+        self.assertLess(rendered.index("K-anonymity"), rendered.index("Reconstruction Attacks"))
+        self.assertLess(rendered.index("Reconstruction Attacks"), rendered.index("Privacy Auditing"))
+
+    def test_syllabus_table_omits_dates(self) -> None:
+        rendered = sync_content.render_syllabus_page(content_model.load_catalog())
+        self.assertIn("| Week | Topic |", rendered)
+        self.assertNotIn("| Date |", rendered)
 
 
 if __name__ == "__main__":

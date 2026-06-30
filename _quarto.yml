@@ -10,6 +10,7 @@ project:
   post-render:
     - python scripts/run_site_python.py scripts/clear_content_outputs.py
     - python scripts/run_site_python.py scripts/defer_wasm_embeds.py
+    - python scripts/run_site_python.py scripts/inject_course_nav.py
     - python scripts/run_site_python.py scripts/assert_private_content.py
   resources:
     - "apps/**"
@@ -40,27 +41,25 @@ website:
   description: "Course site — slides, interactive lectures, and notebooks."
   navbar:
     left:
-      - href: pages/index.qmd
-        text: Home
-      - href: pages/schedule.qmd
-        text: Schedule
-      - href: pages/lectures.qmd
-        text: Lectures
-      - href: pages/assignments.qmd
-        text: Assignments
-      - href: pages/tools.qmd
-        text: Tools
-      - href: pages/blog.qmd
-        text: Blog
-    right:
       - text: Course
         menu:
           - href: pages/syllabus.qmd
             text: Syllabus
+          - href: pages/lectures.qmd
+            text: Lectures
+          - href: pages/class-assignments.qmd
+            text: Class assignments
+          - href: pages/home-assignments.qmd
+            text: Home assignments
           - href: pages/archive.qmd
-            text: Archive
-          - href: pages/about.qmd
-            text: About
+            text: Past years
+      - href: pages/tools.qmd
+        text: Interactive tools
+      - href: pages/assignments.qmd
+        text: Interactive assignments
+      - href: pages/blog.qmd
+        text: Blog
+    right: []
   repo-url: https://github.com/applied-dp-course/website
   page-footer: "Built with Quarto. All computation imported from libdpy (pub_lib)."
 

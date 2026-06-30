@@ -1,9 +1,9 @@
 ---
-title: "Archive"
+title: "Past years"
 ---
 
-Browse schedules from every course offering. The current term's live schedule is on the
-[Schedule](schedule.qmd) page.
+Browse schedules from every course offering. The current term's live plan is on the
+[Syllabus](syllabus.qmd) page.
 
 <!-- BEGIN AUTO-GENERATED ARCHIVE -->
 <details>
@@ -22,9 +22,9 @@ Browse schedules from every course offering. The current term's live schedule is
 
 | Week | Date | Topic | Blog post | Slides | Class assignment | Home assignment | Notes |
 |---|---|---|---|---|---|---|---|
-| 1 | 2026-10-20 | Reconstruction attacks | [Reconstruction Attacks](../content/blog-posts/reconstruction-attacks/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb) | [Reconstruction Attacks](../content/lecture-presentations/reconstruction-attacks/presentation.html) | — | — | — |
-| 2 | 2026-10-27 | DP as hypothesis testing | [DP as Hypothesis Testing](../content/blog-posts/hypothesis-testing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb) | [DP as Hypothesis Testing](../content/lecture-presentations/hypothesis-testing/presentation.html) | [Hypothesis Testing Assignment](../content/class-assignments/hypothesis-testing/assignment.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/class-assignments/hypothesis-testing/assignment.ipynb) | — | — |
-| 3 | 2026-11-03 | Reading week | — | — | — | — | No class |
+| 1 | 2026-10-20 | K-anonymity | — | — | — | — | — |
+| 2 | 2026-10-27 | Reconstruction attacks | [Reconstruction Attacks](../content/blog-posts/reconstruction-attacks/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb) | [Reconstruction Attacks](../content/lecture-presentations/reconstruction-attacks/presentation.html) | — | — | — |
+| 3 | 2026-11-03 | DP as hypothesis testing | [DP as Hypothesis Testing](../content/blog-posts/hypothesis-testing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb) | [DP as Hypothesis Testing](../content/lecture-presentations/hypothesis-testing/presentation.html) | [Hypothesis Testing Assignment](../content/class-assignments/hypothesis-testing/assignment.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/class-assignments/hypothesis-testing/assignment.ipynb) | — | — |
 | 4 | 2026-11-10 | Privacy auditing | [Privacy Auditing](../content/blog-posts/privacy-auditing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb) | [Privacy Auditing](../content/lecture-presentations/privacy-auditing/presentation.html) | — | — | — |
 
 </details>

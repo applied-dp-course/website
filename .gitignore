@@ -13,6 +13,9 @@ TODO.md
 __pycache__/
 *.pyc
 
+# Node dependencies
+/node_modules/
+
 # Quarto build artifacts
 /_site/
 /.quarto/
@@ -36,6 +39,10 @@ __pycache__/
 /authoring/tutorials/**/*_files/
 /authoring/examples/**/*.html
 /authoring/examples/**/*_files/
+
+# Local visual verification artifacts
+/dev/tools/*.png
+/dev/tools/verify-front-page/
 
 # OS
 .DS_Store

@@ -17,8 +17,11 @@ class AuthoringKitTest(unittest.TestCase):
         for name in (
             "index.qmd",
             "schedule.qmd",
+            "course.qmd",
             "lectures.qmd",
             "assignments.qmd",
+            "class-assignments.qmd",
+            "home-assignments.qmd",
             "tools.qmd",
             "blog.qmd",
             "syllabus.qmd",
@@ -32,6 +35,7 @@ class AuthoringKitTest(unittest.TestCase):
         config = yaml.safe_load((SITE_ROOT / "_quarto.yml").read_text(encoding="utf-8"))
         render = config["project"]["render"]
         self.assertIn("/pages/*.qmd", render)
+        self.assertNotIn("/pages/offerings/*.qmd", render)
         self.assertIn("content/lecture-presentations/**/*.qmd", render)
         self.assertIn("content/blog-posts/**/*.ipynb", render)
         self.assertIn("content/class-assignments/**/*.ipynb", render)

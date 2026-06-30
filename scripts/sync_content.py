@@ -44,6 +44,8 @@ LECTURES_SECTION = GeneratedSection("LECTURES")
 SCHEDULE_SECTION = GeneratedSection("SCHEDULE")
 ARCHIVE_SECTION = GeneratedSection("ARCHIVE")
 ASSIGNMENTS_SECTION = GeneratedSection("ASSIGNMENTS")
+CLASS_ASSIGNMENTS_SECTION = GeneratedSection("CLASS ASSIGNMENTS")
+HOME_ASSIGNMENTS_SECTION = GeneratedSection("HOME ASSIGNMENTS")
 TOOLS_SECTION = GeneratedSection("TOOLS")
 OFFERING_BANNER_SECTION = GeneratedSection("OFFERING BANNER")
 SYLLABUS_LOGISTICS_SECTION = GeneratedSection("SYLLABUS LOGISTICS")
@@ -87,18 +89,26 @@ def _rendered_public_path(item: content_model.ContentItem) -> str:
     return path.as_posix()
 
 
+def _content_link_prefix(page_name: str) -> str:
+    """Return a relative prefix from a page under ``pages/`` to site-root content paths."""
+
+    depth = len(Path(page_name).parts)
+    return "../" * depth
+
+
 def _item_link(
     item: content_model.ContentItem,
     label: str | None = None,
     *,
     rendered: bool = True,
+    prefix: str = "../",
 ) -> str:
     path = _rendered_public_path(item) if rendered else item.public_path
-    return f"[{escape_markdown_table_cell(label or item.title)}](../{path})"
+    return f"[{escape_markdown_table_cell(label or item.title)}]({prefix}{path})"
 
 
-def _app_link(app: content_model.ContentApp) -> str:
-    return f"[{escape_markdown_table_cell(app.title)}](../{app.path.strip('/')}/)"
+def _app_link(app: content_model.ContentApp, *, prefix: str = "../") -> str:
+    return f"[{escape_markdown_table_cell(app.title)}]({prefix}{app.path.strip('/')}/)"
 
 
 def _colab_badge(catalog: content_model.ContentCatalog, item: content_model.ContentItem) -> str:
@@ -121,11 +131,22 @@ def _format_date(row: content_model.ScheduleRow) -> str:
     return row.date.isoformat() if row.date else EM_DASH
 
 
+def _format_due(values: list[tuple[str, date | None]], *, include_dates: bool = False) -> str:
+    if not values:
+        return EM_DASH
+    return "; ".join(
+        f"Week {week}" + (f" ({due_date.isoformat()})" if include_dates and due_date else "")
+        for week, due_date in values
+    )
+
+
 def _schedule_table_rows(
     schedule: content_model.OfferingSchedule,
     catalog: content_model.ContentCatalog,
     *,
     include_colab: bool,
+    include_dates: bool = True,
+    link_prefix: str = "../",
 ) -> list[str]:
     collections = {
         "blog_post": {item.name: item for item in catalog.blog_posts},
@@ -135,10 +156,14 @@ def _schedule_table_rows(
         "class_assignment": {item.name: item for item in catalog.class_assignments},
         "home_assignment": {item.name: item for item in catalog.home_assignments},
     }
-    rows = [
-        "| Week | Date | Topic | Blog post | Slides | Class assignment | Home assignment | Notes |",
-        "|---|---|---|---|---|---|---|---|",
-    ]
+    header = (
+        "| Week | Date | Topic | Blog post | Slides | Class assignment | Home assignment | Notes |"
+        if include_dates
+        else "| Week | Topic | Blog post | Slides | Class assignment | Home assignment | Notes |"
+    )
+    column_count = header.count("|") - 1
+    separator = "|" + "|".join(["---"] * column_count) + "|"
+    rows = [header, separator]
     for row in schedule.rows:
         cells: list[str] = []
         for field in (
@@ -152,17 +177,20 @@ def _schedule_table_rows(
             if item is None:
                 cells.append(EM_DASH)
                 continue
-            link = _item_link(item)
+            link = _item_link(item, prefix=link_prefix)
             if include_colab and item.entrypoint.endswith(".ipynb"):
                 link = _append_colab(link, catalog, item)
             cells.append(link)
+        leading = [
+            escape_markdown_table_cell(row.week),
+            *([_format_date(row)] if include_dates else []),
+            escape_markdown_table_cell(row.topic) if row.topic else EM_DASH,
+        ]
         rows.append(
             "| "
             + " | ".join(
                 [
-                    escape_markdown_table_cell(row.week),
-                    _format_date(row),
-                    escape_markdown_table_cell(row.topic) if row.topic else EM_DASH,
+                    *leading,
                     *cells,
                     escape_markdown_table_cell(row.notes) if row.notes else EM_DASH,
                 ]
@@ -172,58 +200,141 @@ def _schedule_table_rows(
     return rows
 
 
+def render_syllabus_page(catalog: content_model.ContentCatalog) -> str:
+    schedule = content_model.current_offering_schedule(catalog)
+    if not schedule.rows:
+        return f"_The {schedule.offering.label} syllabus has no weeks yet._"
+    return "\n".join(
+        _schedule_table_rows(
+            schedule,
+            catalog,
+            include_colab=True,
+            include_dates=False,
+            link_prefix=_content_link_prefix("syllabus.qmd"),
+        )
+    )
+
+
 def render_schedule_page(catalog: content_model.ContentCatalog) -> str:
+    """Legacy alias kept for tests that expect the full dated schedule table."""
+
     schedule = content_model.current_offering_schedule(catalog)
     if not schedule.rows:
         return f"_The {schedule.offering.label} schedule has no weeks yet._"
-    return "\n".join(_schedule_table_rows(schedule, catalog, include_colab=True))
+    return "\n".join(
+        _schedule_table_rows(
+            schedule,
+            catalog,
+            include_colab=True,
+            include_dates=True,
+            link_prefix="../",
+        )
+    )
 
 
-def _group_by_subject(
-    items: tuple[content_model.ContentItem, ...],
-) -> dict[str, list[content_model.ContentItem]]:
-    grouped: dict[str, list[content_model.ContentItem]] = defaultdict(list)
-    for item in items:
-        for subject in item.subjects or ("Other topics",):
-            grouped[subject].append(item)
-    for entries in grouped.values():
-        entries.sort(key=lambda item: (item.title.casefold(), item.name))
-    return dict(sorted(grouped.items(), key=lambda pair: pair[0].casefold()))
-
-
-def _render_content_collection(
-    heading: str,
-    items: tuple[content_model.ContentItem, ...],
+def _lecture_bundles(
     catalog: content_model.ContentCatalog,
-) -> str:
-    if not items:
-        return f"## {heading}\n\n_No {heading.casefold()} are published yet._"
-    sections = [f"## {heading}"]
-    for subject, subject_items in _group_by_subject(items).items():
-        entries: list[str] = []
-        for item in subject_items:
-            link = _item_link(item)
-            if item.entrypoint.endswith(".ipynb"):
-                link = _append_colab(link, catalog, item)
-            apps = ""
-            if item.apps:
-                apps = " · apps: " + ", ".join(_app_link(app) for app in item.apps)
-            entries.append(f"- **{escape_markdown_table_cell(item.title)}** — {link}{apps}")
-        sections.append(f"### {escape_markdown_table_cell(subject)}\n\n" + "\n".join(entries))
-    return "\n\n".join(sections)
+) -> dict[str, dict[str, content_model.ContentItem]]:
+    bundles: dict[str, dict[str, content_model.ContentItem]] = defaultdict(dict)
+    for item in catalog.blog_posts:
+        bundles[item.name]["blog_post"] = item
+    for item in catalog.lecture_presentations:
+        bundles[item.name]["lecture_presentation"] = item
+    return bundles
+
+
+def _lecture_title(bundle: dict[str, content_model.ContentItem]) -> str:
+    for key in ("blog_post", "lecture_presentation"):
+        if key in bundle:
+            return bundle[key].title
+    return "Untitled lecture"
+
+
+def _lecture_slug(row: content_model.ScheduleRow) -> str | None:
+    return row.lecture_presentation or row.blog_post
+
+
+def _items_in_schedule_order(
+    items: tuple[content_model.ContentItem, ...],
+    schedule: content_model.OfferingSchedule,
+    field: str,
+) -> list[content_model.ContentItem]:
+    by_name = {item.name: item for item in items}
+    ordered: list[content_model.ContentItem] = []
+    seen: set[str] = set()
+    for row in schedule.rows:
+        name = getattr(row, field)
+        if not name or name in seen:
+            continue
+        item = by_name.get(name)
+        if item is None:
+            continue
+        ordered.append(item)
+        seen.add(name)
+    for item in items:
+        if item.name not in seen:
+            ordered.append(item)
+    return ordered
 
 
 def render_lectures_page(catalog: content_model.ContentCatalog) -> str:
-    return "\n\n".join(
-        [
-            _render_content_collection(
-                "Lecture presentations",
-                catalog.lecture_presentations,
-                catalog,
-            ),
-            _render_content_collection("Blog posts", catalog.blog_posts, catalog),
+    schedule = content_model.current_offering_schedule(catalog)
+    bundles = _lecture_bundles(catalog)
+    if not schedule.rows and not bundles:
+        return "_No lectures are published yet._"
+    sections: list[str] = []
+    rendered_slugs: set[str] = set()
+    for row in schedule.rows:
+        slug = _lecture_slug(row)
+        if slug:
+            if slug in rendered_slugs:
+                continue
+            rendered_slugs.add(slug)
+            bundle = bundles.get(slug, {})
+            title = _lecture_title(bundle) if bundle else (row.topic or slug)
+        elif not row.topic:
+            continue
+        else:
+            title = row.topic
+            bundle = {}
+        lines = [
+            f"## {escape_markdown_table_cell(title)}",
+            "",
+            f"_Week {escape_markdown_table_cell(row.week)}_",
+            "",
+            "_Short introduction coming soon._",
+            "",
         ]
-    )
+        blog = bundle.get("blog_post")
+        if blog is not None:
+            link = _append_colab(_item_link(blog, "Blog post"), catalog, blog)
+            lines.append(f"- **Blog post** — {link}")
+        presentation = bundle.get("lecture_presentation")
+        if presentation is not None:
+            link = _item_link(presentation, "Presentation")
+            lines.append(f"- **Presentation** — {link}")
+        sections.append("\n".join(lines))
+    for slug in sorted(bundles, key=lambda name: _lecture_title(bundles[name]).casefold()):
+        if slug in rendered_slugs:
+            continue
+        bundle = bundles[slug]
+        title = _lecture_title(bundle)
+        lines = [
+            f"## {escape_markdown_table_cell(title)}",
+            "",
+            "_Short introduction coming soon._",
+            "",
+        ]
+        blog = bundle.get("blog_post")
+        if blog is not None:
+            link = _append_colab(_item_link(blog, "Blog post"), catalog, blog)
+            lines.append(f"- **Blog post** — {link}")
+        presentation = bundle.get("lecture_presentation")
+        if presentation is not None:
+            link = _item_link(presentation, "Presentation")
+            lines.append(f"- **Presentation** — {link}")
+        sections.append("\n".join(lines))
+    return "\n\n".join(sections) if sections else "_No lectures are published yet._"
 
 
 def _assignment_due_map(
@@ -238,13 +349,22 @@ def _assignment_due_map(
     return due
 
 
-def _format_due(values: list[tuple[str, date | None]]) -> str:
-    if not values:
+def _related_lecture_links(
+    catalog: content_model.ContentCatalog,
+    related: tuple[str, ...],
+) -> str:
+    if not related:
         return EM_DASH
-    return "; ".join(
-        f"Week {week}" + (f" ({due_date.isoformat()})" if due_date else "")
-        for week, due_date in values
-    )
+    presentations = {item.name: item for item in catalog.lecture_presentations}
+    blog_posts = {item.name: item for item in catalog.blog_posts}
+    links: list[str] = []
+    for name in related:
+        item = presentations.get(name) or blog_posts.get(name)
+        if item is None:
+            links.append(escape_markdown_table_cell(name))
+            continue
+        links.append(_item_link(item, item.title))
+    return ", ".join(links)
 
 
 def _render_assignments(
@@ -252,38 +372,67 @@ def _render_assignments(
     items: tuple[content_model.ContentItem, ...],
     due_field: str,
     catalog: content_model.ContentCatalog,
+    *,
+    detailed: bool,
 ) -> str:
     if not items:
         return f"## {heading}\n\n_No {heading.casefold()} are published yet._"
+    schedule = content_model.current_offering_schedule(catalog)
     due_map = _assignment_due_map(catalog, due_field)
+    ordered_items = _items_in_schedule_order(items, schedule, due_field)
     lines = [f"## {heading}", ""]
-    for item in items:
+    for item in ordered_items:
         link = _append_colab(_item_link(item, "notebook"), catalog, item)
         estimated = item.estimated_time or EM_DASH
+        if detailed:
+            lines.extend(
+                [
+                    f"### {escape_markdown_table_cell(item.title)}",
+                    "",
+                    "_Assignment explanation coming soon._",
+                    "",
+                    f"- **Related lecture:** {_related_lecture_links(catalog, item.related)}",
+                    f"- **Notebook** — {link}",
+                    f"- **Due:** {_format_due(due_map.get(item.name, []))}",
+                    f"- **Estimated time:** {escape_markdown_table_cell(estimated)}",
+                    "",
+                ]
+            )
+            continue
         related = ", ".join(item.related) if item.related else EM_DASH
         lines.append(
             f"- **{escape_markdown_table_cell(item.title)}** — {link} · "
             f"due {_format_due(due_map.get(item.name, []))} · "
             f"est. {escape_markdown_table_cell(estimated)} · related: {related}"
         )
-    return "\n".join(lines)
+    return "\n".join(lines).rstrip()
+
+
+def render_class_assignments_page(catalog: content_model.ContentCatalog) -> str:
+    return _render_assignments(
+        "Class assignments",
+        catalog.class_assignments,
+        "class_assignment",
+        catalog,
+        detailed=True,
+    )
+
+
+def render_home_assignments_page(catalog: content_model.ContentCatalog) -> str:
+    return _render_assignments(
+        "Home assignments",
+        catalog.home_assignments,
+        "home_assignment",
+        catalog,
+        detailed=True,
+    )
 
 
 def render_assignments_page(catalog: content_model.ContentCatalog) -> str:
     return "\n\n".join(
         [
-            _render_assignments(
-                "Class assignments",
-                catalog.class_assignments,
-                "class_assignment",
-                catalog,
-            ),
-            _render_assignments(
-                "Home assignments",
-                catalog.home_assignments,
-                "home_assignment",
-                catalog,
-            ),
+            render_class_assignments_page(catalog),
+            render_home_assignments_page(catalog),
         ]
     )
 
@@ -457,11 +606,13 @@ def sync_catalog_pages(
     catalog = catalog or content_model.load_catalog()
     for name, body, section in (
         ("lectures.qmd", render_lectures_page(catalog), LECTURES_SECTION),
-        ("schedule.qmd", render_schedule_page(catalog), SCHEDULE_SECTION),
+        ("syllabus.qmd", render_syllabus_page(catalog), SCHEDULE_SECTION),
         ("archive.qmd", render_archive_page(catalog), ARCHIVE_SECTION),
         ("index.qmd", render_offering_banner(catalog), OFFERING_BANNER_SECTION),
-        ("assignments.qmd", render_assignments_page(catalog), ASSIGNMENTS_SECTION),
-        ("syllabus.qmd", render_syllabus_logistics(catalog), SYLLABUS_LOGISTICS_SECTION),
+        ("course.qmd", render_offering_banner(catalog), OFFERING_BANNER_SECTION),
+        ("course.qmd", render_syllabus_logistics(catalog), SYLLABUS_LOGISTICS_SECTION),
+        ("class-assignments.qmd", render_class_assignments_page(catalog), CLASS_ASSIGNMENTS_SECTION),
+        ("home-assignments.qmd", render_home_assignments_page(catalog), HOME_ASSIGNMENTS_SECTION),
     ):
         path = _page_path(name)
         if path.exists():

@@ -2,34 +2,14 @@
 title: "Syllabus"
 ---
 
-## Topics
+Weekly plan for the current course offering. Each row references authored content by its stable,
+unnumbered name. Return to the [course overview](course.qmd) or browse [past years](archive.qmd).
 
-1. Reconstruction attacks and sensitivity
-2. Differential privacy as hypothesis testing
-3. Mechanism design and composition
-4. Privacy-preserving machine learning (overview)
-
-Topics follow the shared [lecture catalog](lectures.qmd) and the current-term [schedule](schedule.qmd).
-
-## Prerequisites
-
-Familiarity with undergraduate probability, basic linear algebra, and Python. Prior exposure to
-machine learning is helpful but not required.
-
-## Grading and policies
-
-Grading breakdown, collaboration rules, and late-work policies are set by the instructor each term
-and announced on the course forum. See the generated logistics below for this offering's dates and
-meeting times.
-
-## Logistics (current offering)
-
-<!-- BEGIN AUTO-GENERATED SYLLABUS LOGISTICS -->
-### Fall 2026
-
-- **Dates:** 2026-10-20 – 2027-01-26
-- **Meeting:** Tuesdays 10:00–12:00
-- **Instructor(s):** [Course staff](https://github.com/applied-dp-course)
-<!-- END AUTO-GENERATED SYLLABUS LOGISTICS -->
-
-For past terms, see the [Archive](archive.qmd).
+<!-- BEGIN AUTO-GENERATED SCHEDULE -->
+| Week | Topic | Blog post | Slides | Class assignment | Home assignment | Notes |
+|---|---|---|---|---|---|---|
+| 1 | K-anonymity | — | — | — | — | — |
+| 2 | Reconstruction attacks | [Reconstruction Attacks](../content/blog-posts/reconstruction-attacks/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb) | [Reconstruction Attacks](../content/lecture-presentations/reconstruction-attacks/presentation.html) | — | — | — |
+| 3 | DP as hypothesis testing | [DP as Hypothesis Testing](../content/blog-posts/hypothesis-testing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb) | [DP as Hypothesis Testing](../content/lecture-presentations/hypothesis-testing/presentation.html) | [Hypothesis Testing Assignment](../content/class-assignments/hypothesis-testing/assignment.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/class-assignments/hypothesis-testing/assignment.ipynb) | — | — |
+| 4 | Privacy auditing | [Privacy Auditing](../content/blog-posts/privacy-auditing/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb) | [Privacy Auditing](../content/lecture-presentations/privacy-auditing/presentation.html) | — | — | — |
+<!-- END AUTO-GENERATED SCHEDULE -->

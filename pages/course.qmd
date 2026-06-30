@@ -1,0 +1,47 @@
+---
+title: "Course"
+toc: false
+---
+
+::: {.offering-banner}
+<!-- BEGIN AUTO-GENERATED OFFERING BANNER -->
+**Fall 2026**
+
+- **Dates:** 2026-10-20 – 2027-01-26
+- **Meeting:** Tuesdays 10:00–12:00
+- **Instructor(s):** [Course staff](https://github.com/applied-dp-course)
+<!-- END AUTO-GENERATED OFFERING BANNER -->
+:::
+
+Applied Differential Privacy is a hands-on course on differential privacy and
+privacy-preserving machine learning. Lectures pair narrative slides with self-study notebooks;
+computation is imported from the course library
+[`libdpy`](https://github.com/applied-dp-course/pub_lib).
+
+## Prerequisites
+
+Familiarity with undergraduate probability, basic linear algebra, and Python. Prior exposure to
+machine learning is helpful but not required.
+
+## Grading and policies
+
+Grading breakdown, collaboration rules, and late-work policies are set by the instructor each term
+and announced on the course forum.
+
+## Logistics (current offering)
+
+<!-- BEGIN AUTO-GENERATED SYLLABUS LOGISTICS -->
+### Fall 2026
+
+- **Dates:** 2026-10-20 – 2027-01-26
+- **Meeting:** Tuesdays 10:00–12:00
+- **Instructor(s):** [Course staff](https://github.com/applied-dp-course)
+<!-- END AUTO-GENERATED SYLLABUS LOGISTICS -->
+
+## Course pages
+
+- **[Syllabus](syllabus.qmd)** — weekly plan with links to lectures, notebooks, and assignments
+- **[Lectures](lectures.qmd)** — self-study notebooks and slide decks for each topic
+- **[Class assignments](class-assignments.qmd)** — in-class interactive problem sets
+- **[Home assignments](home-assignments.qmd)** — take-home problem sets
+- **[Past years](archive.qmd)** — schedules from previous offerings

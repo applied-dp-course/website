@@ -1,0 +1,137 @@
+---
+title: "Private Search"
+subtitle: "Choosing the query privately"
+format:
+  revealjs:
+    theme: white
+    slide-number: true
+    embed-resources: false
+    code-overflow: wrap
+    scrollable: true
+    css: slides.css
+execute:
+  warning: false
+  message: false
+  echo: false
+jupyter: python3
+---
+
+```{python}
+#| echo: false
+#| output: false
+#| include: false
+try:
+    ip = get_ipython()
+    if "autoreload" not in ip.extension_manager.loaded:
+        ip.run_line_magic("load_ext", "autoreload")
+        ip.run_line_magic("autoreload", "2")
+except Exception:
+    pass
+
+try:
+    import libdpy
+except ImportError:
+    %pip install -q "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git"
+    import libdpy
+
+%matplotlib inline
+```
+
+```{python}
+#| echo: false
+#| output: false
+#| include: false
+from libdpy.assignment_specific.private_estimation.lecture_figures import (
+    make_above_threshold_audit_figure,
+    make_baseline_end_to_end_audit_figure,
+    make_report_noisy_max_selection_figure,
+    make_sparse_group_warning_figure,
+    EPS_SELECT,
+)
+
+SEED = 42
+```
+
+## Recap: private estimation
+
+::: {.fragment}
+We can release a private mean via quantiles → clip → noise.
+:::
+
+::: {.fragment}
+The noisy histogram already served as a **search** tool for Gaussian localization.
+:::
+
+## Choosing the query is a release
+
+::: {.fragment}
+Which subgroup? Which transform? Which feature?
+:::
+
+::: {.fragment}
+Each choice made on private data is itself a release.
+:::
+
+## Public priors
+
+::: {.fragment}
+External tables and domain knowledge propose candidates **for free**.
+:::
+
+::: {.fragment}
+Validating a public hypothesis on private data still costs budget.
+:::
+
+## AboveThreshold — ordered hypotheses
+
+```{python}
+fig = make_above_threshold_audit_figure(seed=SEED)
+fig
+```
+
+::: {.fragment}
+Stop at the first good enough — not the best.
+:::
+
+## Report-noisy-max — best candidate
+
+```{python}
+fig = make_report_noisy_max_selection_figure(seed=SEED)
+fig
+```
+
+::: {.fragment}
+Bounded scores; sensitivity `2/n` under replacement — not the score range.
+:::
+
+## Near ties and sparse groups
+
+```{python}
+fig = make_sparse_group_warning_figure(seed=SEED)
+fig
+```
+
+## Minimal baseline predictor
+
+```{python}
+fig = make_baseline_end_to_end_audit_figure(seed=SEED)
+fig
+```
+
+::: {.notes}
+Full pipeline lives in the optional notebook section.
+:::
+
+## Bridge to logistic regression
+
+::: {.fragment}
+Finite menu → continuous weights.
+:::
+
+::: {.fragment}
+Bounded selection scores → clipped/bounded loss.
+:::
+
+::: {.fragment}
+Composition and auditing carry over.
+:::

@@ -1,5 +1,5 @@
 ---
-title: "Tools"
+title: "Interactive tools"
 ---
 
 Interactive widgets from the course catalog and standalone explorations.
