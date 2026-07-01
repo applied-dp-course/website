@@ -191,6 +191,12 @@ references that do not match an authored content name, and **notebooks whose `ke
 `run_smoke_tests.py` is the **required final gate for any content with interactives** — it opens the
 rendered WASM apps in a headless browser and must pass before the content is considered done.
 
+**Baseline routes.** CI runs `tests/test_baseline_routes.py` before render. Whenever you add a new
+content item under `content/lecture-presentations/`, `content/blog-posts/`, `content/class-assignments/`,
+or `content/home-assignments/`, append its rendered HTML path to
+[`dev/plan/baseline-routes.json`](../dev/plan/baseline-routes.json) in the **same commit** — including
+`status: draft` decks, which still build and appear in `required_routes()`.
+
 **Incremental (single-lecture) loop.** The four commands above are the full "done" gate; while
 iterating on one lecture, a faster loop avoids the site-wide render + smoke:
 
