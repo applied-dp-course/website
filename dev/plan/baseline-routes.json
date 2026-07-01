@@ -16,6 +16,7 @@
   ],
   "required_routes": [
     "content/blog-posts/hypothesis-testing/post.html",
+    "content/blog-posts/private-estimation/post.html",
     "content/blog-posts/privacy-auditing/post.html",
     "content/blog-posts/reconstruction-attacks/post.html",
     "content/class-assignments/hypothesis-testing/assignment.html",

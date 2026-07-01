@@ -46,4 +46,22 @@ The four content columns reference directory names, not sequence numbers or path
 Quarto runs catalog validation and page synchronization before rendering. Generated catalog and
 interactive artifacts are written under `_generated/`; rendered pages are written under `_site/`.
 
+### Fast iteration
+
+The four commands above are the full gate. For single-lecture work, skip the site-wide render +
+smoke and rebuild only what changed (full loop, and when a complete `render.sh` is still required:
+[authoring/AUTHORING.md](authoring/AUTHORING.md) → *Validation*):
+
+```bash
+./.venv/bin/python scripts/build_interactives.py      # rebuild WASM apps only
+quarto render content/blog-posts/<slug>/post.ipynb    # render one notebook
+./.venv/bin/python tests/run_smoke_tests.py --slug <slug>
+```
+
+- **Pre-release libdpy checks:** `LIBDPY_SYNC=0 ./dev/tools/render.sh` renders against the currently
+  installed env instead of re-syncing from `pub_lib` (also noted in AUTHORING).
+- **Smoke cost:** the default `run_smoke_tests.py` exercises *every* WASM app with a 5-minute
+  timeout each locally (10 minutes on CI). For one lecture, use `--slug <slug>` or
+  `tests/smoke_full_page_wasm.py` until the final gate.
+
 See [authoring/AUTHORING.md](authoring/AUTHORING.md) for detailed workflows.

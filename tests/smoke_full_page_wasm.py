@@ -88,8 +88,9 @@ def smoke_test_page(
             "running per-app checks..."
         )
 
-        remaining = max(60.0, timeout * 0.6)
-        per_app = remaining / max(len(discovered), 1)
+        # Each deferred iframe is smoke-tested as a standalone WASM cold boot, so every
+        # app needs the same budget as a single-app run — not a fraction of the total.
+        per_app = timeout
         for iframe_src in discovered:
             resolved = _resolve_iframe_url(url, iframe_src)
             _run_wasm_test(chrome_port, resolved, per_app)

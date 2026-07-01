@@ -17,11 +17,17 @@ class ContentModelTest(unittest.TestCase):
                 "privacy-auditing",
                 "private-estimation",
                 "private-search",
+                "private-subgroup-comparisons",
             },
         )
         self.assertEqual(
             {item.name for item in catalog.blog_posts},
-            {"reconstruction-attacks", "hypothesis-testing", "privacy-auditing"},
+            {
+                "reconstruction-attacks",
+                "hypothesis-testing",
+                "privacy-auditing",
+                "private-estimation",
+            },
         )
         self.assertEqual(
             {item.name for item in catalog.class_assignments},

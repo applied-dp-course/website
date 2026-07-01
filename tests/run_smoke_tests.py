@@ -6,10 +6,14 @@ Discovers:
 - external-app canvas apps declared in lecture manifests.
 
 Exits non-zero if any interactive fails to render or respond to its controls.
+
+For lecture-scoped validation, pass ``--slug <name>`` or ``--route <path>`` to run
+only matching full-page WASM routes (skipping the site-wide per-app loop by default).
 """
 
 from __future__ import annotations
 
+import argparse
 import functools
 import http.server
 import socketserver
@@ -148,17 +152,97 @@ def discover_full_page_wasm_routes() -> list[str]:
     return list(FULL_PAGE_WASM_SMOKE_ROUTES)
 
 
-def main() -> None:
+def filter_full_page_wasm_routes(
+    routes: list[str],
+    *,
+    slug: str | None = None,
+    selected: tuple[str, ...] = (),
+) -> list[str]:
+    """Return the subset of ``routes`` selected by explicit paths or a slug filter."""
+
+    if selected:
+        known = set(routes)
+        unknown = [route for route in selected if route not in known]
+        if unknown:
+            raise SystemExit(
+                "unknown full-page WASM route(s): "
+                + ", ".join(unknown)
+                + ". Known routes: "
+                + ", ".join(routes)
+            )
+        return list(selected)
+    if slug:
+        matched = [route for route in routes if slug in route]
+        if not matched:
+            raise SystemExit(
+                f"no full-page WASM routes match slug {slug!r}. "
+                f"Known routes: {', '.join(routes)}"
+            )
+        return matched
+    return routes
+
+
+def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--route",
+        action="append",
+        default=[],
+        metavar="ROUTE",
+        help=(
+            "Smoke only this rendered full-page route (repeatable). "
+            "Example: content/blog-posts/private-estimation/post.html"
+        ),
+    )
+    parser.add_argument(
+        "--slug",
+        metavar="SLUG",
+        help="Smoke full-page routes whose path contains this slug (e.g. private-estimation).",
+    )
+    parser.add_argument(
+        "--skip-per-app",
+        action="store_true",
+        help="Skip standalone per-app WASM/canvas smoke tests.",
+    )
+    parser.add_argument(
+        "--include-per-app",
+        action="store_true",
+        help="Also run standalone per-app smoke when --route or --slug is set.",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    args = _parse_args(argv)
     output_root = SITE_ROOT / "_site"
     if not output_root.is_dir():
         raise SystemExit(f"built site not found: {output_root} (run `quarto render` first)")
 
-    wasm_urls, canvas_urls = discover_smoke_targets(SITE_ROOT, output_root)
+    scoped = bool(args.route or args.slug)
+    skip_per_app = args.skip_per_app or (scoped and not args.include_per_app)
+
+    wasm_urls: list[str] = []
+    canvas_urls: list[str] = []
+    if not skip_per_app:
+        wasm_urls, canvas_urls = discover_smoke_targets(SITE_ROOT, output_root)
+
+    page_routes = filter_full_page_wasm_routes(
+        discover_full_page_wasm_routes(),
+        slug=args.slug,
+        selected=tuple(args.route),
+    )
     relative_urls = wasm_urls + canvas_urls
-    page_routes = discover_full_page_wasm_routes()
     if not relative_urls and not page_routes:
         print("No lecture interactives or full-page WASM routes discovered; nothing to smoke-test.")
         return
+
+    if scoped:
+        print(
+            "Scoped smoke run: "
+            f"{len(page_routes)} full-page route(s)"
+            + ("" if skip_per_app else f", plus {len(relative_urls)} per-app target(s)"),
+            flush=True,
+        )
 
     handler = functools.partial(_SiteHandler, directory=str(output_root))
     failures: list[str] = []

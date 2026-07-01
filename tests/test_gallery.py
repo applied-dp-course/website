@@ -8,7 +8,7 @@ class GalleryBuildTest(unittest.TestCase):
         entries = gallery.build_gallery_entries(content_model.load_catalog())
         hrefs = {entry.href for entry in entries}
         self.assertIn(
-            "apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab/",
+            "_generated/apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab/",
             hrefs,
         )
         self.assertIn(

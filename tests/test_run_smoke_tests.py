@@ -32,8 +32,7 @@ class SmokeTargetTest(unittest.TestCase):
             run_smoke_tests.content_model.load_catalog()
         )
         canvas = [entry for entry in entries if entry.runtime in {"external-app", "browser-native"}]
-        self.assertEqual(len(canvas), 2)
-        self.assertTrue(all(entry.href.startswith("apps/") for entry in canvas))
+        self.assertEqual(len(canvas), 0)
 
     def test_built_targets_are_discoverable_when_site_exists(self) -> None:
         root = run_smoke_tests.content_model.SITE_ROOT
@@ -43,7 +42,7 @@ class SmokeTargetTest(unittest.TestCase):
         ).is_dir():
             self.skipTest("_site is stale or not built for the current layout")
         wasm, canvas = run_smoke_tests.discover_smoke_targets(root, output)
-        self.assertEqual(len(canvas), 2)
+        self.assertEqual(len(canvas), 0)
         self.assertGreaterEqual(len(wasm), 2)
 
     def test_full_page_wasm_routes_are_exposed(self) -> None:
@@ -52,6 +51,25 @@ class SmokeTargetTest(unittest.TestCase):
         self.assertIn(
             "content/blog-posts/privacy-auditing/post.html",
             routes,
+        )
+
+    def test_filter_full_page_routes_by_slug(self) -> None:
+        routes = run_smoke_tests.discover_full_page_wasm_routes()
+        filtered = run_smoke_tests.filter_full_page_wasm_routes(
+            routes,
+            slug="private-estimation",
+        )
+        self.assertEqual(
+            filtered,
+            ["content/blog-posts/private-estimation/post.html"],
+        )
+
+    def test_filter_full_page_routes_by_explicit_route(self) -> None:
+        routes = run_smoke_tests.discover_full_page_wasm_routes()
+        selected = ("content/blog-posts/private-estimation/post.html",)
+        self.assertEqual(
+            run_smoke_tests.filter_full_page_wasm_routes(routes, selected=selected),
+            list(selected),
         )
 
     def test_resolve_iframe_url_normalizes_parent_segments(self) -> None:

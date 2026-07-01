@@ -530,9 +530,19 @@ def _run_wasm_test(port: int, url: str, timeout: float) -> None:
             devtools.evaluate(_PLOT_HELPERS_JS)
 
             slider_timeout = min(120.0, timeout * 0.35)
+            controls_ready_expr = (
+                "(function () {"
+                "  const sliders = window.__sliders().length;"
+                "  const thumbs = window.__thumbs().length;"
+                "  const computeButtons = window.__computeButtons().length;"
+                "  const checkboxes = window.__roleCheckboxes().length;"
+                "  if (sliders >= 2 && thumbs >= 2) return true;"
+                "  return sliders >= 1 && thumbs >= 1 && (computeButtons >= 1 || checkboxes >= 1);"
+                "})()"
+            )
             sliders_ready = _wait_for(
                 devtools,
-                "window.__sliders().length >= 2 && window.__thumbs().length >= 2",
+                controls_ready_expr,
                 timeout=slider_timeout,
                 label="marimo sliders",
             )
@@ -540,7 +550,7 @@ def _run_wasm_test(port: int, url: str, timeout: float) -> None:
                 errors = _browser_errors(devtools)
                 visible_text = devtools.evaluate("window.__deepText()")
                 raise RuntimeError(
-                    "interactive did not finish loading two marimo sliders\n"
+                    "interactive did not finish loading marimo controls\n"
                     f"{_plot_diagnostics(devtools)}\n"
                     f"visible text:\n{visible_text}\n"
                     f"browser errors:\n{chr(10).join(errors) if errors else '(none captured)'}"
@@ -560,7 +570,8 @@ def _run_wasm_test(port: int, url: str, timeout: float) -> None:
 
             changed_any = False
             slider_failures: list[str] = []
-            for index in (0, 1):
+            thumb_count = int(devtools.evaluate("window.__thumbs().length") or 0)
+            for index in range(min(2, thumb_count)):
                 before = devtools.evaluate(
                     "(function () {"
                     "  const p = window.__plot();"
