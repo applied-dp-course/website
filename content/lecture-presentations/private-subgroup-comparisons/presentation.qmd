@@ -1,0 +1,238 @@
+---
+title: "Private Subgroup Comparisons"
+subtitle: "Denominators, local sensitivity, and private control flow"
+format:
+  revealjs:
+    theme: white
+    slide-number: true
+    embed-resources: false
+    code-overflow: wrap
+    scrollable: true
+    css: slides.css
+execute:
+  warning: false
+  message: false
+  echo: false
+jupyter: python3
+---
+
+```{python}
+#| echo: false
+#| output: false
+#| include: false
+try:
+    ip = get_ipython()
+    if "autoreload" not in ip.extension_manager.loaded:
+        ip.run_line_magic("load_ext", "autoreload")
+        ip.run_line_magic("autoreload", "2")
+except Exception:
+    pass
+
+try:
+    import libdpy
+except ImportError:
+    %pip install -q "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git"
+    import libdpy
+
+%matplotlib inline
+```
+
+```{python}
+#| echo: false
+#| output: false
+#| include: false
+from libdpy.assignment_specific.private_subgroup_comparisons.lecture_figures import (
+    make_global_sensitivity_baseline_figure,
+    make_local_sensitivity_vs_support_figure,
+    make_noisy_count_sum_release_figure,
+    make_oracle_ls_neighbor_bars_figure,
+    make_oracle_ls_privacy_failure_figure,
+    make_oracle_ls_utility_figure,
+    make_oracle_vs_count_sum_audit_figure,
+    make_sparse_subgroup_warning_figure,
+    make_support_comparison_figure,
+    make_support_repair_leaderboard_figure,
+    make_subgroup_mechanism_leaderboard_figure,
+    make_subgroup_sampling_distribution_figure,
+    make_above_threshold_support_search_figure,
+)
+
+SEED = 42
+```
+
+## From clipping to subgroup analysis
+
+::: {.fragment}
+We already controlled the salary range with a public clip interval.
+:::
+
+::: {.fragment}
+Now **denominators** control accuracy for subgroup comparisons.
+:::
+
+## The statistic
+
+::: {.fragment}
+Difference of two **normalized** group means on clipped salaries.
+:::
+
+::: {.fragment}
+Dollar-scale estimates are post-processing: multiply by `(U - L)`.
+:::
+
+## Sampling variability before privacy
+
+::: {.fragment}
+Ordinary statistical uncertainty for the subgroup difference before adding privacy noise.
+:::
+
+```{python}
+fig = make_subgroup_sampling_distribution_figure(seed=SEED)
+fig
+```
+
+## Global sensitivity is pessimistic
+
+::: {.fragment}
+Tiny groups dominate the worst case: `GS_Δ ≤ 2` on the normalized scale.
+:::
+
+```{python}
+fig = make_global_sensitivity_baseline_figure(seed=SEED)
+fig
+```
+
+## Local sensitivity explains typical utility
+
+::: {.fragment}
+Conservative bound scales like `1/n_A + 1/n_B`.
+:::
+
+```{python}
+fig = make_local_sensitivity_vs_support_figure(seed=SEED)
+fig
+```
+
+## Temptation: scale noise by local sensitivity
+
+::: {.fragment}
+Looks excellent on balanced datasets — **not DP**.
+:::
+
+```{python}
+fig = make_oracle_ls_utility_figure(seed=SEED)
+fig
+```
+
+## Engineered sparse support
+
+::: {.fragment}
+Same 990/10 split as Lecture 5: denominator-fragile even before privacy.
+:::
+
+```{python}
+fig = make_sparse_subgroup_warning_figure(seed=SEED)
+fig
+```
+
+## Why the tempting mechanism is not private
+
+::: {.fragment}
+Neighboring datasets can change the **noise scale** when support drops.
+:::
+
+::: {.fragment}
+Local sensitivity is an excellent diagnostic, but a bad noise scale.
+:::
+
+```{python}
+fig = make_oracle_ls_neighbor_bars_figure(seed=SEED)
+fig
+```
+
+```{python}
+fig = make_oracle_ls_privacy_failure_figure(seed=SEED)
+fig
+```
+
+```{python}
+fig = make_oracle_vs_count_sum_audit_figure(seed=SEED)
+fig
+```
+
+## Valid baseline: release counts and sums
+
+::: {.fragment}
+Four Laplace queries + public denominator floor `τ`.
+:::
+
+::: {.fragment}
+Counts are not free, but sometimes they are the right output.
+:::
+
+```{python}
+fig = make_noisy_count_sum_release_figure(seed=SEED)
+fig
+```
+
+## PTR: test support, then release or abstain
+
+::: {.fragment}
+The test estimates distance from the bad set.
+:::
+
+::: {.fragment}
+Release uses a public sensitivity bound once the test certifies enough distance.
+:::
+
+## Smooth sensitivity
+
+::: {.fragment}
+Nearby datasets matter; noise grows smoothly near sparse regions.
+:::
+
+::: {.fragment}
+Conceptual comparison — not a formal pure-DP guarantee in this deck.
+:::
+
+## Common support comparison
+
+::: {.fragment}
+Vary true minimum support `min(n_A, n_B)` — not only the PTR threshold `m`.
+:::
+
+```{python}
+fig = make_support_comparison_figure(seed=SEED)
+fig
+```
+
+```{python}
+fig = make_support_repair_leaderboard_figure(seed=SEED)
+fig
+```
+
+```{python}
+fig = make_subgroup_mechanism_leaderboard_figure(seed=SEED)
+fig
+```
+
+## Public data gives a menu
+
+::: {.fragment}
+Public coarsenings and subgroup definitions are free to propose.
+:::
+
+::: {.fragment}
+Private validation of support costs privacy budget.
+:::
+
+```{python}
+fig = make_above_threshold_support_search_figure(seed=SEED)
+fig
+```
+
+## Next lecture
+
+::: {.fragment}
+Choosing among many questions: AboveThreshold, report-noisy-max, and bridge to private learning.
+:::

@@ -1,0 +1,6 @@
+title: Private Subgroup Comparisons
+entrypoint: presentation.qmd
+subjects:
+  - private subgroup comparisons
+  - differential privacy
+status: draft
