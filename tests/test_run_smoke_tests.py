@@ -72,6 +72,12 @@ class SmokeTargetTest(unittest.TestCase):
             list(selected),
         )
 
+    def test_shard_items_splits_deterministically(self) -> None:
+        items = ["a", "b", "c", "d", "e"]
+        self.assertEqual(run_smoke_tests.shard_items(items, 0, 2), ["a", "c", "e"])
+        self.assertEqual(run_smoke_tests.shard_items(items, 1, 2), ["b", "d"])
+        self.assertEqual(run_smoke_tests.shard_items(items, 0, 1), items)
+
     def test_resolve_iframe_url_normalizes_parent_segments(self) -> None:
         from smoke_full_page_wasm import _resolve_iframe_url
 

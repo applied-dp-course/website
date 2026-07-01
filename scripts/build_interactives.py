@@ -11,12 +11,14 @@ import hashlib
 import importlib
 import io
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
 import zipfile
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -40,6 +42,8 @@ DISCOVERY_FILES = (
     "pages/index.qmd",
 )
 MARIMO_VERSION = "0.23.9"
+# ``marimo export`` subprocesses are memory-heavy; cap parallel workers on large runners.
+MAX_PARALLEL_EXPORTS = 4
 PYTHON_FENCE = re.compile(
     r"^```(?:\{python\}|python)\s*$\n(.*?)^```\s*$",
     re.MULTILINE | re.DOTALL,
@@ -238,8 +242,88 @@ def _package_files(package_root: Path, archive_root: Path):
         yield path, archive_root / relative
 
 
-def build_libdpy_wheel(output_directory: Path) -> Path:
+def _spec_signature_payload(use: InteractiveUse, app_source: str) -> str:
+    """Inputs that determine whether a marimo export needs rebuilding."""
+
+    spec = use.spec
+    return "\n".join(
+        [
+            spec.name,
+            json.dumps(dict(spec.fixed_kwargs), sort_keys=True, default=str),
+            libdpy.__version__,
+            MARIMO_VERSION,
+            app_source,
+        ]
+    )
+
+
+def _export_signature(use: InteractiveUse, app_source: str) -> str:
+    return hashlib.sha256(_spec_signature_payload(use, app_source).encode()).hexdigest()
+
+
+def _read_export_marker(marker_path: Path) -> dict[str, str]:
+    if not marker_path.is_file():
+        return {}
+    fields: dict[str, str] = {}
+    for line in marker_path.read_text(encoding="utf-8").splitlines():
+        if "=" in line:
+            key, value = line.split("=", 1)
+            fields[key.strip()] = value.strip()
+    return fields
+
+
+def _write_export_marker(
+    marker_path: Path,
+    *,
+    use: InteractiveUse,
+    signature: str,
+) -> None:
+    marker_path.write_text(
+        "\n".join(
+            [
+                f"name={use.spec.name}",
+                f"artifact={use.spec.artifact_name}",
+                f"signature={signature}",
+                f"libdpy_version={libdpy.__version__}",
+                f"marimo_version={MARIMO_VERSION}",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def _cached_wheel(wheels_dir: Path) -> Path | None:
+    """Return an existing wheel when libdpy.__version__ has not changed."""
+
+    marker = wheels_dir / ".libdpy-wheel-version"
+    if not marker.is_file() or marker.read_text(encoding="utf-8").strip() != libdpy.__version__:
+        return None
+    wheels = sorted(wheels_dir.glob("libdpy-*.whl"))
+    if len(wheels) == 1 and wheels[0].is_file():
+        return wheels[0]
+    return None
+
+
+def get_or_build_libdpy_wheel(output_directory: Path) -> Path:
     """Build a pure-Python wheel from the imported ``libdpy`` package."""
+
+    cached = _cached_wheel(output_directory)
+    if cached is not None:
+        return cached
+
+    for stale in output_directory.glob("libdpy-*.whl"):
+        stale.unlink()
+    wheel = build_libdpy_wheel(output_directory)
+    (output_directory / ".libdpy-wheel-version").write_text(
+        f"{libdpy.__version__}\n",
+        encoding="utf-8",
+    )
+    return wheel
+
+
+def build_libdpy_wheel(output_directory: Path) -> Path:
+    """Build a pure-Python wheel from the imported ``libdpy`` package (internal)."""
 
     bundled_packages = {
         "libdpy": Path(libdpy.__file__).resolve().parent,
@@ -320,19 +404,31 @@ def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
     public_directory = source_directory / "public"
     source_directory.mkdir(parents=True, exist_ok=True)
     public_directory.mkdir(parents=True, exist_ok=True)
+    for stale_wheel in public_directory.glob("libdpy-*.whl"):
+        stale_wheel.unlink()
     shutil.copy2(wheel, public_directory / wheel.name)
 
-    app_source = source_directory / "app.py"
-    app_source.write_text(
-        marimo_app_source(
-            use.spec,
-            wheel_filename=wheel.name,
-            marimo_version=MARIMO_VERSION,
-        ),
-        encoding="utf-8",
+    app_source_text = marimo_app_source(
+        use.spec,
+        wheel_filename=wheel.name,
+        marimo_version=MARIMO_VERSION,
     )
+    app_source = source_directory / "app.py"
+    app_source.write_text(app_source_text, encoding="utf-8")
 
     output_directory = output_directory_for(use, site_root)
+    marker_path = output_directory / ".libdpy-interactive"
+    signature = _export_signature(use, app_source_text)
+    marker = _read_export_marker(marker_path)
+    index_html = output_directory / "index.html"
+    if (
+        marker.get("signature") == signature
+        and index_html.is_file()
+        and (public_directory / wheel.name).is_file()
+    ):
+        print(f"Skipped {use.spec.artifact_name} (signature unchanged)")
+        return
+
     if output_directory.exists():
         shutil.rmtree(output_directory)
     output_directory.parent.mkdir(parents=True, exist_ok=True)
@@ -354,10 +450,7 @@ def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
         check=True,
     )
     _enable_tracebacks(output_directory / "index.html")
-    (output_directory / ".libdpy-interactive").write_text(
-        f"{use.spec.name}\n{use.spec.artifact_name}\n",
-        encoding="utf-8",
-    )
+    _write_export_marker(marker_path, use=use, signature=signature)
     payload_mb = sum(
         path.stat().st_size for path in output_directory.rglob("*") if path.is_file()
     ) / (1024 * 1024)
@@ -402,6 +495,32 @@ def _remove_stale_generated_apps(uses: list[InteractiveUse], *, site_root: Path)
         )
 
 
+def _export_all(uses: list[InteractiveUse], wheel: Path, *, site_root: Path) -> None:
+    """Export discovered apps, parallelizing independent ``marimo export`` subprocesses."""
+
+    if len(uses) <= 1:
+        for use in uses:
+            _export(use, wheel, site_root=site_root)
+            print(
+                f"Built {use.spec.artifact_name} for "
+                f"{use.source.parent.relative_to(site_root)}"
+            )
+        return
+
+    workers = min(len(uses), os.cpu_count() or 4, MAX_PARALLEL_EXPORTS)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {
+            pool.submit(_export, use, wheel, site_root=site_root): use for use in uses
+        }
+        for future in as_completed(futures):
+            use = futures[future]
+            future.result()
+            print(
+                f"Built {use.spec.artifact_name} for "
+                f"{use.source.parent.relative_to(site_root)}"
+            )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -425,13 +544,8 @@ def main() -> None:
 
     if uses:
         _remove_stale_generated_apps(uses, site_root=SITE_ROOT)
-        wheel = build_libdpy_wheel(GENERATED_ROOT / "wheels")
-        for use in uses:
-            _export(use, wheel, site_root=SITE_ROOT)
-            print(
-                f"Built {use.spec.artifact_name} for "
-                f"{use.source.parent.relative_to(SITE_ROOT)}"
-            )
+        wheel = get_or_build_libdpy_wheel(GENERATED_ROOT / "wheels")
+        _export_all(uses, wheel, site_root=SITE_ROOT)
     else:
         print("No libdpy interactive embeds discovered.")
 

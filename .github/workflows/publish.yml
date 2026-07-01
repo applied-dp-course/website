@@ -1,14 +1,21 @@
 name: Publish website
 
 # Build the Quarto site (which generates the marimo WASM interactives from libdpy),
-# verify every interactive renders in headless Chrome, then deploy to GitHub Pages.
+# verify routes and links, then deploy to GitHub Pages.
 #
-# libdpy is installed from the public pub_lib repo (see requirements.txt), so this
-# workflow only succeeds once the interactive-widget code has been propagated there.
+# libdpy is installed from a pinned tag in requirements.txt (see the release flow in
+# code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md).
+#
+# Pull requests run a scoped WASM smoke gate for changed lectures. The full smoke suite
+# runs nightly (see smoke-nightly.yml).
+#
+# Branch protection: require the pull_request build-check job before merging to main.
+# Direct pushes to main render and deploy without smoke — only PRs and nightly cover that.
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -17,21 +24,47 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   PAGES_BASE_URL: https://applied-dp-course.github.io/website
+  RENDER_CACHE_PATHS: |
+    _freeze
+    _generated/apps
+    _generated/wheels
+    _generated/animations
+    _generated/interactives_src
 
 jobs:
-  build:
+  build-check:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
+
+      - name: Compute render cache key
+        id: render-cache
+        run: |
+          echo "key=$(python3 scripts/ci_render_cache_key.py key)" >> "$GITHUB_OUTPUT"
+          echo "prefix=$(python3 scripts/ci_render_cache_key.py prefix)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore render cache
+        uses: actions/cache/restore@v4
+        id: render-cache-restore
+        with:
+          path: ${{ env.RENDER_CACHE_PATHS }}
+          key: ${{ steps.render-cache.outputs.key }}
+          restore-keys: |
+            ${{ steps.render-cache.outputs.prefix }}
 
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
@@ -47,8 +80,7 @@ jobs:
         run: |
           python -m venv .venv
           ./.venv/bin/pip install --upgrade pip
-          ./.venv/bin/pip install -r requirements.txt
-          ./.venv/bin/pip install pytest websocket-client
+          ./.venv/bin/pip install -r requirements-ci.txt
 
       - name: Unit tests (before expensive WASM build)
         run: ./.venv/bin/python -m pytest tests -q
@@ -59,6 +91,13 @@ jobs:
           MPLBACKEND: Agg
         run: quarto render --execute
 
+      - name: Save render cache
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.RENDER_CACHE_PATHS }}
+          key: ${{ steps.render-cache.outputs.key }}
+
       - name: Verify rendered routes and internal links
         run: ./.venv/bin/python scripts/check_site.py
 
@@ -68,12 +107,89 @@ jobs:
           tests/test_plot_inventory_scan.py::PlotInventoryWebsiteTest::test_inventory_scan_strict_post_render
           -q
 
-      - name: WASM and canvas browser smoke tests
-        continue-on-error: true
+      - name: Scoped WASM smoke tests (blocking)
         env:
           LIBDPY_CHROME: ${{ steps.chrome.outputs.chrome-path }}
           LIBDPY_HEADLESS: "0"
-        run: xvfb-run -a ./.venv/bin/python tests/run_smoke_tests.py
+        run: |
+          set -euo pipefail
+          slug_file="$(mktemp)"
+          trap 'rm -f "$slug_file"' EXIT
+          if ! ./.venv/bin/python scripts/changed_smoke_slugs.py "origin/${{ github.base_ref }}" >"$slug_file"; then
+            echo "ERROR: changed_smoke_slugs.py failed" >&2
+            exit 1
+          fi
+          mapfile -t slugs <"$slug_file"
+          if [ "${#slugs[@]}" -eq 0 ]; then
+            echo "No content slug changes detected; skipping scoped smoke tests."
+            exit 0
+          fi
+          for slug in "${slugs[@]}"; do
+            echo "== scoped smoke for slug: ${slug} =="
+            xvfb-run -a ./.venv/bin/python tests/run_smoke_tests.py --slug "${slug}" --include-per-app
+          done
+
+  build:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
+
+      - name: Compute render cache key
+        id: render-cache
+        run: |
+          echo "key=$(python3 scripts/ci_render_cache_key.py key)" >> "$GITHUB_OUTPUT"
+          echo "prefix=$(python3 scripts/ci_render_cache_key.py prefix)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore render cache
+        uses: actions/cache/restore@v4
+        id: render-cache-restore
+        with:
+          path: ${{ env.RENDER_CACHE_PATHS }}
+          key: ${{ steps.render-cache.outputs.key }}
+          restore-keys: |
+            ${{ steps.render-cache.outputs.prefix }}
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "1.6.43"
+
+      - name: Install Python dependencies
+        run: |
+          python -m venv .venv
+          ./.venv/bin/pip install --upgrade pip
+          ./.venv/bin/pip install -r requirements-ci.txt
+
+      - name: Unit tests (before expensive WASM build)
+        run: ./.venv/bin/python -m pytest tests -q
+
+      - name: Render site (pre-render builds the libdpy wheel + WASM apps)
+        env:
+          QUARTO_PYTHON: ${{ github.workspace }}/.venv/bin/python
+          MPLBACKEND: Agg
+        run: quarto render --execute
+
+      - name: Save render cache
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.RENDER_CACHE_PATHS }}
+          key: ${{ steps.render-cache.outputs.key }}
+
+      - name: Verify rendered routes and internal links
+        run: ./.venv/bin/python scripts/check_site.py
+
+      - name: Post-render plot inventory (strict)
+        run: >-
+          ./.venv/bin/python -m pytest
+          tests/test_plot_inventory_scan.py::PlotInventoryWebsiteTest::test_inventory_scan_strict_post_render
+          -q
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -81,6 +197,7 @@ jobs:
           path: _site
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -94,6 +211,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
   verify:
+    if: github.event_name != 'pull_request'
     needs: deploy
     runs-on: ubuntu-latest
     steps:

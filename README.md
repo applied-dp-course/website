@@ -63,9 +63,15 @@ quarto render content/blog-posts/<slug>/post.ipynb    # render one notebook
 ```
 
 - **Pre-release libdpy checks:** `LIBDPY_SYNC=0 ./dev/tools/render.sh` renders against the currently
-  installed env instead of re-syncing from `pub_lib` (also noted in AUTHORING).
-- **Smoke cost:** the default `run_smoke_tests.py` exercises *every* WASM app with a 5-minute
-  timeout each locally (10 minutes on CI). For one lecture, use `--slug <slug>` or
-  `tests/smoke_full_page_wasm.py` until the final gate.
+  installed env instead of installing the pinned libdpy from `requirements.txt` (also noted in AUTHORING).
+- **PR smoke gate:** pull requests run scoped, blocking WASM smoke tests for changed lecture slugs.
+  The full suite runs nightly (`smoke-nightly.yml`) across four parallel shards after a single
+  render. **Require the PR build-check job via branch protection** — direct pushes to `main`
+  deploy without smoke.
+- **CI render cache:** GitHub Actions restores `_freeze/` and `_generated/` from a prior run.
+  Cache keys are scoped to the libdpy pin; partial restores never cross pins. Within a job,
+  `build_interactives.py` skips unchanged WASM apps. Full-site `quarto render --execute` respects
+  project `freeze: auto` (only re-executes notebooks whose source changed); `--execute` is the
+  default and does not override freeze on a global project render.
 
 See [authoring/AUTHORING.md](authoring/AUTHORING.md) for detailed workflows.

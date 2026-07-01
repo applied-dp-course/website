@@ -69,8 +69,9 @@ posts, and a notebook for the assignment and blog-post collections.
    `status: draft` items (draft decks still build and appear in `required_routes()`).
 2. If the item is a lecture presentation, blog post, or class assignment, update the expected
    name sets in `tests/test_content_model.py::test_live_catalog_uses_named_collections`.
-3. If the source imports **new** `libdpy` API, release to `pub_lib` first (*Content that depends on
-   a new `libdpy` API* below) — including draft decks that call new `make_*_figure()` helpers.
+3. If the source imports **new** `libdpy` API, release and tag on `pub_lib` first, then bump the
+   website pin in the same commit (*Content that depends on a new `libdpy` API* below) — including
+   draft decks that call new `make_*_figure()` helpers.
 
 Example baseline entry for `content/lecture-presentations/mechanisms/presentation.qmd`:
 
@@ -80,17 +81,18 @@ content/lecture-presentations/mechanisms/presentation.html
 
 ### Content that depends on a new `libdpy` API
 
-The site installs `libdpy` **unpinned from `pub_lib`**, and `./dev/tools/render.sh` re-syncs it
-before rendering. So content using **any** library API not yet on `pub_lib` — a new function, a new
-keyword argument, or a newly registered interactive — will fail to build until that API is
-**released to `pub_lib` first**. Release it (see
-`code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md`), then render. Do **not** `pip install -e` a local
-libdpy into `.venv`: `sync_libdpy.sh` reverts it on the next render. For a deliberate pre-release
-local check only, use `LIBDPY_SYNC=0 ./dev/tools/render.sh`.
+The site installs `libdpy` from a **pinned tag** in `requirements.txt`, and `./dev/tools/render.sh`
+installs that pin before rendering. Content using **any** library API not yet on the pinned tag — a
+new function, a new keyword argument, or a newly registered interactive — will fail to build until
+you **release `libdpy` (tag `vX.Y.Z` on `pub_lib`) and bump the pin** in the same commit as the
+content. Release first (see `code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md`), then update
+`requirements.txt` to `@vX.Y.Z` together with your content change. Do **not** `pip install -e` a
+local libdpy into `.venv`: `sync_libdpy.sh` reverts it on the next render. For a deliberate
+pre-release local check only, use `LIBDPY_SYNC=0 ./dev/tools/render.sh`.
 
 The trigger is not only new kwargs: **adding a new class to `EMBED_CONSTRUCTOR_NAMES`**
-(`libdpy.visualization.registry`) is itself a library change that needs a version bump and a
-`pub_lib` release before its `.embed()` calls resolve on the site.
+(`libdpy.visualization.registry`) is itself a library change that needs a version bump, a
+`pub_lib` tag, and a website pin bump before its `.embed()` calls resolve on the site.
 
 ## Developing a lecture (end to end)
 
@@ -101,9 +103,9 @@ notebook is the permanent source and is **never deleted**; the two website copie
 parallel (drift accepted — the blog-post smoke route is the tripwire).
 
 **Preconditions.** The tree is green (content validation + the plot-inventory scan pass on `main`),
-and every `libdpy` API the content uses is **already released to `pub_lib`** — see *Content that
-depends on a new `libdpy` API* above, and `code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md` for how a
-release works (that is a code_base_dev step, not a website one).
+and every `libdpy` API the content uses is **covered by the pinned tag in `requirements.txt`** —
+release and bump the pin first if needed (*Content that depends on a new `libdpy` API* above, and
+`code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md` for how a release works).
 
 **Steps.** Author both artifacts (*Add content*) → use `.embed()` for interactives (*Plotting
 policy*) → validate with `./dev/tools/render.sh` then `./.venv/bin/python tests/run_smoke_tests.py`

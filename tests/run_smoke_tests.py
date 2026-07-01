@@ -182,6 +182,16 @@ def filter_full_page_wasm_routes(
     return routes
 
 
+def shard_items(items: list[str], index: int, count: int) -> list[str]:
+    """Return the ``index`` shard of ``items`` split across ``count`` workers."""
+
+    if count <= 1:
+        return items
+    if index < 0 or index >= count:
+        raise SystemExit(f"shard index must be in [0, {count}), got {index}")
+    return [item for offset, item in enumerate(items) if offset % count == index]
+
+
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -209,6 +219,18 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Also run standalone per-app smoke when --route or --slug is set.",
     )
+    parser.add_argument(
+        "--shard-index",
+        type=int,
+        default=0,
+        help="Zero-based shard index for parallel nightly smoke (default: 0).",
+    )
+    parser.add_argument(
+        "--shard-count",
+        type=int,
+        default=1,
+        help="Number of smoke shards (default: 1, no sharding).",
+    )
     return parser.parse_args(argv)
 
 
@@ -232,6 +254,16 @@ def main(argv: list[str] | None = None) -> None:
         selected=tuple(args.route),
     )
     relative_urls = wasm_urls + canvas_urls
+    if args.shard_count > 1:
+        relative_urls = shard_items(relative_urls, args.shard_index, args.shard_count)
+        if args.shard_index != 0:
+            page_routes = []
+        print(
+            f"Smoke shard {args.shard_index + 1}/{args.shard_count}: "
+            f"{len(relative_urls)} per-app target(s)"
+            + (f", {len(page_routes)} full-page route(s)" if page_routes else ""),
+            flush=True,
+        )
     if not relative_urls and not page_routes:
         print("No lecture interactives or full-page WASM routes discovered; nothing to smoke-test.")
         return
