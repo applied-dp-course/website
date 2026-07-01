@@ -50,15 +50,12 @@ _Short introduction coming soon._
 - **Blog post** — [Blog post](../content/blog-posts/private-estimation/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-estimation/post.ipynb)
 - **Presentation** — [Presentation](../content/lecture-presentations/private-estimation/presentation.html)
 
-## Private Search
+## Private Estimation - cont
+
+_Week 6_
 
 _Short introduction coming soon._
 
-- **Presentation** — [Presentation](../content/lecture-presentations/private-search/presentation.html)
-
-## Private Subgroup Comparisons
-
-_Short introduction coming soon._
-
+- **Blog post** — [Blog post](../content/blog-posts/private-subgroup-comparisons/post.html) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-subgroup-comparisons/post.ipynb)
 - **Presentation** — [Presentation](../content/lecture-presentations/private-subgroup-comparisons/presentation.html)
 <!-- END AUTO-GENERATED LECTURES -->

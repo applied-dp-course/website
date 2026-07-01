@@ -16,7 +16,6 @@ class ContentModelTest(unittest.TestCase):
                 "hypothesis-testing",
                 "privacy-auditing",
                 "private-estimation",
-                "private-search",
                 "private-subgroup-comparisons",
             },
         )
@@ -27,6 +26,7 @@ class ContentModelTest(unittest.TestCase):
                 "hypothesis-testing",
                 "privacy-auditing",
                 "private-estimation",
+                "private-subgroup-comparisons",
             },
         )
         self.assertEqual(

@@ -15,4 +15,4 @@ ipywidgets
 anywidget
 marimo==0.23.9
 PyYAML>=6.0,<7
-libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git@v0.2.13
+libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git@v0.2.15

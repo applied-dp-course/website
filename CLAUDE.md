@@ -1,7 +1,8 @@
 # Website guidance
 
 This is the public Quarto site. It imports all computation from `libdpy` (installed from `pub_lib`)
-and defines no course logic of its own. Rules live in public docs — read the relevant one first:
+and defines no course logic of its own. Rules live in public docs — read the relevant one first.
+**Full instruction-file index** (all repos) → `../.cursor/rules/instruction-docs.mdc`.
 
 - Content collections, templates, plotting policy (`.show()` vs `.embed()`), and validation →
   [authoring/AUTHORING.md](authoring/AUTHORING.md)

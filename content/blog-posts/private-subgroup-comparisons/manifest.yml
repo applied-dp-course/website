@@ -1,5 +1,5 @@
 title: Private Estimation - cont
-entrypoint: presentation.qmd
+entrypoint: post.ipynb
 subjects:
   - private estimation
   - differential privacy

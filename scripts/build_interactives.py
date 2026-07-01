@@ -405,7 +405,7 @@ def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
     source_directory.mkdir(parents=True, exist_ok=True)
     public_directory.mkdir(parents=True, exist_ok=True)
     for stale_wheel in public_directory.glob("libdpy-*.whl"):
-        stale_wheel.unlink()
+        stale_wheel.unlink(missing_ok=True)
     shutil.copy2(wheel, public_directory / wheel.name)
 
     app_source_text = marimo_app_source(
@@ -498,8 +498,17 @@ def _remove_stale_generated_apps(uses: list[InteractiveUse], *, site_root: Path)
 def _export_all(uses: list[InteractiveUse], wheel: Path, *, site_root: Path) -> None:
     """Export discovered apps, parallelizing independent ``marimo export`` subprocesses."""
 
-    if len(uses) <= 1:
-        for use in uses:
+    seen_artifacts: set[str] = set()
+    unique_uses: list[InteractiveUse] = []
+    for use in uses:
+        name = use.spec.artifact_name
+        if name in seen_artifacts:
+            continue
+        seen_artifacts.add(name)
+        unique_uses.append(use)
+
+    if len(unique_uses) <= 1:
+        for use in unique_uses:
             _export(use, wheel, site_root=site_root)
             print(
                 f"Built {use.spec.artifact_name} for "
@@ -507,10 +516,10 @@ def _export_all(uses: list[InteractiveUse], wheel: Path, *, site_root: Path) -> 
             )
         return
 
-    workers = min(len(uses), os.cpu_count() or 4, MAX_PARALLEL_EXPORTS)
+    workers = min(len(unique_uses), os.cpu_count() or 4, MAX_PARALLEL_EXPORTS)
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
-            pool.submit(_export, use, wheel, site_root=site_root): use for use in uses
+            pool.submit(_export, use, wheel, site_root=site_root): use for use in unique_uses
         }
         for future in as_completed(futures):
             use = futures[future]

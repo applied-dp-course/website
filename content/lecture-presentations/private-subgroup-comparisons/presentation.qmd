@@ -1,5 +1,5 @@
 ---
-title: "Private Subgroup Comparisons"
+title: "Private Estimation - cont"
 subtitle: "Denominators, local sensitivity, and private control flow"
 format:
   revealjs:
@@ -150,10 +150,22 @@ fig = make_oracle_ls_neighbor_bars_figure(seed=SEED)
 fig
 ```
 
+## Audit the released estimate
+
+::: {.fragment}
+The privacy failure is visible in the output distribution, not only in the internal scale.
+:::
+
 ```{python}
 fig = make_oracle_ls_privacy_failure_figure(seed=SEED)
 fig
 ```
+
+## Same witness, valid repair
+
+::: {.fragment}
+Noisy count/sum spends budget on denominators instead of adapting the noise scale for free.
+:::
 
 ```{python}
 fig = make_oracle_vs_count_sum_audit_figure(seed=SEED)
@@ -206,10 +218,22 @@ fig = make_support_comparison_figure(seed=SEED)
 fig
 ```
 
+## Sparse vs dense support repairs
+
+::: {.fragment}
+Conditional PTR error is only shown where releases are common enough to estimate honestly.
+:::
+
 ```{python}
 fig = make_support_repair_leaderboard_figure(seed=SEED)
 fig
 ```
+
+## Fulton mechanism leaderboard
+
+::: {.fragment}
+Same Lecture 5 signed-error workflow, now comparing subgroup mechanisms.
+:::
 
 ```{python}
 fig = make_subgroup_mechanism_leaderboard_figure(seed=SEED)
@@ -231,8 +255,12 @@ fig = make_above_threshold_support_search_figure(seed=SEED)
 fig
 ```
 
-## Next lecture
+## Summary
 
 ::: {.fragment}
-Choosing among many questions: AboveThreshold, report-noisy-max, and bridge to private learning.
+After clipping, subgroup analysis is about **denominators and private control flow** — not extreme outliers.
+:::
+
+::: {.fragment}
+Public coarsenings propose questions; private validation of support costs budget.
 :::
