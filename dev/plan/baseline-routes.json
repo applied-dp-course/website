@@ -1,5 +1,5 @@
 {
-  "description": "Canonical public routes for the course site.",
+  "description": "Canonical public routes for the course site. Keep in sync with scripts/check_site.py required_routes() — see authoring/AUTHORING.md (Add content / Validation).",
   "page_routes": [
     "pages/index.html",
     "pages/course.html",

@@ -43,6 +43,10 @@ The four content columns reference directory names, not sequence numbers or path
 ./.venv/bin/python tests/run_smoke_tests.py
 ```
 
+CI runs the pytest line **before** Quarto render (see [authoring/AUTHORING.md](authoring/AUTHORING.md)
+→ *Validation*). When adding content, update `dev/plan/baseline-routes.json` and
+`tests/test_content_model.py` in the same commit.
+
 Quarto runs catalog validation and page synchronization before rendering. Generated catalog and
 interactive artifacts are written under `_generated/`; rendered pages are written under `_site/`.
 

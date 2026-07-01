@@ -1,4 +1,8 @@
-"""Validate the baseline route fixture against the live catalog."""
+"""Validate the baseline route fixture against the live catalog.
+
+When adding content under content/, append the rendered .html path to
+dev/plan/baseline-routes.json in the same commit. See website/authoring/AUTHORING.md.
+"""
 
 from __future__ import annotations
 

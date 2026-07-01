@@ -62,6 +62,22 @@ Edit the copied `manifest.yml` and source file. Set `gallery: true` in the tool 
 it on **Tools**. The manifest `entrypoint` must be QMD for lecture presentations, tools, and site
 posts, and a notebook for the assignment and blog-post collections.
 
+**Same-commit checklist** (CI runs `./.venv/bin/python -m pytest tests -q` before render):
+
+1. Append the item's rendered HTML path to
+   [`dev/plan/baseline-routes.json`](../dev/plan/baseline-routes.json) — required even for
+   `status: draft` items (draft decks still build and appear in `required_routes()`).
+2. If the item is a lecture presentation, blog post, or class assignment, update the expected
+   name sets in `tests/test_content_model.py::test_live_catalog_uses_named_collections`.
+3. If the source imports **new** `libdpy` API, release to `pub_lib` first (*Content that depends on
+   a new `libdpy` API* below) — including draft decks that call new `make_*_figure()` helpers.
+
+Example baseline entry for `content/lecture-presentations/mechanisms/presentation.qmd`:
+
+```text
+content/lecture-presentations/mechanisms/presentation.html
+```
+
 ### Content that depends on a new `libdpy` API
 
 The site installs `libdpy` **unpinned from `pub_lib`**, and `./dev/tools/render.sh` re-syncs it
@@ -178,6 +194,10 @@ Notes:
 
 ## Validation
 
+CI (`.github/workflows/publish.yml`) runs, in order: **unit tests** → **render** → **route
+checks** → **WASM smoke** → deploy. A failure in the first step completes in under a minute; check
+Actions logs for the failing pytest name before assuming a render or browser issue.
+
 ```bash
 ./.venv/bin/python scripts/content_model.py
 ./.venv/bin/python -m pytest tests -q
@@ -185,17 +205,25 @@ Notes:
 ./.venv/bin/python tests/run_smoke_tests.py
 ```
 
+The first pytest command mirrors CI's pre-render gate. Run it after adding or renaming content
+(*Add content* → same-commit checklist).
+
 Validation rejects numbered content names, missing entrypoints, wrong source types, offering
 references that do not match an authored content name, and **notebooks whose `kernelspec.name` is not
 `python3`** (CI rejects e.g. `libdpy-base-local` — reset the kernel to `python3` before committing).
 `run_smoke_tests.py` is the **required final gate for any content with interactives** — it opens the
 rendered WASM apps in a headless browser and must pass before the content is considered done.
 
-**Baseline routes.** CI runs `tests/test_baseline_routes.py` before render. Whenever you add a new
-content item under `content/lecture-presentations/`, `content/blog-posts/`, `content/class-assignments/`,
-or `content/home-assignments/`, append its rendered HTML path to
-[`dev/plan/baseline-routes.json`](../dev/plan/baseline-routes.json) in the **same commit** — including
-`status: draft` decks, which still build and appear in `required_routes()`.
+**Baseline routes.** `tests/test_baseline_routes.py` compares the live catalog's
+`required_routes()` against [`dev/plan/baseline-routes.json`](../dev/plan/baseline-routes.json).
+Whenever you add a content item under `content/lecture-presentations/`, `content/blog-posts/`,
+`content/class-assignments/`, or `content/home-assignments/`, append its `.html` route to
+`required_routes` in that file in the **same commit** — including `status: draft` decks.
+
+**`pub_lib` dependency.** CI installs `libdpy` from `pub_lib` during *Install Python dependencies*,
+before unit tests. If the latest `pub_lib` wheel is broken (for example `pyproject.toml` lists a
+package directory that was not synced), the workflow fails before any website test runs. Fix and
+release on the library side first (`code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md`).
 
 **Incremental (single-lecture) loop.** The four commands above are the full "done" gate; while
 iterating on one lecture, a faster loop avoids the site-wide render + smoke:
