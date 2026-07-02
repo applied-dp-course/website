@@ -117,6 +117,37 @@ convention (applied to private-estimation): the **deck** uses static `make_*_fig
 speed and print-safety, while the **blog post** carries the interactive `.embed()` explorers — not
 every interactive in the dev notebook must appear in both.
 
+### In-flight lectures (stricter alignment)
+
+Once a lecture is stable on the website, the dev notebook may drift from the website copies
+and can eventually move to a legacy directory (see
+[../../code_base_dev/PROJECT_STRUCTURE.md](../../code_base_dev/PROJECT_STRUCTURE.md)). **While a
+lecture is still in active development**, treat alignment as mandatory:
+
+| Artifact | Role |
+|---|---|
+| `code_base_dev/lectures/lecture_<topic>.ipynb` | Authoring source — never delete |
+| `blog-posts/<slug>/post.ipynb` | Self-study copy — same `libdpy` symbols and public contract |
+| `lecture-presentations/<slug>/presentation.qmd` | Deck copy — same mechanism names, budgets, seeds, sampling params |
+
+Narrative density and interactives may differ (see *Deck vs blog interactives*), but imports and
+public constants must match the **pinned** install, not a local editable sibling `libdpy`.
+
+**Do not use quarantined generators.** Scripts under `dev/tools/quarantine/` are not part of the
+delivery path — they may be stale or hand-maintained. Align blog and deck manually against the dev
+notebook until a generator ships with a deterministic `--check` mode.
+
+**Pre-ship checklist** (in-flight example:
+[private-subgroup-comparisons-cleanup.md](../../plans/private-subgroup-comparisons-cleanup.md)):
+
+- Dev notebook, blog, and deck import only symbols on the intended release tag.
+- Run `./dev/tools/sync_libdpy.sh`, then confirm `libdpy.__file__` is under
+  `.venv/.../site-packages/` (not `code_base_dev/libdpy`).
+- Run `./.venv/bin/python dev/tools/verify_libdpy_imports.py --slug <slug>` (add `--sync` to
+  install the pin first).
+- Bump `requirements.txt` and content in the **same commit**; pass `./dev/tools/deliver_lecture.sh
+  --slug <slug>`.
+
 ### Delivery gate (definition of “shipped”)
 
 **Infra go-live and lecture go-live are different.** A green deploy of CI/release-flow changes, or a
@@ -191,6 +222,7 @@ infer lecture health from an unrelated green workflow run.
 | Warm local cache hides a cold CI render | Local `./dev/tools/render.sh` passes; **Publish website** fails on `build_interactives` / gallery | After WASM or gallery changes, simulate CI: `rm -rf _freeze _generated _site && ./dev/tools/render.sh` |
 | Shared WASM artifact, one export path | Gallery error: manifest path missing under `_generated/apps/lecture-presentations/...` | One `.embed()` in several sources (home page + deck + blog) needs a bundle at **each** source-relative `_generated/apps/<parent>/` path; `build_interactives.py` exports once and copies to every location |
 | API drift on the pin | ~7-minute render fails mid-notebook | Run `./.venv/bin/python dev/tools/verify_libdpy_imports.py --slug <slug>` first (CI runs this before render) |
+| Sibling editable `libdpy` in `.venv` | Local checks pass against unreleased API; pin/CI disagree | Run `./dev/tools/sync_libdpy.sh`; confirm `libdpy.__file__` is under `.venv/.../site-packages/`, not `code_base_dev/libdpy` (automated guard **planned**) |
 | Static-figure lecture | `run_smoke_tests.py --slug` exits: "no full-page WASM routes match" | Expected for deck-only static figures — scoped smoke no-ops; still run the full gate before push |
 | Infra green ≠ lecture shipped | Tag on `pub_lib` exists or CI passed on an infra-only commit | Use `./dev/tools/deliver_lecture.sh --slug <slug> --push` and wait for **Publish website** green on the **content** commit |
 

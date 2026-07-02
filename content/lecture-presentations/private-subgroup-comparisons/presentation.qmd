@@ -49,31 +49,56 @@ from libdpy.assignment_specific.private_estimation.utils import (
     gaussian_noise_std,
 )
 from libdpy.assignment_specific.private_subgroup_comparisons.lecture_figures import (
+    DEFAULT_BETA,
+    DEFAULT_SUBGROUP_SAMPLING_DRAW_SIZE,
+    PTR_DELTA_FAIL,
+    PTR_DELTA_RELEASE,
+    PTR_DELTA_TEST,
+    PTR_EPS_RELEASE,
+    PTR_EPS_TEST,
+    SubgroupRepairSpec,
+    build_above_threshold_ladder_artifact,
+    build_guess_quality_artifact,
     build_oracle_ls_failure_artifact,
     build_ptr_failure_artifact,
+    build_report_noisy_max_accuracy_artifact,
+    build_report_noisy_max_race_artifact,
     build_support_comparison_artifact,
     build_subgroup_sampling_artifact,
-    build_typical_oracle_neighbor_pair,
+    build_fair_comparison_neighbor_pair,
+    evaluate_shared_subgroup_accuracy,
     evaluate_subgroup_accuracy,
-    make_ptr_failure_probability_figure,
+    global_sensitivity_release_theory_laws,
+    make_above_threshold_ladder_figure,
+    make_guess_quality_figure,
     make_subgroup_accuracy_leaderboard_figure,
+    make_subgroup_private_methods_population_error_figure,
+    make_ptr_failure_probability_figure,
+    make_report_noisy_max_accuracy_figure,
+    make_report_noisy_max_race_figure,
     make_support_comparison_figure,
     make_subgroup_sampling_distribution_figure,
+    ptr_conditional_release_theory_laws,
 )
 from libdpy.visualization.roc_plots import TheoryROCVisualizer
 from libdpy.assignment_specific.private_subgroup_comparisons.mechanisms import (
-    conceptual_smooth_sensitivity_release,
     global_sensitivity_release,
+    noisy_count_sum_release,
     oracle_local_sensitivity_output_law,
     ptr_support_release,
+    smooth_sensitivity_release,
     subgroup_counts,
 )
 from libdpy.assignment_specific.private_subgroup_comparisons.witnesses import (
     DEFAULT_EPS_TOTAL,
+    DEFAULT_FAIR_COMPARISON_MAX_SMALL,
+    DEFAULT_FAIR_COMPARISON_MIN_SMALL,
     DEFAULT_SUPPORT_THRESHOLD,
     DEFAULT_TAU,
+    DEFAULT_WALKTHROUGH_GROUP_COLUMN,
     PUBLIC_VALUE_UPPER,
     frame_to_arrays,
+    prepare_fair_comparison_frame,
     prepare_fulton_subgroup_frame,
 )
 
@@ -81,15 +106,28 @@ SEED = DEFAULT_SEED
 EPS_TOTAL = DEFAULT_EPS_TOTAL
 DELTA = DEFAULT_DELTA
 
-frame = prepare_fulton_subgroup_frame(seed=SEED)
-x, groups = frame_to_arrays(frame)
+frame = prepare_fair_comparison_frame(seed=SEED)
+x, groups = frame_to_arrays(frame, group_column=DEFAULT_WALKTHROUGH_GROUP_COLUMN)
+_, sex_groups = frame_to_arrays(frame, group_column="sex_group")
+walkthrough_counts = subgroup_counts(groups)
+
 population_df = prepare_fulton_subgroup_frame(n_rows=1_000_000, seed=SEED)
 population_x, population_sex_groups = frame_to_arrays(population_df)
+_, population_latino_groups = frame_to_arrays(population_df, group_column="latino_group")
 
 LEADERBOARD_N = 1000
 LEADERBOARD_N_DATASETS = 40
 LEADERBOARD_N_RUNS = 5
-sex_counts = subgroup_counts(groups)
+
+(
+    fair_x,
+    fair_groups,
+    fair_x_prime,
+    fair_groups_prime,
+    _,
+    _,
+    _,
+) = build_fair_comparison_neighbor_pair(seed=SEED)
 
 
 def subgroup_value_fn(df):
@@ -97,83 +135,113 @@ def subgroup_value_fn(df):
 
 
 def subgroup_group_fn(df):
-    return df["group"].to_numpy()
+    return df[DEFAULT_WALKTHROUGH_GROUP_COLUMN].to_numpy()
 ```
 
 ## From clipping to subgroup analysis
 
 ::: {.fragment}
-We already controlled the salary range with a public clip interval.
+After a private step controlled the salary scale, subgroup analysis is about **denominators and private control flow**.
 :::
 
 ::: {.fragment}
-Now **denominators** control accuracy for subgroup comparisons.
+Public contract: clipping interval and reference mean from Lecture 5.
+:::
+
+## Roadmap
+
+::: {.fragment}
+**Part I:** one subgroup question — audit failures, repair with private control flow.
+:::
+
+::: {.fragment}
+**Part II:** private control flow — Report Noisy Max and AboveThreshold.
 :::
 
 ## The statistic
 
 ::: {.fragment}
-Difference of two **normalized** group means on clipped salaries.
+Target: difference of normalized group means on clipped salaries.
 :::
 
 ::: {.fragment}
-Dollar-scale estimates are post-processing: multiply by the public reference mean.
+Main demo: **Latino workers vs everyone else**; contrast with stable sex-code groups.
 :::
 
 ## Sampling variability — stable support
 
 ::: {.fragment}
-Ordinary resampling uncertainty before privacy noise (sex-code groups).
+Resampling uncertainty before privacy noise (sex-code groups).
 :::
 
 ```{python}
 sex_sampling = build_subgroup_sampling_artifact(
     population_x,
     population_sex_groups,
-    sample_size=1000,
-    n_samples=2000,
+    sample_size=DEFAULT_SUBGROUP_SAMPLING_DRAW_SIZE,
+    n_samples=40,
     comparison_label="sex-code groups",
     seed=SEED,
 )
 make_subgroup_sampling_distribution_figure(
     sex_sampling,
-    title="Sampling variability before privacy — sex-code groups",
-    xlim=(0.1, 1.0),
+    title="Sampling variability — sex-code groups (Fulton)",
 )
 ```
 
 ## Sampling variability — rare cut
 
 ::: {.fragment}
-Same design on Latino workers vs everyone else (~5% minority): wider histogram.
+Latino workers vs everyone else (~5% minority): wider histogram before privacy.
 :::
 
 ```{python}
-_, population_latino_groups = frame_to_arrays(population_df, group_column="latino_group")
 latino_sampling = build_subgroup_sampling_artifact(
     population_x,
     population_latino_groups,
-    sample_size=1000,
-    n_samples=2000,
-    comparison_label="Latino workers vs everyone else",
+    sample_size=DEFAULT_SUBGROUP_SAMPLING_DRAW_SIZE,
+    n_samples=40,
+    comparison_label="Latino vs everyone else",
     seed=SEED + 1,
 )
 make_subgroup_sampling_distribution_figure(
     latino_sampling,
-    title="Sampling variability before privacy — Latino workers vs everyone else",
-    xlim=(0.1, 1.0),
+    title="Sampling variability — Latino walkthrough comparison",
 )
 ```
 
 ## Global sensitivity is pessimistic
 
 ::: {.fragment}
-If tiny groups are allowed, $GS_\Delta \le 2B$ — valid but usually not the useful baseline.
+Valid worst-case bound $GS_\Delta \le 2B$ — usually not the useful baseline.
 :::
 
-::: {.fragment}
-The formula matters more than a plot here; the global release is valid but pessimistic.
-:::
+## Global sensitivity — theory audit
+
+```{python}
+global_theory = global_sensitivity_release_theory_laws(
+    fair_x,
+    fair_groups,
+    fair_x_prime,
+    fair_groups_prime,
+    epsilon=EPS_TOTAL,
+    delta=DELTA,
+    value_bound=PUBLIC_VALUE_UPPER,
+)
+TheoryROCVisualizer(
+    "Gaussian",
+    scale=global_theory.scale,
+    delta=global_theory.delta,
+    selectable_distribution=False,
+    loc_negative=global_theory.loc,
+    scale_negative=global_theory.scale,
+    loc_positive=global_theory.loc_prime,
+    scale_positive=global_theory.scale_prime,
+    compute_epsilon=True,
+    show_compute_epsilon_toggle=False,
+    show_governing_point=True,
+).figure()
+```
 
 ## Global sensitivity leaderboard
 
@@ -204,41 +272,29 @@ global_rows = evaluate_subgroup_accuracy(
 )
 make_subgroup_accuracy_leaderboard_figure(
     global_rows,
-    title="Global sensitivity release on Fulton sex-code sample",
+    title="Global sensitivity release",
 )
 ```
 
 ## Temptation: oracle local sensitivity
 
 ::: {.fragment}
-Scale Gaussian noise to the conservative local-sensitivity bound on the private dataset.
-:::
-
-::: {.fragment}
-Looks excellent on balanced support — **not DP** when the noise std is data-dependent.
+Scale Gaussian noise to a **data-dependent** local-sensitivity bound — not DP when support moves the scale.
 :::
 
 ## Typical neighbor pair — analytical ROC
 
 ```{python}
-(
-    typical_oracle_x,
-    typical_oracle_groups,
-    typical_oracle_x_prime,
-    typical_oracle_groups_prime,
-    _,
-    _,
-) = build_typical_oracle_neighbor_pair(seed=SEED)
 typical_oracle_loc, _ = oracle_local_sensitivity_output_law(
-    typical_oracle_x,
-    typical_oracle_groups,
+    fair_x,
+    fair_groups,
     EPS_TOTAL,
     DELTA,
     value_bound=PUBLIC_VALUE_UPPER,
 )
 typical_oracle_loc_prime, _ = oracle_local_sensitivity_output_law(
-    typical_oracle_x_prime,
-    typical_oracle_groups_prime,
+    fair_x_prime,
+    fair_groups_prime,
     EPS_TOTAL,
     DELTA,
     value_bound=PUBLIC_VALUE_UPPER,
@@ -265,7 +321,7 @@ TheoryROCVisualizer(
 ## Sparse support — privacy failure ROC
 
 ::: {.fragment}
-Engineered sparse pair: noise scale jumps on $D'$ when support drops.
+Engineered pair: oracle Gaussian std doubles on $D'$ when support drops.
 :::
 
 ```{python}
@@ -305,9 +361,40 @@ TheoryROCVisualizer(
 Four Gaussian queries + public denominator floor $\tau$.
 :::
 
-::: {.fragment}
-Counts are not free, but they publish support instead of leaking it through the noise scale.
-:::
+```{python}
+def count_sum_mechanism(values, group_labels, run_rng):
+    q = EPS_TOTAL / 4
+    return noisy_count_sum_release(
+        values,
+        group_labels,
+        q,
+        q,
+        q,
+        q,
+        DEFAULT_TAU,
+        run_rng,
+        value_bound=PUBLIC_VALUE_UPPER,
+    )
+
+
+count_sum_rows = evaluate_subgroup_accuracy(
+    population_df,
+    count_sum_mechanism,
+    n=LEADERBOARD_N,
+    n_datasets=LEADERBOARD_N_DATASETS,
+    n_runs=LEADERBOARD_N_RUNS,
+    seed=SEED + 1,
+    group_fn=subgroup_group_fn,
+    value_fn=subgroup_value_fn,
+    method="noisy counts and sums",
+    privacy_status="valid",
+    epsilon_total=EPS_TOTAL,
+)
+make_subgroup_accuracy_leaderboard_figure(
+    count_sum_rows,
+    title="Noisy counts and sums",
+)
+```
 
 ## PTR: test support, then release or abstain
 
@@ -319,15 +406,45 @@ Certify distance from the bad set before releasing with a public sensitivity bou
 ptr_failure = build_ptr_failure_artifact(
     support_values=np.arange(1, 121, dtype=int),
     ptr_threshold=DEFAULT_SUPPORT_THRESHOLD,
-    eps_test=0.4,
-    delta=0.05,
+    eps_test=PTR_EPS_TEST,
+    delta_test=PTR_DELTA_TEST,
+    delta_release=PTR_DELTA_RELEASE,
+    delta_fail=PTR_DELTA_FAIL,
 )
 make_ptr_failure_probability_figure(
     ptr_failure,
     title="PTR support test failure probability vs true minimum support",
-    marker_min_count=min(sex_counts.values()),
-    marker_label=f"Fulton sex-code sample (min n={min(sex_counts.values())})",
+    marker_min_count=min(walkthrough_counts.values()),
+    marker_label=f"Latino walkthrough (min n={min(walkthrough_counts.values())})",
 )
+```
+
+## PTR conditional release — theory audit
+
+```{python}
+ptr_theory = ptr_conditional_release_theory_laws(
+    fair_x,
+    fair_groups,
+    fair_x_prime,
+    fair_groups_prime,
+    ptr_threshold=DEFAULT_SUPPORT_THRESHOLD,
+    eps_release=PTR_EPS_RELEASE,
+    delta_release=PTR_DELTA_RELEASE,
+    value_bound=PUBLIC_VALUE_UPPER,
+)
+TheoryROCVisualizer(
+    "Gaussian",
+    scale=ptr_theory.scale,
+    delta=ptr_theory.delta_release,
+    selectable_distribution=False,
+    loc_negative=ptr_theory.loc,
+    scale_negative=ptr_theory.scale,
+    loc_positive=ptr_theory.loc_prime,
+    scale_positive=ptr_theory.scale_prime,
+    compute_epsilon=True,
+    show_compute_epsilon_toggle=False,
+    show_governing_point=True,
+).figure()
 ```
 
 ## PTR accuracy leaderboard
@@ -337,11 +454,13 @@ def ptr_mechanism(values, group_labels, run_rng):
     return ptr_support_release(
         values,
         group_labels,
-        m=DEFAULT_SUPPORT_THRESHOLD,
-        eps_test=0.4,
-        eps_release=0.6,
-        delta=0.05,
-        rng=run_rng,
+        DEFAULT_SUPPORT_THRESHOLD,
+        PTR_EPS_TEST,
+        PTR_EPS_RELEASE,
+        PTR_DELTA_TEST,
+        PTR_DELTA_RELEASE,
+        PTR_DELTA_FAIL,
+        run_rng,
         value_bound=PUBLIC_VALUE_UPPER,
     )
 
@@ -356,29 +475,30 @@ ptr_rows = evaluate_subgroup_accuracy(
     group_fn=subgroup_group_fn,
     value_fn=subgroup_value_fn,
     method="PTR support",
-    privacy_status="conceptual PTR",
+    privacy_status="valid PTR",
     epsilon_total=EPS_TOTAL,
 )
 make_subgroup_accuracy_leaderboard_figure(
     ptr_rows,
-    title="PTR support release on Fulton sex-code sample",
+    title="PTR support release",
 )
 ```
 
-## Smooth sensitivity (conceptual)
+## Smooth sensitivity
 
 ::: {.fragment}
-Inflate noise near sparse regions — teaching sketch, not a formal pure-DP guarantee here.
+NRS Laplace release with admissible $\beta$ — valid pure-DP repair.
 :::
 
 ```{python}
 def smooth_mechanism(values, group_labels, run_rng):
-    return conceptual_smooth_sensitivity_release(
+    return smooth_sensitivity_release(
         values,
         group_labels,
-        epsilon=EPS_TOTAL,
-        beta=0.35,
-        rng=run_rng,
+        EPS_TOTAL,
+        DEFAULT_BETA,
+        run_rng,
+        delta=DELTA,
         value_bound=PUBLIC_VALUE_UPPER,
     )
 
@@ -393,20 +513,43 @@ smooth_rows = evaluate_subgroup_accuracy(
     group_fn=subgroup_group_fn,
     value_fn=subgroup_value_fn,
     method="smooth sensitivity",
-    privacy_status="conceptual smooth sensitivity",
+    privacy_status="valid smooth sensitivity",
     epsilon_total=EPS_TOTAL,
 )
 make_subgroup_accuracy_leaderboard_figure(
     smooth_rows,
-    title="Smooth-sensitivity release on Fulton sex-code sample",
+    title="Smooth sensitivity release",
+)
+```
+
+## All valid methods vs population gap
+
+```{python}
+private_method_specs = [
+    SubgroupRepairSpec(global_mechanism, "global sensitivity", "valid", EPS_TOTAL),
+    SubgroupRepairSpec(count_sum_mechanism, "noisy counts and sums", "valid", EPS_TOTAL),
+    SubgroupRepairSpec(ptr_mechanism, "PTR support", "valid PTR", EPS_TOTAL),
+    SubgroupRepairSpec(smooth_mechanism, "smooth sensitivity", "valid smooth sensitivity", EPS_TOTAL),
+]
+private_method_rows = evaluate_shared_subgroup_accuracy(
+    population_df,
+    private_method_specs,
+    n=LEADERBOARD_N,
+    n_datasets=LEADERBOARD_N_DATASETS,
+    n_runs=LEADERBOARD_N_RUNS,
+    seed=SEED + 10,
+    min_small_support=DEFAULT_FAIR_COMPARISON_MIN_SMALL,
+    max_small_support=DEFAULT_FAIR_COMPARISON_MAX_SMALL,
+    group_fn=subgroup_group_fn,
+    value_fn=subgroup_value_fn,
+)
+make_subgroup_private_methods_population_error_figure(
+    private_method_rows,
+    title="Released estimate vs population gap — valid private subgroup mechanisms",
 )
 ```
 
 ## Repairs vs support
-
-::: {.fragment}
-Vary true minimum support — compare count/sum, PTR, and smooth repairs on common footing.
-:::
 
 ```{python}
 support_artifact = build_support_comparison_artifact(
@@ -421,12 +564,58 @@ support_artifact = build_support_comparison_artifact(
 make_support_comparison_figure(support_artifact)
 ```
 
-## Summary
+## Part II — Private control flow
 
 ::: {.fragment}
-After clipping, subgroup analysis is about **denominators and private control flow** — not extreme outliers.
+Part I released a **number**; Part II shows how to make **choices** privately — with and without public data.
 :::
 
 ::: {.fragment}
-Public coarsenings propose questions; private validation of support costs budget.
+**Demo A:** Report Noisy Max for the most common education code (no public data).
+:::
+
+::: {.fragment}
+**Demo B:** AboveThreshold with a public guess to recover the clip bound Part I assumed.
+:::
+
+## Report Noisy Max — one noisy draw
+
+```{python}
+race_artifact = build_report_noisy_max_race_artifact(seed=SEED)
+make_report_noisy_max_race_figure(race_artifact)
+```
+
+## Report Noisy Max — accuracy vs budget
+
+```{python}
+accuracy_artifact = build_report_noisy_max_accuracy_artifact(seed=SEED, n_repeats=200)
+make_report_noisy_max_accuracy_figure(accuracy_artifact)
+```
+
+## AboveThreshold — clip-bound ladder
+
+```{python}
+ladder_artifact = build_above_threshold_ladder_artifact(seed=SEED, epsilon=1.0)
+make_above_threshold_ladder_figure(ladder_artifact)
+```
+
+## AboveThreshold — good public guess
+
+```{python}
+guess_quality_artifact = build_guess_quality_artifact(seed=SEED, n_repeats=150)
+make_guess_quality_figure(guess_quality_artifact)
+```
+
+## Summary
+
+::: {.fragment}
+After clipping, subgroup analysis is about **denominators and private control flow**.
+:::
+
+::: {.fragment}
+Report Noisy Max picks a value; AboveThreshold finds a threshold — closing the loop to Part I's public clip bound.
+:::
+
+::: {.fragment}
+Next: private search as a general design pattern and preparing models for private learning.
 :::

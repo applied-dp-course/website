@@ -53,6 +53,10 @@ block on a green CI build+deploy. See [authoring/AUTHORING.md](authoring/AUTHORI
 gate* (including *Common delivery pitfalls*). A local render passing, or a `pub_lib` tag existing, is
 **not** "shipped".
 
+**Quarantined dev tools:** `dev/tools/quarantine/` holds scripts that are **not** part of delivery
+(stale generators, experiments). Do not run them to regenerate committed content unless rewritten and
+promoted back to `dev/tools/`.
+
 Quarto runs catalog validation and page synchronization before rendering. Generated catalog and
 interactive artifacts are written under `_generated/`; rendered pages are written under `_site/`.
 
