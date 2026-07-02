@@ -59,6 +59,9 @@ jobs:
           ./.venv/bin/pip install --upgrade pip
           ./.venv/bin/pip install -r requirements-ci.txt
 
+      - name: Verify content libdpy imports resolve on the pinned tag (fast gate before render)
+        run: ./.venv/bin/python dev/tools/verify_libdpy_imports.py
+
       - name: Render site
         env:
           QUARTO_PYTHON: ${{ github.workspace }}/.venv/bin/python

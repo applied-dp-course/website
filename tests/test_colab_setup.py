@@ -43,7 +43,12 @@ class AssignmentColabSetupTest(unittest.TestCase):
 
         with mock.patch("builtins.__import__", side_effect=guarded_import):
             with mock.patch("subprocess.check_call") as check_call:
-                exec(compile(script, "<setup>", "exec"), {})
+                try:
+                    exec(compile(script, "<setup>", "exec"), {})
+                finally:
+                    # The guarded import installs a stub module; remove it so later
+                    # tests see the real libdpy package from site-packages.
+                    sys.modules.pop("libdpy", None)
         check_call.assert_called_once()
 
 

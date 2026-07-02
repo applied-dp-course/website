@@ -142,25 +142,41 @@ to import the **same symbols** from the **pinned** install — not from a local 
 Do **not** tag `libdpy` for a lecture while website content still imports symbols that do not exist
 on the tag you plan to pin.
 
-**Delivery gate** — all must pass before merge/push; agents must run these, not hand off:
+**Delivery gate — run the orchestrator; do not hand off.** `./dev/tools/deliver_lecture.sh`
+executes every step below fail-closed and, with `--push`, blocks until CI deploys the content
+commit to Pages. A local render passing or a `pub_lib` tag existing is **not** shipping.
 
 ```bash
-# code_base_dev (when libdpy changed)
-~/venvs/libdpy/dev-local/bin/python -m pytest tests/test_<topic>.py -q
+# from website/ — validate only (no push):
+./dev/tools/deliver_lecture.sh --slug <slug>
 
-# website (from website/)
-./dev/tools/sync_libdpy.sh
-./.venv/bin/python -m pytest tests -q
-./dev/tools/render.sh
-./.venv/bin/python tests/run_smoke_tests.py --slug <slug>
+# validate, then push and block on a GREEN build+deploy (optionally confirm the live page):
+./dev/tools/deliver_lecture.sh --slug <slug> --push \
+    --base-url https://applied-dp-course.github.io/website/<route> --expect "<deck title>"
 ```
 
-Quick import check after sync (catches API drift before a long render):
+The gate runs, in order, and stops at the first failure:
+
+1. **Preconditions** — the slug is registered (content dir + `dev/plan/baseline-routes.json` +
+   `tests/test_content_model.py`); clean tree required when `--push`.
+2. **Pin / library** — the `requirements.txt` tag exists on `pub_lib` (`git ls-remote`, so you
+   cannot push ahead of the tag); `sync_libdpy.sh`; then **`verify_libdpy_imports.py`** — the fast
+   API-drift tripwire that resolves every libdpy symbol the deck/post import against the pinned
+   install, in seconds, *before* the ~7-minute render.
+3. **Validate** — `pytest tests` → full `render.sh` → `check_site.py` → `run_smoke_tests.py --slug`.
+4. **Publish** (`--push` only) — push, then `gh run watch` the *Publish website* build+deploy to
+   green; optional live-URL check.
+
+Run the drift tripwire on its own any time you refactor a `libdpy` helper (fails in seconds):
 
 ```bash
-./.venv/bin/python -c "
-from libdpy.... import ...  # every symbol presentation.qmd / post.ipynb use
-"
+./.venv/bin/python dev/tools/verify_libdpy_imports.py --slug <slug>   # omit --slug to scan all content
+```
+
+When `libdpy` changed, run its unit tests on the library side before releasing/tagging:
+
+```bash
+~/venvs/libdpy/dev-local/bin/python -m pytest tests/test_<topic>.py -q
 ```
 
 **CI cache caveat.** A green deploy on `main` that only touched infra may not have rendered your

@@ -82,6 +82,9 @@ jobs:
           ./.venv/bin/pip install --upgrade pip
           ./.venv/bin/pip install -r requirements-ci.txt
 
+      - name: Verify content libdpy imports resolve on the pinned tag (fast gate before render)
+        run: ./.venv/bin/python dev/tools/verify_libdpy_imports.py
+
       - name: Unit tests (before expensive WASM build)
         run: ./.venv/bin/python -m pytest tests -q
 
@@ -165,6 +168,9 @@ jobs:
           python -m venv .venv
           ./.venv/bin/pip install --upgrade pip
           ./.venv/bin/pip install -r requirements-ci.txt
+
+      - name: Verify content libdpy imports resolve on the pinned tag (fast gate before render)
+        run: ./.venv/bin/python dev/tools/verify_libdpy_imports.py
 
       - name: Unit tests (before expensive WASM build)
         run: ./.venv/bin/python -m pytest tests -q
