@@ -117,6 +117,57 @@ convention (applied to private-estimation): the **deck** uses static `make_*_fig
 speed and print-safety, while the **blog post** carries the interactive `.embed()` explorers — not
 every interactive in the dev notebook must appear in both.
 
+### Delivery gate (definition of “shipped”)
+
+**Infra go-live and lecture go-live are different.** A green deploy of CI/release-flow changes, or a
+successful `pub_lib` tag push, does **not** mean a lecture slug is shipped. Do not report a lecture
+as done until the gates below pass on **that slug’s commit**.
+
+**Keep website copies aligned with the dev notebook.** The dev notebook is the authoring source;
+`presentation.qmd` and `post.ipynb` are parallel copies that **will drift** if refactored separately.
+After changing `libdpy` figure helpers or imports in the dev notebook, update both website artifacts
+to import the **same symbols** from the **pinned** install — not from a local editable `libdpy`.
+
+**Order for a lecture that needs new library API:**
+
+1. Implement and test in `code_base_dev/libdpy/` (`pytest` green on affected tests).
+2. Update website deck + blog post to match the current API (use `LIBDPY_SYNC=0 ./dev/tools/render.sh`
+   only while iterating against an editable local install).
+3. Run the **delivery gate** below with the pin you intend to ship (`./dev/tools/sync_libdpy.sh`
+   installs it).
+4. Tag `code_base_dev` (`vX.Y.Z`) and confirm `pub_lib` has the tag.
+5. Bump `website/requirements.txt` to `@vX.Y.Z` in the **same commit** as the content, then push
+   website `main` (or merge a PR whose `build-check` passed).
+
+Do **not** tag `libdpy` for a lecture while website content still imports symbols that do not exist
+on the tag you plan to pin.
+
+**Delivery gate** — all must pass before merge/push; agents must run these, not hand off:
+
+```bash
+# code_base_dev (when libdpy changed)
+~/venvs/libdpy/dev-local/bin/python -m pytest tests/test_<topic>.py -q
+
+# website (from website/)
+./dev/tools/sync_libdpy.sh
+./.venv/bin/python -m pytest tests -q
+./dev/tools/render.sh
+./.venv/bin/python tests/run_smoke_tests.py --slug <slug>
+```
+
+Quick import check after sync (catches API drift before a long render):
+
+```bash
+./.venv/bin/python -c "
+from libdpy.... import ...  # every symbol presentation.qmd / post.ipynb use
+"
+```
+
+**CI cache caveat.** A green deploy on `main` that only touched infra may not have rendered your
+lecture. CI render cache and incremental WASM skips can hide stale artifacts. Before calling a
+lecture shipped, a **full** local `./dev/tools/render.sh` on the content commit is required; do not
+infer lecture health from an unrelated green workflow run.
+
 ## Configure an offering
 
 Copy `authoring/templates/offering` to `content/offerings/<term>/`. The schedule header is:
@@ -244,7 +295,9 @@ iterating; pass `--include-per-app` to `run_smoke_tests.py` if you also need the
 standalone per-app pass.
 
 A full `./dev/tools/render.sh` is still required before "done" when artifact names change, animation
-sidecars are added/changed, or offering/page sync is affected.
+sidecars are added/changed, or offering/page sync is affected. See *Developing a lecture → Delivery
+gate* for the full “shipped” definition and the anti-pattern of treating infra deploy success as
+lecture completion.
 
 Private `solution.ipynb` files under class or home assignments are ignored and blocked from the
 rendered site.
