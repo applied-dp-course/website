@@ -50,7 +50,8 @@ CI runs the pytest line **before** Quarto render (see [authoring/AUTHORING.md](a
 **Shipping a lecture:** run `./dev/tools/deliver_lecture.sh --slug <slug>` — a fail-closed gate that
 resolves libdpy imports on the pin, renders, checks routes, and smoke-tests; add `--push` to push and
 block on a green CI build+deploy. See [authoring/AUTHORING.md](authoring/AUTHORING.md) → *Delivery
-gate*. A local render passing, or a `pub_lib` tag existing, is **not** "shipped".
+gate* (including *Common delivery pitfalls*). A local render passing, or a `pub_lib` tag existing, is
+**not** "shipped".
 
 Quarto runs catalog validation and page synchronization before rendering. Generated catalog and
 interactive artifacts are written under `_generated/`; rendered pages are written under `_site/`.

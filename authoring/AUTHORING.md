@@ -184,6 +184,23 @@ lecture. CI render cache and incremental WASM skips can hide stale artifacts. Be
 lecture shipped, a **full** local `./dev/tools/render.sh` on the content commit is required; do not
 infer lecture health from an unrelated green workflow run.
 
+**Common delivery pitfalls (do not repeat):**
+
+| Pitfall | Symptom | Guard |
+|---------|---------|-------|
+| Warm local cache hides a cold CI render | Local `./dev/tools/render.sh` passes; **Publish website** fails on `build_interactives` / gallery | After WASM or gallery changes, simulate CI: `rm -rf _freeze _generated _site && ./dev/tools/render.sh` |
+| Shared WASM artifact, one export path | Gallery error: manifest path missing under `_generated/apps/lecture-presentations/...` | One `.embed()` in several sources (home page + deck + blog) needs a bundle at **each** source-relative `_generated/apps/<parent>/` path; `build_interactives.py` exports once and copies to every location |
+| API drift on the pin | ~7-minute render fails mid-notebook | Run `./.venv/bin/python dev/tools/verify_libdpy_imports.py --slug <slug>` first (CI runs this before render) |
+| Static-figure lecture | `run_smoke_tests.py --slug` exits: "no full-page WASM routes match" | Expected for deck-only static figures — scoped smoke no-ops; still run the full gate before push |
+| Infra green ≠ lecture shipped | Tag on `pub_lib` exists or CI passed on an infra-only commit | Use `./dev/tools/deliver_lecture.sh --slug <slug> --push` and wait for **Publish website** green on the **content** commit |
+
+**Simulate CI before push** when you touched WASM exports, gallery manifests, or shared embeds:
+
+```bash
+rm -rf _freeze _generated _site
+./dev/tools/deliver_lecture.sh --slug <slug>    # validate only; add --push when clean tree is green
+```
+
 ## Configure an offering
 
 Copy `authoring/templates/offering` to `content/offerings/<term>/`. The schedule header is:
@@ -305,7 +322,8 @@ quarto render content/blog-posts/<slug>/post.ipynb               # render one no
 ```
 
 The scoped smoke command runs only the matching full-page WASM routes and skips the
-site-wide per-app loop (each app can take up to five minutes locally). Use
+site-wide per-app loop (each app can take up to five minutes locally). Static-figure slugs with
+no WASM embeds no-op instead of failing. Use
 `tests/smoke_full_page_wasm.py` against a served URL for an even lighter check while
 iterating; pass `--include-per-app` to `run_smoke_tests.py` if you also need the
 standalone per-app pass.

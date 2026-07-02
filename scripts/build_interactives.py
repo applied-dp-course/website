@@ -495,37 +495,85 @@ def _remove_stale_generated_apps(uses: list[InteractiveUse], *, site_root: Path)
         )
 
 
+def _pick_canonical_use(group: list[InteractiveUse], *, site_root: Path) -> InteractiveUse:
+    """Pick one embed source to run ``marimo export`` for a shared artifact."""
+
+    def sort_key(use: InteractiveUse) -> tuple[int, int, str]:
+        relative = use.source.relative_to(site_root).as_posix()
+        return (
+            1 if relative.startswith("pages/") else 0,
+            1 if relative.startswith("content/tools/") or relative.startswith("content/site-posts/") else 0,
+            relative,
+        )
+
+    return sorted(group, key=sort_key)[0]
+
+
+def _mirror_app_bundle(source: Path, target: Path) -> None:
+    """Replicate a built WASM bundle so each embed location has a local copy.
+
+    The same artifact name often appears in several sources (home page, deck, blog, tools).
+    ``defer_wasm_embeds.py`` resolves ``apps/<id>`` relative to each page's source parent, and
+    gallery manifests declare lecture paths — one export is not enough. Use real copies (not
+    symlinks): symlinks break asset paths and are not copied into ``_site`` reliably.
+    """
+
+    source = source.resolve()
+    target = target.resolve()
+    if source == target:
+        return
+    if target.exists() or target.is_symlink():
+        if target.is_symlink():
+            target.unlink()
+        else:
+            shutil.rmtree(target)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(source, target)
+
+
 def _export_all(uses: list[InteractiveUse], wheel: Path, *, site_root: Path) -> None:
     """Export discovered apps, parallelizing independent ``marimo export`` subprocesses."""
 
-    seen_artifacts: set[str] = set()
-    unique_uses: list[InteractiveUse] = []
+    by_artifact: dict[str, list[InteractiveUse]] = {}
     for use in uses:
-        name = use.spec.artifact_name
-        if name in seen_artifacts:
-            continue
-        seen_artifacts.add(name)
-        unique_uses.append(use)
+        by_artifact.setdefault(use.spec.artifact_name, []).append(use)
 
-    if len(unique_uses) <= 1:
-        for use in unique_uses:
+    canonical_uses = [
+        _pick_canonical_use(group, site_root=site_root) for group in by_artifact.values()
+    ]
+
+    if len(canonical_uses) <= 1:
+        for use in canonical_uses:
             _export(use, wheel, site_root=site_root)
             print(
                 f"Built {use.spec.artifact_name} for "
                 f"{use.source.parent.relative_to(site_root)}"
             )
-        return
+    else:
+        workers = min(len(canonical_uses), os.cpu_count() or 4, MAX_PARALLEL_EXPORTS)
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = {
+                pool.submit(_export, use, wheel, site_root=site_root): use
+                for use in canonical_uses
+            }
+            for future in as_completed(futures):
+                use = futures[future]
+                future.result()
+                print(
+                    f"Built {use.spec.artifact_name} for "
+                    f"{use.source.parent.relative_to(site_root)}"
+                )
 
-    workers = min(len(unique_uses), os.cpu_count() or 4, MAX_PARALLEL_EXPORTS)
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = {
-            pool.submit(_export, use, wheel, site_root=site_root): use for use in unique_uses
-        }
-        for future in as_completed(futures):
-            use = futures[future]
-            future.result()
+    for group in by_artifact.values():
+        canonical = _pick_canonical_use(group, site_root=site_root)
+        source_directory = output_directory_for(canonical, site_root)
+        for use in group:
+            target_directory = output_directory_for(use, site_root)
+            if target_directory == source_directory:
+                continue
+            _mirror_app_bundle(source_directory, target_directory)
             print(
-                f"Built {use.spec.artifact_name} for "
+                f"Mirrored {use.spec.artifact_name} to "
                 f"{use.source.parent.relative_to(site_root)}"
             )
 
