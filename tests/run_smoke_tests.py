@@ -172,13 +172,7 @@ def filter_full_page_wasm_routes(
             )
         return list(selected)
     if slug:
-        matched = [route for route in routes if slug in route]
-        if not matched:
-            raise SystemExit(
-                f"no full-page WASM routes match slug {slug!r}. "
-                f"Known routes: {', '.join(routes)}"
-            )
-        return matched
+        return [route for route in routes if slug in route]
     return routes
 
 
@@ -247,6 +241,9 @@ def main(argv: list[str] | None = None) -> None:
     canvas_urls: list[str] = []
     if not skip_per_app:
         wasm_urls, canvas_urls = discover_smoke_targets(SITE_ROOT, output_root)
+        if args.slug:
+            wasm_urls = [path for path in wasm_urls if args.slug in path]
+            canvas_urls = [path for path in canvas_urls if args.slug in path]
 
     page_routes = filter_full_page_wasm_routes(
         discover_full_page_wasm_routes(),
