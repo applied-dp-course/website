@@ -42,7 +42,6 @@ except ImportError:
 #| output: false
 #| include: false
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy import stats
 
 from libdpy.assignment_specific.privacy_auditing.lecture_figures import (
@@ -367,8 +366,7 @@ To avoid overstating privacy loss, move the empirical ROC point **down** and **r
 ## Confidence rectangle
 
 ```{python}
-fig = make_confidence_rectangle_figure(audit_main)
-plt.show()
+make_confidence_rectangle_figure(audit_main)
 ```
 
 ## Naive versus safe

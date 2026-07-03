@@ -6,6 +6,8 @@ import unittest
 import zipfile
 from pathlib import Path
 
+import plotly.graph_objects as go
+
 SCRIPT_PATH = Path(__file__).resolve().parents[1] / "scripts" / "build_interactives.py"
 SPEC = importlib.util.spec_from_file_location("build_interactives", SCRIPT_PATH)
 build_interactives = importlib.util.module_from_spec(SPEC)
@@ -170,6 +172,68 @@ class BuildInteractivesTest(unittest.TestCase):
             build_interactives._remove_stale_generated_apps(uses, site_root=root)
 
             self.assertFalse(stale.exists())
+
+    def test_export_static_plotly_writes_plotly_html(self) -> None:
+        from libdpy.visualization.interactive import InteractiveSpec
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            spec = InteractiveSpec(
+                name="static_plotly_test",
+                artifact_name="static-plotly-test",
+                controls=(),
+                preferred_backend="plotly-declarative",
+                allowed_backends=("plotly-declarative", "ipywidgets"),
+                make_figure=lambda: go.Figure(data=[go.Scatter(x=[0, 1], y=[0, 1])]),
+                figure_factory="example:make_figure",
+            )
+            use = build_interactives.InteractiveUse(source=root / "test.qmd", spec=spec)
+            build_interactives._export(use, wheel=Path("unused.whl"), site_root=root)
+
+            output = build_interactives.output_directory_for(use, root)
+            index_html = output / "index.html"
+            marker = (output / ".libdpy-interactive").read_text(encoding="utf-8")
+            self.assertTrue(index_html.is_file())
+            self.assertIn("plotly", index_html.read_text(encoding="utf-8"))
+            self.assertIn("export_backend=static-plotly", marker)
+            self.assertFalse(any(output.rglob("*.whl")))
+
+    def test_export_plotly_declarative_writes_slider_html(self) -> None:
+        from libdpy.visualization.interactive import ControlSpec, InteractiveSpec
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            spec = InteractiveSpec(
+                name="declarative_plotly_test",
+                artifact_name="declarative-plotly-test",
+                controls=(
+                    ControlSpec(
+                        name="value",
+                        kind="slider",
+                        label="value",
+                        default=0,
+                        min=0,
+                        max=2,
+                        step=1,
+                    ),
+                ),
+                preferred_backend="plotly-declarative",
+                allowed_backends=("plotly-declarative", "ipywidgets"),
+                make_figure=lambda value: go.Figure(
+                    data=[go.Scatter(x=[0, 1], y=[0, value])]
+                ),
+                figure_factory="example:make_figure",
+                declarative_grid={"value": (0, 1, 2)},
+            )
+            use = build_interactives.InteractiveUse(source=root / "test.qmd", spec=spec)
+            build_interactives._export(use, wheel=Path("unused.whl"), site_root=root)
+
+            output = build_interactives.output_directory_for(use, root)
+            index_html = output / "index.html"
+            marker = (output / ".libdpy-interactive").read_text(encoding="utf-8")
+            html = index_html.read_text(encoding="utf-8")
+            self.assertIn("export_backend=plotly-declarative", marker)
+            self.assertIn("sliders", html)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,3 @@
-from IPython.display import display
 ---
 title: "DP as Hypothesis Testing"
 subtitle: "Applied Differential Privacy"
@@ -37,7 +36,7 @@ except Exception:
 try:
     import libdpy
 except ImportError:
-    %pip install -q "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git"
+    %pip install -q "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git@v0.2.19"
     import libdpy
 
 # Register inline figures for Quarto/RevealJS export.
@@ -49,12 +48,17 @@ except ImportError:
 #| output: false
 #| include: false
 from libdpy.visualization.privacy_plots import PrivacyPlot
-from libdpy.visualization.roc_plots import make_roc_decision_declarative_figure, ComparisonType
+from libdpy.visualization.roc_plots import make_roc_decision_declarative_figure
 from libdpy.assignment_specific.dp_as_hypothesis_testing.utils import desicion_rule_params
+from libdpy.assignment_specific.dp_as_hypothesis_testing.lecture_figures import (
+    make_analytic_roc_curve_figure,
+    make_analytic_roc_curves_by_std_figure,
+    make_empty_roc_plane_figure,
+    make_fpr_tpr_confusion_panels_figure,
+    make_hypothesis_distributions_figure,
+    make_threshold_decision_rule_figure,
+)
 from scipy.stats import norm, laplace, uniform
-from scipy.stats import rv_continuous as Distribution
-import numpy as np
-import matplotlib.pyplot as plt
 ```
 
 ## Recap: privacy and anonymity
@@ -93,12 +97,7 @@ Example: $\mathbf{H_0}$: $x \sim \mathcal{N}(\mu_0, \sigma^2)$ (negative) and $\
 ```{python}
 dist_neg = norm(0, 1)
 dist_pos = norm(1, 1)
-fig = plt.figure()
-x = np.linspace(-4, 5, 1000)
-plt.plot(x, dist_neg.pdf(x), 'r', label='H0')
-plt.plot(x, dist_pos.pdf(x), 'b', label='H1')
-plt.legend()
-plt.show()
+make_hypothesis_distributions_figure(dist_neg, dist_pos)
 ```
 
 
@@ -131,16 +130,7 @@ A function from the domain to $\{0, 1\}$, which given a sampled value guesses wh
 
 ```{python}
 tau = 0.35
-fig = plt.figure()
-x = np.linspace(-4, 5, 1000)
-plt.plot(x, dist_neg.pdf(x), 'r', label='H0')
-plt.plot(x, dist_pos.pdf(x), 'b', label='H1')
-plt.axvline(x=tau, color='black', label='tau')
-# color the region to the right of tau in blue and to the left in red
-plt.fill_between(x, 0.4, where=x<=tau, color='red', alpha=0.2)
-plt.fill_between(x, 0.4, where=x>tau, color='blue', alpha=0.2)
-plt.legend()
-plt.show()
+make_threshold_decision_rule_figure(dist_neg, dist_pos, tau)
 ```
 
 
@@ -190,25 +180,7 @@ plt.show()
 ## FP and TP
 
 ```{python}
-fig, axs = plt.subplots(1, 2)
-fig.suptitle('Hypothesis testing')
-x = np.linspace(-4, 5, 1000)
-axs[0].plot(x, dist_neg.pdf(x), 'r', label='H0')
-axs[0].plot(x, dist_pos.pdf(x), 'b', label='H1')
-axs[0].axvline(x=tau, color='black', label='tau')
-axs[0].fill_between(x, dist_neg.pdf(x), where=x<=tau, color='red', alpha=0.2)
-axs[0].fill_between(x, dist_neg.pdf(x), where=x>tau, color='blue', alpha=0.2)
-axs[0].legend()
-axs[0].set_title('True negative (red) and false positive (blue)')
-axs[1].plot(x, dist_neg.pdf(x), 'r', label='H0')
-axs[1].plot(x, dist_pos.pdf(x), 'b', label='H1')
-axs[1].axvline(x=tau, color='black', label='tau')
-axs[1].fill_between(x, dist_pos.pdf(x), where=x>tau, color='blue', alpha=0.2)
-axs[1].fill_between(x, dist_pos.pdf(x), where=x<=tau, color='red', alpha=0.2)
-axs[1].legend()
-axs[1].set_title('True positive (blue) and false negative (red)')
-fig.set_size_inches(12, 6)
-plt.show()
+make_fpr_tpr_confusion_panels_figure(dist_neg, dist_pos, tau)
 ```
 
 ## FPR and TPR
@@ -224,14 +196,7 @@ $$FPR := \Pr_{X \sim H_0}(X > \tau), \qquad TPR := \Pr_{X \sim H_1}(X > \tau).$$
 Naturally, there is a tradeoff between TPR and FPR. This tradeoff is represented by the **ROC plane**. Any decision rule is a point with coordinates $(FPR, TPR)$.
 
 ```{python}
-fig = plt.figure(figsize=(6, 6))
-ax = fig.add_axes([0.15, 0.15, 0.7, 0.7])
-ax.set_xlabel('False positive rate (FPR)')
-ax.set_ylabel('True positive rate (TPR)')
-ax.set_title('ROC plane')
-ax.set_xlim(0, 1)
-ax.set_ylim(0, 1)
-plt.show()
+make_empty_roc_plane_figure(title='ROC plane', square=True)
 ```
 
 ## The ROC curve
@@ -239,19 +204,7 @@ plt.show()
 For any FPR there is a maximal achievable TPR; the collection of these points is the **ROC curve**.
 
 ```{python}
-fig = plt.figure(figsize=(6, 6))
-ax = fig.add_axes([0.15, 0.15, 0.7, 0.7])
-FPR = np.linspace(0, 1, 1000)
-TPR = 1 - dist_pos.cdf(dist_neg.ppf(1-FPR))
-ax.plot(FPR, TPR, label='ROC curve', color='green')
-ax.plot(FPR, FPR, label='Random guess', color='black', linestyle='--')
-ax.set_xlabel('False positive rate (FPR)')
-ax.set_ylabel('True positive rate (TPR)')
-ax.set_title('ROC curve')
-ax.set_xlim(0, 1)
-ax.set_ylim(0, 1)
-ax.legend()
-plt.show()
+make_analytic_roc_curve_figure(dist_neg, dist_pos, square=True)
 ```
 
 
@@ -260,21 +213,7 @@ plt.show()
 Of course, this curve depends on $\mu_1 - \mu_0$ and $\sigma$.
 
 ```{python}
-fig = plt.figure(figsize=(6, 6))
-ax = fig.add_axes([0.15, 0.15, 0.7, 0.7])
-FPR = np.linspace(0, 1, 1000)
-std_arr = [0.2, 0.5, 1, 2, 5]
-for std in std_arr:
-    TPR = 1 - norm(1, std).cdf(norm(0, std).ppf(1-FPR))
-    ax.plot(FPR, TPR, label='ROC curve, $\\sigma$ = ' + str(std))
-ax.plot(FPR, FPR, label='Random guess', color='black', linestyle='--')
-ax.set_xlabel('False positive rate (FPR)')
-ax.set_ylabel('True positive rate (TPR)')
-ax.set_title('ROC curve')
-ax.set_xlim(0, 1)
-ax.set_ylim(0, 1)
-ax.legend()
-plt.show()
+make_analytic_roc_curves_by_std_figure([0.2, 0.5, 1, 2, 5], square=True)
 ```
 
 ## Case study: two Binomials
@@ -292,13 +231,7 @@ Consider two Binomial random variables: $H_0 = \mathrm{Bin}(0.5, 5)$ and $H_1 = 
 
 ```{python}
 # Start from an empty ROC plane and fill it in together.
-fig = plt.figure()
-plt.xlabel('False positive rate (FPR)')
-plt.ylabel('True positive rate (TPR)')
-plt.title('ROC plane')
-plt.xlim(0, 1)
-plt.ylim(0, 1)
-plt.show()
+make_empty_roc_plane_figure(title='ROC plane')
 ```
 
 ## Connecting the threshold to the ROC
@@ -307,14 +240,14 @@ plt.show()
 Sweeping the threshold traces a curve in the ROC plane.
 
 ```{python}
-display(make_roc_decision_declarative_figure(desicion_rule_params, dist_neg, dist_pos, True))
+make_roc_decision_declarative_figure(desicion_rule_params, dist_neg, dist_pos, True)
 ```
 
 ## Connecting the threshold to the ROC
 ### Uniform distributions
 
 ```{python}
-display(make_roc_decision_declarative_figure(desicion_rule_params, uniform(0, 3), uniform(1, 3), True))
+make_roc_decision_declarative_figure(desicion_rule_params, uniform(0, 3), uniform(1, 3), True)
 ```
 
 ## Neyman–Pearson lemma
@@ -323,7 +256,7 @@ Every optimal decision rule is a threshold on the log probability ratio.
 If the log probability ratio is monotonic in $x$, a threshold on the value itself is optimal.
 
 ```{python}
-display(make_roc_decision_declarative_figure(desicion_rule_params, dist_neg, dist_pos, False))
+make_roc_decision_declarative_figure(desicion_rule_params, dist_neg, dist_pos, False)
 ```
 
 ## Privacy as a bound on the ROC curve

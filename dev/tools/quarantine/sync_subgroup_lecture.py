@@ -9,7 +9,7 @@ import textwrap
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DEV_NB = ROOT.parent / "code_base_dev/lectures/lecture_private_subgroup_comparisons.ipynb"
+DEV_NB = ROOT.parent / "code_base_dev/lectures/migrated/lecture_private_subgroup_comparisons.ipynb"
 BLOG = ROOT / "content/blog-posts/private-subgroup-comparisons/post.ipynb"
 DECK = ROOT / "content/lecture-presentations/private-subgroup-comparisons/presentation.qmd"
 

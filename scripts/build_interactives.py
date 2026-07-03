@@ -23,7 +23,14 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import libdpy
-from libdpy.visualization.interactive import InteractiveSpec, marimo_app_source
+import plotly.graph_objects as go
+from libdpy.visualization.interactive import (
+    ExportBackend,
+    InteractiveSpec,
+    declarative_plotly_from_spec,
+    derive_export_backend,
+    marimo_app_source,
+)
 from libdpy.visualization.registry import embed_spec_builders
 from scipy import stats
 
@@ -257,6 +264,24 @@ def _spec_signature_payload(use: InteractiveUse, app_source: str) -> str:
     )
 
 
+def _plotly_signature_payload(use: InteractiveUse, export_backend: ExportBackend) -> str:
+    spec = use.spec
+    parts = [
+        spec.name,
+        export_backend,
+        json.dumps(dict(spec.fixed_kwargs), sort_keys=True, default=str),
+        libdpy.__version__,
+    ]
+    if export_backend == "plotly-declarative" and spec.declarative_grid is not None:
+        parts.append(
+            json.dumps(
+                {key: list(values) for key, values in spec.declarative_grid.items()},
+                sort_keys=True,
+            )
+        )
+    return "\n".join(parts)
+
+
 def _export_signature(use: InteractiveUse, app_source: str) -> str:
     return hashlib.sha256(_spec_signature_payload(use, app_source).encode()).hexdigest()
 
@@ -277,12 +302,14 @@ def _write_export_marker(
     *,
     use: InteractiveUse,
     signature: str,
+    export_backend: ExportBackend,
 ) -> None:
     marker_path.write_text(
         "\n".join(
             [
                 f"name={use.spec.name}",
                 f"artifact={use.spec.artifact_name}",
+                f"export_backend={export_backend}",
                 f"signature={signature}",
                 f"libdpy_version={libdpy.__version__}",
                 f"marimo_version={MARIMO_VERSION}",
@@ -399,7 +426,56 @@ def _enable_tracebacks(index_html: Path) -> None:
         index_html.write_text(updated, encoding="utf-8")
 
 
-def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
+def _write_plotly_html(figure: go.Figure, index_html: Path) -> None:
+    index_html.parent.mkdir(parents=True, exist_ok=True)
+    index_html.write_text(
+        figure.to_html(full_html=True, include_plotlyjs="cdn"),
+        encoding="utf-8",
+    )
+
+
+def _export_plotly(use: InteractiveUse, export_backend: ExportBackend, *, site_root: Path) -> None:
+    spec = use.spec
+    if export_backend == "static-plotly":
+        figure = spec.default_figure()
+    elif export_backend == "plotly-declarative":
+        if spec.declarative_grid is None:
+            raise ValueError(
+                f"{spec.name} is classified as plotly-declarative but has no declarative_grid"
+            )
+        figure = declarative_plotly_from_spec(spec, spec.declarative_grid)
+    else:
+        raise ValueError(f"unsupported Plotly export backend: {export_backend!r}")
+
+    if not isinstance(figure, go.Figure):
+        raise TypeError(f"{spec.name} figure factory must return plotly.graph_objects.Figure")
+
+    output_directory = output_directory_for(use, site_root)
+    marker_path = output_directory / ".libdpy-interactive"
+    signature = hashlib.sha256(
+        _plotly_signature_payload(use, export_backend).encode()
+    ).hexdigest()
+    marker = _read_export_marker(marker_path)
+    index_html = output_directory / "index.html"
+    if marker.get("signature") == signature and index_html.is_file():
+        print(f"Skipped {spec.artifact_name} ({export_backend}, signature unchanged)")
+        return
+
+    if output_directory.exists():
+        shutil.rmtree(output_directory)
+    output_directory.mkdir(parents=True, exist_ok=True)
+    _write_plotly_html(figure, index_html)
+    _write_export_marker(
+        marker_path,
+        use=use,
+        signature=signature,
+        export_backend=export_backend,
+    )
+    payload_kb = index_html.stat().st_size / 1024
+    print(f"{spec.artifact_name} ({export_backend}) payload: {payload_kb:.1f} KB")
+
+
+def _export_wasm_marimo(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
     source_directory = GENERATED_ROOT / "interactives_src" / use.spec.artifact_name
     public_directory = source_directory / "public"
     source_directory.mkdir(parents=True, exist_ok=True)
@@ -450,7 +526,12 @@ def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
         check=True,
     )
     _enable_tracebacks(output_directory / "index.html")
-    _write_export_marker(marker_path, use=use, signature=signature)
+    _write_export_marker(
+        marker_path,
+        use=use,
+        signature=signature,
+        export_backend="wasm-marimo",
+    )
     payload_mb = sum(
         path.stat().st_size for path in output_directory.rglob("*") if path.is_file()
     ) / (1024 * 1024)
@@ -460,6 +541,22 @@ def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
             f"WARNING: {use.spec.artifact_name} exceeds the 20 MB WASM payload warning budget.",
             file=sys.stderr,
         )
+
+
+def _export(use: InteractiveUse, wheel: Path, *, site_root: Path) -> None:
+    export_backend = derive_export_backend(use.spec)
+    if export_backend == "live-only":
+        raise ValueError(
+            f"{use.spec.name} ({use.spec.artifact_name}) cannot be exported: "
+            "derive_export_backend returned live-only"
+        )
+    if export_backend in {"static-plotly", "plotly-declarative"}:
+        _export_plotly(use, export_backend, site_root=site_root)
+        return
+    if export_backend == "wasm-marimo":
+        _export_wasm_marimo(use, wheel, site_root=site_root)
+        return
+    raise ValueError(f"unsupported export backend for {use.spec.name}: {export_backend!r}")
 
 
 def _write_gallery(site_root: Path) -> Path:

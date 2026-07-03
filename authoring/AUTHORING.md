@@ -119,10 +119,12 @@ every interactive in the dev notebook must appear in both.
 
 ### In-flight lectures (stricter alignment)
 
-Once a lecture is stable on the website, the dev notebook may drift from the website copies
-and can eventually move to a legacy directory (see
-[../../code_base_dev/PROJECT_STRUCTURE.md](../../code_base_dev/PROJECT_STRUCTURE.md)). **While a
-lecture is still in active development**, treat alignment as mandatory:
+Once a lecture passes the delivery gate (below), the dev notebook may drift from the website
+copies and should move to
+[`code_base_dev/lectures/migrated/`](../../code_base_dev/lectures/migrated/README.md) — a
+post-ship bookkeeping step in the private repo, not part of the website commit. **While a
+lecture is still in active development**, keep the dev notebook in
+`code_base_dev/lectures/` and treat alignment as mandatory:
 
 | Artifact | Role |
 |---|---|
@@ -137,8 +139,7 @@ public constants must match the **pinned** install, not a local editable sibling
 delivery path — they may be stale or hand-maintained. Align blog and deck manually against the dev
 notebook until a generator ships with a deterministic `--check` mode.
 
-**Pre-ship checklist** (in-flight example:
-[private-subgroup-comparisons-cleanup.md](../../plans/private-subgroup-comparisons-cleanup.md)):
+**Pre-ship checklist:**
 
 - Dev notebook, blog, and deck import only symbols on the intended release tag.
 - Run `./dev/tools/sync_libdpy.sh`, then confirm `libdpy.__file__` is under
@@ -197,6 +198,12 @@ The gate runs, in order, and stops at the first failure:
 3. **Validate** — `pytest tests` → full `render.sh` → `check_site.py` → `run_smoke_tests.py --slug`.
 4. **Publish** (`--push` only) — push, then `gh run watch` the *Publish website* build+deploy to
    green; optional live-URL check.
+
+**After the gate passes**, move the dev notebook from `code_base_dev/lectures/` to
+`code_base_dev/lectures/migrated/` (never delete it). Update any hard-coded paths in tests or
+scripts. In-flight lectures without shipped website content stay in `lectures/` — see
+[../../code_base_dev/lectures/migrated/README.md](../../code_base_dev/lectures/migrated/README.md)
+for the slug mapping table.
 
 Run the drift tripwire on its own any time you refactor a `libdpy` helper (fails in seconds):
 

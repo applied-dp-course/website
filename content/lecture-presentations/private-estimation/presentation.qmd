@@ -31,7 +31,7 @@ except Exception:
 try:
     import libdpy
 except ImportError:
-    %pip install -q "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git"
+    %pip install -q "libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git@v0.2.19"
     import libdpy
 
 %matplotlib inline

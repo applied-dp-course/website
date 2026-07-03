@@ -406,48 +406,10 @@ The figure below separates the OLS path that leaves the cube from the bounded LP
 
 
 ```{python}
-# Static Matplotlib replacement for the former browser 3-D figure.
-# Work in the x1 = 1 slice; horizontal is x2 and vertical is x3.
-fig, ax = plt.subplots(figsize=(8.5, 4.8))
-ax.set_title("OLS leaves the cube; the bounded LP stays feasible")
+from libdpy.assignment_specific.reconstruction.reconstruction_lecture_visualization import make_ols_lp_geometry_figure
 
-cube = plt.Rectangle((0, 0), 1, 1, facecolor="#f8fafc", edgecolor="#111827", linewidth=2)
-ax.add_patch(cube)
-ax.axvline(0.5, color="#6b7280", linestyle="--", linewidth=1.5, label="rounding threshold x2 = 1/2")
+make_ols_lp_geometry_figure()
 
-ols_raw = np.array([0.6, -0.4])
-ols_clipped = np.array([0.6, 0.0])
-ols_rounded = np.array([1.0, 0.0])
-lp_segment = np.array([[0.0, 0.0], [0.4, 0.0]])
-lp_solution = np.array([0.2, 0.0])
-lp_rounded = np.array([0.0, 0.0])
-true_b = np.array([0.0, 0.0])
-
-ax.plot(lp_segment[:, 0], lp_segment[:, 1], color="#1f77b4", linewidth=6, solid_capstyle="round", label="LP feasible segment")
-ax.plot([ols_raw[0], ols_clipped[0], ols_rounded[0]], [ols_raw[1], ols_clipped[1], ols_rounded[1]], color="#d62728", linewidth=2.5, label="OLS path")
-ax.scatter(*ols_raw, color="#d62728", s=90, marker="o", zorder=5, label="OLS raw")
-ax.scatter(*ols_clipped, color="#d62728", s=90, marker="s", zorder=5, label="OLS clipped")
-ax.scatter(*ols_rounded, color="#d62728", s=90, marker="D", zorder=5, label="OLS rounded")
-ax.scatter(*lp_solution, color="#1f77b4", s=90, marker="o", zorder=5, label="LP solution")
-ax.scatter(*lp_rounded, color="#1f77b4", s=90, marker="D", zorder=5, label="LP rounded")
-ax.scatter(*true_b, color="#7c3aed", s=120, marker="x", linewidths=3, zorder=6, label="true b")
-
-for point, text, offset in [
-    (ols_raw, "raw OLS outside cube", (0.03, -0.03)),
-    (ols_clipped, "clip", (0.03, 0.05)),
-    (ols_rounded, "rounds wrong", (-0.26, 0.06)),
-    (lp_solution, "LP stays in cube", (0.03, 0.08)),
-]:
-    ax.annotate(text, xy=point, xytext=point + np.array(offset), fontsize=10,
-                arrowprops={"arrowstyle": "->", "linewidth": 1, "color": "#374151"})
-
-ax.set_xlim(-0.08, 1.08)
-ax.set_ylim(-0.55, 1.05)
-ax.set_xlabel("x2 in the x1 = 1 slice")
-ax.set_ylabel("x3")
-ax.grid(True, color="#e5e7eb", linewidth=0.8)
-ax.legend(loc="lower right", fontsize=8, ncol=2, frameon=True)
-plt.show()
 
 ```
 
