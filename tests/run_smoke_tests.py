@@ -39,6 +39,14 @@ from smoke_wasm_browser import (  # noqa: E402
 from libdpy.visualization.plot_inventory import FULL_PAGE_WASM_SMOKE_ROUTES  # noqa: E402
 from smoke_full_page_wasm import smoke_test_page  # noqa: E402
 
+# Neutralised to static figures (W1b); skip until pinned libdpy drops these routes (v0.2.22+).
+_STATIC_FULL_PAGE_WASM_SKIP: frozenset[str] = frozenset(
+    {
+        "content/blog-posts/reconstruction-attacks/post.html",
+        "content/lecture-presentations/reconstruction-attacks/presentation.html",
+    }
+)
+
 # When the same marimo export is copied to home, site posts, tools, and lectures, smoke-test
 # one canonical deployment per artifact id (prefer lecture paths).
 _WASM_SMOKE_PATH_PRIORITY = (
@@ -149,16 +157,20 @@ class _SiteHandler(http.server.SimpleHTTPRequestHandler):
 def discover_full_page_wasm_routes() -> list[str]:
     """Return rendered routes that should pass ``smoke_full_page_wasm``."""
 
-    return list(FULL_PAGE_WASM_SMOKE_ROUTES)
+    return [
+        route
+        for route in FULL_PAGE_WASM_SMOKE_ROUTES
+        if route not in _STATIC_FULL_PAGE_WASM_SKIP
+    ]
 
 
 def filter_full_page_wasm_routes(
     routes: list[str],
     *,
-    slug: str | None = None,
+    slugs: tuple[str, ...] = (),
     selected: tuple[str, ...] = (),
 ) -> list[str]:
-    """Return the subset of ``routes`` selected by explicit paths or a slug filter."""
+    """Return the subset of ``routes`` selected by explicit paths or slug filter(s)."""
 
     if selected:
         known = set(routes)
@@ -171,8 +183,8 @@ def filter_full_page_wasm_routes(
                 + ", ".join(routes)
             )
         return list(selected)
-    if slug:
-        return [route for route in routes if slug in route]
+    if slugs:
+        return [route for route in routes if any(slug in route for slug in slugs)]
     return routes
 
 
@@ -200,8 +212,13 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--slug",
+        action="append",
+        default=[],
         metavar="SLUG",
-        help="Smoke full-page routes whose path contains this slug (e.g. private-estimation).",
+        help=(
+            "Smoke full-page routes whose path contains this slug (repeatable; "
+            "e.g. private-estimation)."
+        ),
     )
     parser.add_argument(
         "--skip-per-app",
@@ -236,18 +253,23 @@ def main(argv: list[str] | None = None) -> None:
 
     scoped = bool(args.route or args.slug)
     skip_per_app = args.skip_per_app or (scoped and not args.include_per_app)
+    slug_filters = tuple(args.slug)
 
     wasm_urls: list[str] = []
     canvas_urls: list[str] = []
     if not skip_per_app:
         wasm_urls, canvas_urls = discover_smoke_targets(SITE_ROOT, output_root)
-        if args.slug:
-            wasm_urls = [path for path in wasm_urls if args.slug in path]
-            canvas_urls = [path for path in canvas_urls if args.slug in path]
+        if slug_filters:
+            wasm_urls = [
+                path for path in wasm_urls if any(slug in path for slug in slug_filters)
+            ]
+            canvas_urls = [
+                path for path in canvas_urls if any(slug in path for slug in slug_filters)
+            ]
 
     page_routes = filter_full_page_wasm_routes(
         discover_full_page_wasm_routes(),
-        slug=args.slug,
+        slugs=slug_filters,
         selected=tuple(args.route),
     )
     relative_urls = wasm_urls + canvas_urls
