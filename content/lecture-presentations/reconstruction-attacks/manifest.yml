@@ -4,14 +4,3 @@ subjects:
   - reconstruction attacks
   - differential privacy
 status: published
-apps:
-  - id: reconstruction-2d-slab
-    title: Reconstruction 2-D slab
-    path: _generated/apps/lecture-presentations/reconstruction-attacks/reconstruction-2d-slab
-    runtime: wasm-marimo
-    gallery: true
-  - id: reconstruction-3d-slabs
-    title: Reconstruction 3-D slabs
-    path: _generated/apps/lecture-presentations/reconstruction-attacks/reconstruction-3d-slabs
-    runtime: wasm-marimo
-    gallery: true
