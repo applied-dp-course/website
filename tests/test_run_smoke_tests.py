@@ -57,11 +57,22 @@ class SmokeTargetTest(unittest.TestCase):
         routes = run_smoke_tests.discover_full_page_wasm_routes()
         filtered = run_smoke_tests.filter_full_page_wasm_routes(
             routes,
-            slug="private-estimation",
+            slugs=("private-estimation",),
         )
         self.assertEqual(
             filtered,
             ["content/blog-posts/private-estimation/post.html"],
+        )
+
+    def test_static_reconstruction_routes_are_skipped(self) -> None:
+        routes = run_smoke_tests.discover_full_page_wasm_routes()
+        self.assertNotIn(
+            "content/blog-posts/reconstruction-attacks/post.html",
+            routes,
+        )
+        self.assertNotIn(
+            "content/lecture-presentations/reconstruction-attacks/presentation.html",
+            routes,
         )
 
     def test_filter_full_page_routes_by_explicit_route(self) -> None:
