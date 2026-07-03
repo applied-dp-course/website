@@ -176,7 +176,10 @@ on the tag you plan to pin.
 
 **Delivery gate — run the orchestrator; do not hand off.** `./dev/tools/deliver_lecture.sh`
 executes every step below fail-closed and, with `--push`, blocks until CI deploys the content
-commit to Pages. A local render passing or a `pub_lib` tag existing is **not** shipping.
+commit to Pages. A local render passing or a `pub_lib` tag existing is **not** shipping. When the
+gate fails or you learn something isolating a slug, add an entry to
+[`code_base_dev/DEVELOPMENT/DEV_LOG.md`](../../code_base_dev/DEVELOPMENT/DEV_LOG.md) during the
+work — not only after a successful push.
 
 ```bash
 # from website/ — validate only (no push):
@@ -198,6 +201,44 @@ The gate runs, in order, and stops at the first failure:
 3. **Validate** — `pytest tests` → full `render.sh` → `check_site.py` → `run_smoke_tests.py --slug`.
 4. **Publish** (`--push` only) — push, then `gh run watch` the *Publish website* build+deploy to
    green; optional live-URL check.
+
+#### Isolating failures (debug loop discipline)
+
+`deliver_lecture.sh` runs the full validate step (pytest → **site-wide** `render.sh` → smoke) and
+stops at the first failure. Use it as the **final** confirmation before push — not as the inner
+loop while fixing one slug or one WASM app. Re-running it after every tweak burns ~10–15 minutes per
+attempt and re-renders all targets even when only one slug is broken.
+
+When smoke fails on one slug, narrow scope before touching the orchestrator:
+
+1. **Import / API drift** — `./.venv/bin/python dev/tools/verify_libdpy_imports.py --slug <slug>`
+   (seconds).
+2. **Scoped smoke** — `./.venv/bin/python tests/run_smoke_tests.py --slug <slug>` after a
+   slug-scoped render or `build_interactives.py` rebuild (*Validation → Incremental loop*).
+3. **Single per-app WASM** — serve `_generated/apps/.../<artifact>/index.html` and run
+   `tests/smoke_wasm_browser.py` against that URL, or pass `--include-per-app` to scoped
+   `run_smoke_tests.py` for one artifact.
+4. **Manual browser** — only when headless smoke is ambiguous (timing, focus, or a new control
+   type).
+
+Do **not** re-run `deliver_lecture.sh` (or a cold full `render.sh`) until the isolated check for
+the failing slug passes. When multiple slugs are in scope, fix and verify one slug at a time; run
+the full gate once at the end.
+
+**Smoke harness changes** (`tests/smoke_wasm_browser.py`, `smoke_full_page_wasm.py`) are a last
+resort. Prefer fixing `libdpy` reactive wiring or website content. If the harness must change, state
+the product bug vs test gap explicitly and get human approval — do not patch assertions to green a
+known broken interactive.
+
+**Stop-loss — when isolation shows an *open problem*, not a hidden one.** The ladder above finds a
+fix that already *exists*. If the isolated per-app check keeps failing because the behavior itself
+is unknown (e.g. a WASM/marimo interactive that will not redraw — reconstruction, 2026-07-03), you
+have crossed from debugging into R&D: **stop looping.** Confirm the root cause once, then take the
+plan's pre-committed fallback (e.g. ship the visual as a static `make_*_figure`) or escalate with a
+short options list — do **not** tag a release on an unproven fix or re-run the full gate hoping it
+changes. Uncertain interactive work belongs in a bounded spike **off** the delivery critical path;
+decouple it so the other slugs ship (see `../../plans/README.md` → *Writing plans that don't loop*
+and `../../.cursor/rules/instruction-docs.mdc` #11).
 
 **After the gate passes**, move the dev notebook from `code_base_dev/lectures/` to
 `code_base_dev/lectures/migrated/` (never delete it). Update any hard-coded paths in tests or
@@ -232,6 +273,8 @@ infer lecture health from an unrelated green workflow run.
 | Sibling editable `libdpy` in `.venv` | Local checks pass against unreleased API; pin/CI disagree | Run `./dev/tools/sync_libdpy.sh`; confirm `libdpy.__file__` is under `.venv/.../site-packages/`, not `code_base_dev/libdpy` (automated guard **planned**) |
 | Static-figure lecture | `run_smoke_tests.py --slug` exits: "no full-page WASM routes match" | Expected for deck-only static figures — scoped smoke no-ops; still run the full gate before push |
 | Infra green ≠ lecture shipped | Tag on `pub_lib` exists or CI passed on an infra-only commit | Use `./dev/tools/deliver_lecture.sh --slug <slug> --push` and wait for **Publish website** green on the **content** commit |
+| Full gate as debug loop | Hours spent re-rendering; one slug still red | Isolate per slug → per-app WASM → manual browser (*Isolating failures* above); run `deliver_lecture.sh` once when scoped checks pass |
+| Smoke harness band-aid | Assertions loosened; product still broken in browser | Fix `libdpy`/content; document a known exemption with human approval instead of patching smoke |
 
 **Simulate CI before push** when you touched WASM exports, gallery manifests, or shared embeds:
 
