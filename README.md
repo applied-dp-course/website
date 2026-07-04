@@ -1,5 +1,10 @@
 # Applied Differential Privacy course site
 
+> **Source moved (Stage 1):** edit site content in the private monorepo
+> [`code_base_dev`](https://github.com/applied-dp-course/code_base_dev) (`content/`, `pages/`,
+> `authoring/`, …). This public repo remains the **GitHub Pages output** until Stage 2 retires it
+> as a read-only mirror. Do not author new lectures here.
+
 This Quarto site publishes lecture presentations, self-learning blog posts, assignments, and
 interactive tools. Computation is imported from
 [`libdpy`](https://github.com/applied-dp-course/pub_lib).
