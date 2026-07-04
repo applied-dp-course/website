@@ -1,5 +1,10 @@
 # Authoring guide
 
+> **Human-developer reference.** How *agents* operate (delivery discipline, isolate-don't-loop,
+> stop-loss) is in [`../../AGENTS.md`](../../AGENTS.md); this guide covers *how website authoring
+> works*. The *Delivery gate* and *Isolating failures* sections below are the mechanics both humans
+> and agents follow.
+
 Authors edit two places:
 
 - `pages/` for main site pages such as Home, Schedule, Syllabus, Blog listing, and About.
@@ -237,8 +242,8 @@ have crossed from debugging into R&D: **stop looping.** Confirm the root cause o
 plan's pre-committed fallback (e.g. ship the visual as a static `make_*_figure`) or escalate with a
 short options list — do **not** tag a release on an unproven fix or re-run the full gate hoping it
 changes. Uncertain interactive work belongs in a bounded spike **off** the delivery critical path;
-decouple it so the other slugs ship (see `../../plans/README.md` → *Writing plans that don't loop*
-and `../../.cursor/rules/instruction-docs.mdc` #11).
+decouple it so the other slugs ship (agent operating rules: [`../../AGENTS.md`](../../AGENTS.md)
+§4–5).
 
 **After the gate passes**, move the dev notebook from `code_base_dev/lectures/` to
 `code_base_dev/lectures/migrated/` (never delete it). Update any hard-coded paths in tests or

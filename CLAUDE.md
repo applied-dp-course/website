@@ -1,5 +1,8 @@
 # Website guidance
 
+**Agents: your operating rules are in [`../AGENTS.md`](../AGENTS.md)** (workspace root). This file is
+human-developer reference for the website repo.
+
 This is the public Quarto site. It imports all computation from `libdpy` (installed from `pub_lib`)
 and defines no course logic of its own. Rules live in public docs — read the relevant one first.
 **Full instruction-file index** (all repos) → `../.cursor/rules/instruction-docs.mdc`.
