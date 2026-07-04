@@ -1,7 +1,8 @@
 # HOST render environment only (GitHub Actions / local `quarto render`).
 # All course logic comes from libdpy — the website defines none of it.
-# Local/host render uses the git install; the BROWSER (WASM) path uses a hosted wheel
-# via micropip/piplite instead — never git+ (v4 §1.1).
+# libdpy itself is installed by dev/tools/sync_libdpy.sh from sibling code_base_dev/libdpy
+# (editable). Student pip installs still pin pub_lib — see requirements-pub-lib-pin.txt.
+# The BROWSER (WASM) path uses a hosted wheel via micropip/piplite — never git+ (v4 §1.1).
 jupyter
 numpy
 scipy
@@ -15,4 +16,3 @@ ipywidgets
 anywidget
 marimo==0.23.9
 PyYAML>=6.0,<7
-libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git@v0.2.24

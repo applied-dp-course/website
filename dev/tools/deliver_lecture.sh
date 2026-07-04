@@ -14,7 +14,7 @@
 #
 # Steps:
 #   1. Preconditions   — repo/venv sane; each slug is real (content + baseline-routes + content-model)
-#   2. Library / pin   — pinned pub_lib tag exists; sync it; verify content imports resolve on it
+#   2. Library         — sync in-tree libdpy; verify content imports resolve
 #   3. Validate        — pytest; full render; site route/link check; scoped smoke
 #   4. Publish (--push)— clean tree required; push; watch CI to green; optional live-URL check
 #
@@ -77,24 +77,12 @@ fi
 SLUG_ARGS=()
 for slug in "${SLUGS[@]}"; do SLUG_ARGS+=(--slug "$slug"); done
 
-# --- 2. library / pin --------------------------------------------------------
-step "2. Library / pin"
-PIN="$(grep -oE 'pub_lib\.git@\S+' requirements.txt | sed -E 's/.*@//')" \
-  || die "could not read the libdpy pin from requirements.txt"
-[[ -n "$PIN" ]] || die "requirements.txt libdpy line is unpinned (expected @vX.Y.Z)"
-echo "  libdpy pin: ${PIN}"
-
-if git ls-remote --exit-code --tags \
-    https://github.com/applied-dp-course/pub_lib.git "refs/tags/${PIN}" >/dev/null 2>&1; then
-  ok "pub_lib tag ${PIN} exists"
-else
-  die "pub_lib has no tag ${PIN} — release/tag libdpy before pinning content to it (do not push ahead of the tag)"
-fi
-
+# --- 2. library (in-tree libdpy) ---------------------------------------------
+step "2. Library (in-tree libdpy)"
 ./dev/tools/sync_libdpy.sh
 "$PY" dev/tools/verify_libdpy_imports.py "${SLUG_ARGS[@]}" \
-  || die "content imports symbols missing from libdpy ${PIN} (see list above) — align content + pin, or release the version that provides them"
-ok "content libdpy imports resolve on ${PIN}"
+  || die "content imports symbols missing from installed libdpy (see list above) — implement in code_base_dev/libdpy and sync"
+ok "content libdpy imports resolve"
 
 # --- 3. validate -------------------------------------------------------------
 step "3. Validate (pytest -> full render -> site check -> scoped smoke)"
@@ -113,7 +101,7 @@ ok "scoped smoke passed (no-op is fine for static-figure slugs)"
 
 if [[ "$DO_PUSH" -eq 0 ]]; then
   step "Gate passed. Not pushing (no --push)."
-  echo "  Commit the content + pin, then re-run with --push (clean tree) to ship and confirm CI."
+  echo "  Commit the content, then re-run with --push (clean tree) to ship and confirm CI."
   exit 0
 fi
 

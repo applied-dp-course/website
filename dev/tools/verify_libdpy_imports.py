@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify every ``libdpy`` symbol imported by website content resolves on the installed pin.
+"""Verify every ``libdpy`` symbol imported by website content resolves on the installed package.
 
 This is the cheap API-drift tripwire. The website deck (`presentation.qmd`) and blog
 post (`post.ipynb`) are hand-kept copies of the private dev notebook; when `libdpy`
@@ -7,13 +7,14 @@ helpers are renamed or removed they silently import dead symbols, and the only p
 that surfaces today is a ~7-minute Quarto render (locally) or a cryptic "Render site"
 failure on CI *after* the commit is already pushed. This script parses the libdpy
 imports out of content sources and resolves each one against the **installed** package
-(the pin in ``requirements.txt``), so drift fails in seconds, before any render.
+(the in-tree sibling install from ``sync_libdpy.sh``), so drift fails in seconds,
+before any render.
 
-Run it with the site venv so it sees the pinned install:
+Run it with the site venv so it sees the installed package:
 
     ./.venv/bin/python dev/tools/verify_libdpy_imports.py                 # all content
     ./.venv/bin/python dev/tools/verify_libdpy_imports.py --slug private-subgroup-comparisons
-    ./.venv/bin/python dev/tools/verify_libdpy_imports.py --sync          # sync the pin first
+    ./.venv/bin/python dev/tools/verify_libdpy_imports.py --sync          # sync libdpy first
 
 Exit status:
     0  every imported libdpy name resolves
@@ -36,7 +37,6 @@ from pathlib import Path
 SITE_ROOT = Path(__file__).resolve().parents[2]
 CONTENT_ROOT = SITE_ROOT / "content"
 PAGES_ROOT = SITE_ROOT / "pages"
-REQUIREMENTS = SITE_ROOT / "requirements.txt"
 SYNC_SCRIPT = SITE_ROOT / "dev" / "tools" / "sync_libdpy.sh"
 
 # Same ```{python} / ```python code-fence shape scripts/build_interactives.py discovers.
@@ -56,13 +56,12 @@ class ImportRef:
     name: str | None  # imported name, or None for `import libdpy.x` / `from ... import *`
 
 
-def _pinned_spec() -> str:
+def _installed_libdpy_label() -> str:
     try:
-        text = REQUIREMENTS.read_text(encoding="utf-8")
-    except OSError:
-        return "<requirements.txt unreadable>"
-    match = re.search(r"pub_lib\.git@(\S+)", text)
-    return match.group(1) if match else "<unpinned>"
+        import libdpy
+    except Exception:  # noqa: BLE001
+        return "<libdpy not installed>"
+    return f"v{libdpy.__version__} ({libdpy.__file__})"
 
 
 def _python_blocks(path: Path) -> list[str]:
@@ -151,7 +150,7 @@ def resolve_failure(ref: ImportRef) -> str | None:
 def _run_sync() -> None:
     if not SYNC_SCRIPT.is_file():
         raise SystemExit(f"sync script not found: {SYNC_SCRIPT}")
-    print(f"Syncing libdpy pin ({_pinned_spec()}) via {SYNC_SCRIPT.name} ...", flush=True)
+    print(f"Syncing in-tree libdpy via {SYNC_SCRIPT.name} ...", flush=True)
     subprocess.run(["bash", str(SYNC_SCRIPT)], check=True)
 
 
@@ -167,7 +166,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--sync",
         action="store_true",
-        help="Run dev/tools/sync_libdpy.sh (install the requirements.txt pin) before checking.",
+        help="Run dev/tools/sync_libdpy.sh (install sibling libdpy) before checking.",
     )
     args = parser.parse_args(argv)
 
@@ -188,9 +187,9 @@ def main(argv: list[str] | None = None) -> int:
     for path in files:
         refs.extend(extract_libdpy_imports(path))
 
-    pin = _pinned_spec()
+    label = _installed_libdpy_label()
     scope = ", ".join(args.slug) if args.slug else "all content + pages"
-    print(f"Verifying {len(refs)} libdpy import(s) across {len(files)} file(s) [{scope}] against pin {pin}")
+    print(f"Verifying {len(refs)} libdpy import(s) across {len(files)} file(s) [{scope}] against {label}")
 
     failures: list[tuple[ImportRef, str]] = []
     for ref in refs:
@@ -199,10 +198,13 @@ def main(argv: list[str] | None = None) -> int:
             failures.append((ref, error))
 
     if not failures:
-        print("OK: every libdpy symbol imported by content resolves on the installed pin.")
+        print("OK: every libdpy symbol imported by content resolves on the installed package.")
         return 0
 
-    print(f"\nFAILED: {len(failures)} unresolved libdpy import(s) — content is ahead of the pinned {pin}:\n", file=sys.stderr)
+    print(
+        f"\nFAILED: {len(failures)} unresolved libdpy import(s) — content is ahead of installed libdpy:\n",
+        file=sys.stderr,
+    )
     by_file: dict[Path, list[tuple[ImportRef, str]]] = {}
     for ref, error in failures:
         by_file.setdefault(ref.source, []).append((ref, error))
@@ -212,8 +214,8 @@ def main(argv: list[str] | None = None) -> int:
             target = ref.module if ref.name is None else f"{ref.module}.{ref.name}"
             print(f"    - {target}: {error}", file=sys.stderr)
     print(
-        "\nFix: release + tag the libdpy version that provides these symbols, bump "
-        "requirements.txt to that tag, and align the content imports — in the same commit.",
+        "\nFix: implement the missing symbols in code_base_dev/libdpy/, run "
+        "./dev/tools/sync_libdpy.sh, and align the content imports.",
         file=sys.stderr,
     )
     return 1

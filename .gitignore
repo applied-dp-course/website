@@ -1,6 +1,9 @@
 # Local working checklist — not tracked
 TODO.md
 
+# Local scratch (pub_lib pin checks, Quarto HOME isolation, caches)
+.tmp/
+
 # Local IDE config
 .claude/
 

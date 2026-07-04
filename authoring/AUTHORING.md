@@ -74,9 +74,10 @@ posts, and a notebook for the assignment and blog-post collections.
    `status: draft` items (draft decks still build and appear in `required_routes()`).
 2. If the item is a lecture presentation, blog post, or class assignment, update the expected
    name sets in `tests/test_content_model.py::test_live_catalog_uses_named_collections`.
-3. If the source imports **new** `libdpy` API, release and tag on `pub_lib` first, then bump the
-   website pin in the same commit (*Content that depends on a new `libdpy` API* below) — including
-   draft decks that call new `make_*_figure()` helpers.
+3. If the source imports **new** `libdpy` API, implement it in `code_base_dev/libdpy/` first
+   (*Content that depends on a new `libdpy` API* below) — including draft decks that call new
+   `make_*_figure()` helpers. Release to `pub_lib` is for the student pip path only, not required
+   to render locally or in CI.
 
 Example baseline entry for `content/lecture-presentations/mechanisms/presentation.qmd`:
 
@@ -86,18 +87,19 @@ content/lecture-presentations/mechanisms/presentation.html
 
 ### Content that depends on a new `libdpy` API
 
-The site installs `libdpy` from a **pinned tag** in `requirements.txt`, and `./dev/tools/render.sh`
-installs that pin before rendering. Content using **any** library API not yet on the pinned tag — a
-new function, a new keyword argument, or a newly registered interactive — will fail to build until
-you **release `libdpy` (tag `vX.Y.Z` on `pub_lib`) and bump the pin** in the same commit as the
-content. Release first (see `code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md`), then update
-`requirements.txt` to `@vX.Y.Z` together with your content change. Do **not** `pip install -e` a
-local libdpy into `.venv`: `sync_libdpy.sh` reverts it on the next render. For a deliberate
-pre-release local check only, use `LIBDPY_SYNC=0 ./dev/tools/render.sh`.
+The site installs `libdpy` **editable from sibling `code_base_dev/libdpy`**, and
+`./dev/tools/render.sh` runs `sync_libdpy.sh` before rendering. Content using **any** library API
+not yet in that tree — a new function, a new keyword argument, or a newly registered interactive —
+will fail to build until you implement it in `code_base_dev/libdpy/` and sync. No `pub_lib` release
+is required to iterate locally or in CI.
+
+**Student pip installs** still use pinned `pub_lib` tags. When students need the new API, release
+via `code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md` and update `requirements-pub-lib-pin.txt`
+(not `requirements.txt`). For a deliberate skip of re-sync, use `LIBDPY_SYNC=0 ./dev/tools/render.sh`.
 
 The trigger is not only new kwargs: **adding a new class to `EMBED_CONSTRUCTOR_NAMES`**
-(`libdpy.visualization.registry`) is itself a library change that needs a version bump, a
-`pub_lib` tag, and a website pin bump before its `.embed()` calls resolve on the site.
+(`libdpy.visualization.registry`) is itself a library change — implement and register it in
+`code_base_dev/libdpy/` before its `.embed()` calls resolve on the site.
 
 ## Developing a lecture (end to end)
 
@@ -108,9 +110,8 @@ notebook is the permanent source and is **never deleted**; the two website copie
 parallel (drift accepted — the blog-post smoke route is the tripwire).
 
 **Preconditions.** The tree is green (content validation + the plot-inventory scan pass on `main`),
-and every `libdpy` API the content uses is **covered by the pinned tag in `requirements.txt`** —
-release and bump the pin first if needed (*Content that depends on a new `libdpy` API* above, and
-`code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md` for how a release works).
+and every `libdpy` API the content uses exists in sibling `code_base_dev/libdpy/` — implement
+there first if needed (*Content that depends on a new `libdpy` API* above).
 
 **Steps.** Author both artifacts (*Add content*) → use `.embed()` for interactives (*Plotting
 policy*) → validate with `./dev/tools/render.sh` then `./.venv/bin/python tests/run_smoke_tests.py`
@@ -138,7 +139,7 @@ lecture is still in active development**, keep the dev notebook in
 | `lecture-presentations/<slug>/presentation.qmd` | Deck copy — same mechanism names, budgets, seeds, sampling params |
 
 Narrative density and interactives may differ (see *Deck vs blog interactives*), but imports and
-public constants must match the **pinned** install, not a local editable sibling `libdpy`.
+public constants must match the **in-tree** `libdpy` install (`sync_libdpy.sh`).
 
 **Do not use quarantined generators.** Scripts under `dev/tools/quarantine/` are not part of the
 delivery path — they may be stale or hand-maintained. Align blog and deck manually against the dev
@@ -146,13 +147,11 @@ notebook until a generator ships with a deterministic `--check` mode.
 
 **Pre-ship checklist:**
 
-- Dev notebook, blog, and deck import only symbols on the intended release tag.
-- Run `./dev/tools/sync_libdpy.sh`, then confirm `libdpy.__file__` is under
-  `.venv/.../site-packages/` (not `code_base_dev/libdpy`).
+- Dev notebook, blog, and deck import only symbols present in sibling `code_base_dev/libdpy/`.
+- Run `./dev/tools/sync_libdpy.sh`, then confirm `libdpy.__file__` resolves (import succeeds).
 - Run `./.venv/bin/python dev/tools/verify_libdpy_imports.py --slug <slug>` (add `--sync` to
-  install the pin first).
-- Bump `requirements.txt` and content in the **same commit**; pass `./dev/tools/deliver_lecture.sh
-  --slug <slug>`.
+  install libdpy first).
+- Pass `./dev/tools/deliver_lecture.sh --slug <slug>`.
 
 ### Delivery gate (definition of “shipped”)
 
@@ -163,21 +162,18 @@ as done until the gates below pass on **that slug’s commit**.
 **Keep website copies aligned with the dev notebook.** The dev notebook is the authoring source;
 `presentation.qmd` and `post.ipynb` are parallel copies that **will drift** if refactored separately.
 After changing `libdpy` figure helpers or imports in the dev notebook, update both website artifacts
-to import the **same symbols** from the **pinned** install — not from a local editable `libdpy`.
+to import the **same symbols** from the in-tree install.
 
 **Order for a lecture that needs new library API:**
 
 1. Implement and test in `code_base_dev/libdpy/` (`pytest` green on affected tests).
-2. Update website deck + blog post to match the current API (use `LIBDPY_SYNC=0 ./dev/tools/render.sh`
-   only while iterating against an editable local install).
-3. Run the **delivery gate** below with the pin you intend to ship (`./dev/tools/sync_libdpy.sh`
-   installs it).
-4. Tag `code_base_dev` (`vX.Y.Z`) and confirm `pub_lib` has the tag.
-5. Bump `website/requirements.txt` to `@vX.Y.Z` in the **same commit** as the content, then push
-   website `main` (or merge a PR whose `build-check` passed).
+2. Update website deck + blog post to match the current API.
+3. Run the **delivery gate** below (`./dev/tools/sync_libdpy.sh` installs the sibling tree).
+4. Push website `main` (or merge a PR whose `build-check` passed).
+5. When students need the new API, tag `code_base_dev` (`vX.Y.Z`), confirm `pub_lib` has the tag,
+   and update `requirements-pub-lib-pin.txt`.
 
-Do **not** tag `libdpy` for a lecture while website content still imports symbols that do not exist
-on the tag you plan to pin.
+Do **not** push website content that imports symbols missing from sibling `code_base_dev/libdpy/`.
 
 **Delivery gate — run the orchestrator; do not hand off.** `./dev/tools/deliver_lecture.sh`
 executes every step below fail-closed and, with `--push`, blocks until CI deploys the content
@@ -199,10 +195,9 @@ The gate runs, in order, and stops at the first failure:
 
 1. **Preconditions** — the slug is registered (content dir + `dev/plan/baseline-routes.json` +
    `tests/test_content_model.py`); clean tree required when `--push`.
-2. **Pin / library** — the `requirements.txt` tag exists on `pub_lib` (`git ls-remote`, so you
-   cannot push ahead of the tag); `sync_libdpy.sh`; then **`verify_libdpy_imports.py`** — the fast
-   API-drift tripwire that resolves every libdpy symbol the deck/post import against the pinned
-   install, in seconds, *before* the ~7-minute render.
+2. **Library** — `sync_libdpy.sh` (sibling `code_base_dev/libdpy`); then
+   **`verify_libdpy_imports.py`** — the fast API-drift tripwire that resolves every libdpy symbol
+   the deck/post import against the installed package, in seconds, *before* the ~7-minute render.
 3. **Validate** — `pytest tests` → full `render.sh` → `check_site.py` → `run_smoke_tests.py --slug`.
 4. **Publish** (`--push` only) — push, then `gh run watch` the *Publish website* build+deploy to
    green; optional live-URL check.
@@ -274,8 +269,8 @@ infer lecture health from an unrelated green workflow run.
 |---------|---------|-------|
 | Warm local cache hides a cold CI render | Local `./dev/tools/render.sh` passes; **Publish website** fails on `build_interactives` / gallery | After WASM or gallery changes, simulate CI: `rm -rf _freeze _generated _site && ./dev/tools/render.sh` |
 | Shared WASM artifact, one export path | Gallery error: manifest path missing under `_generated/apps/lecture-presentations/...` | One `.embed()` in several sources (home page + deck + blog) needs a bundle at **each** source-relative `_generated/apps/<parent>/` path; `build_interactives.py` exports once and copies to every location |
-| API drift on the pin | ~7-minute render fails mid-notebook | Run `./.venv/bin/python dev/tools/verify_libdpy_imports.py --slug <slug>` first (CI runs this before render) |
-| Sibling editable `libdpy` in `.venv` | Local checks pass against unreleased API; pin/CI disagree | Run `./dev/tools/sync_libdpy.sh`; confirm `libdpy.__file__` is under `.venv/.../site-packages/`, not `code_base_dev/libdpy` (automated guard **planned**) |
+| API drift on installed libdpy | ~7-minute render fails mid-notebook | Run `./.venv/bin/python dev/tools/verify_libdpy_imports.py --slug <slug>` first (CI runs this before render) |
+| Stale libdpy in `.venv` | Local checks pass against old API; sync needed | Run `./dev/tools/sync_libdpy.sh` after changing `code_base_dev/libdpy/` |
 | Static-figure lecture | `run_smoke_tests.py --slug` exits: "no full-page WASM routes match" | Expected for deck-only static figures — scoped smoke no-ops; still run the full gate before push |
 | Infra green ≠ lecture shipped | Tag on `pub_lib` exists or CI passed on an infra-only commit | Use `./dev/tools/deliver_lecture.sh --slug <slug> --push` and wait for **Publish website** green on the **content** commit |
 | Full gate as debug loop | Hours spent re-rendering; one slug still red | Isolate per slug → per-app WASM → manual browser (*Isolating failures* above); run `deliver_lecture.sh` once when scoped checks pass |
@@ -393,10 +388,11 @@ Whenever you add a content item under `content/lecture-presentations/`, `content
 `content/class-assignments/`, or `content/home-assignments/`, append its `.html` route to
 `required_routes` in that file in the **same commit** — including `status: draft` decks.
 
-**`pub_lib` dependency.** CI installs `libdpy` from `pub_lib` during *Install Python dependencies*,
-before unit tests. If the latest `pub_lib` wheel is broken (for example `pyproject.toml` lists a
-package directory that was not synced), the workflow fails before any website test runs. Fix and
-release on the library side first (`code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md`).
+**In-tree `libdpy` dependency.** CI checks out sibling `code_base_dev` and runs
+`sync_libdpy.sh` during *Install Python dependencies*, before unit tests. The website repo needs
+the `CODE_BASE_DEV_CHECKOUT_TOKEN` secret (contents:read on `code_base_dev`). Student pip installs
+still use `pub_lib` — see `requirements-pub-lib-pin.txt` and
+`code_base_dev/DEVELOPMENT/PUB_LIB_DELIVERY.md`.
 
 **Incremental (single-lecture) loop.** The four commands above are the full "done" gate; while
 iterating on one lecture, a faster loop avoids the site-wide render + smoke:
@@ -436,7 +432,7 @@ returned figure.
 constructors and exports marimo WASM apps to `_generated/apps/`. Colab falls back to live widgets
 inside `embed()`; do not monkeypatch `AbstractInteractivePlot.embed` in content. `.embed()` only
 produces a WASM app if the constructor is registered in `libdpy.visualization.registry` **and** that
-registration has been released to `pub_lib` — an `.embed()` on an unregistered/unreleased class
+registration exists in sibling `code_base_dev/libdpy/` — an `.embed()` on an unregistered class
 renders nothing on the static site.
 
 The build discovers `.embed()` calls by **static AST parsing** (`scripts/build_interactives.py`,

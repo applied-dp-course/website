@@ -4,6 +4,8 @@ name: Nightly WASM smoke tests
 # instead of blocking every deploy (scoped PR smoke is the fast gate).
 #
 # Renders once, then shards per-app smoke across parallel runners.
+#
+# Required secret: CODE_BASE_DEV_CHECKOUT_TOKEN (see publish.yml).
 
 on:
   schedule:
@@ -23,17 +25,29 @@ env:
     _generated/interactives_src
   SMOKE_SHARD_COUNT: "4"
 
+defaults:
+  run:
+    working-directory: website
+
 jobs:
   render:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: website
+
+      - uses: actions/checkout@v4
+        with:
+          repository: applied-dp-course/code_base_dev
+          token: ${{ secrets.CODE_BASE_DEV_CHECKOUT_TOKEN }}
+          path: code_base_dev
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
-          cache-dependency-path: requirements-ci.txt
+          cache-dependency-path: website/requirements-ci.txt
 
       - name: Compute render cache key
         id: render-cache
@@ -44,7 +58,12 @@ jobs:
       - name: Restore render cache
         uses: actions/cache/restore@v4
         with:
-          path: ${{ env.RENDER_CACHE_PATHS }}
+          path: |
+            website/_freeze
+            website/_generated/apps
+            website/_generated/wheels
+            website/_generated/animations
+            website/_generated/interactives_src
           key: ${{ steps.render-cache.outputs.key }}
           restore-keys: |
             ${{ steps.render-cache.outputs.prefix }}
@@ -58,13 +77,14 @@ jobs:
           python -m venv .venv
           ./.venv/bin/pip install --upgrade pip
           ./.venv/bin/pip install -r requirements-ci.txt
+          ./dev/tools/sync_libdpy.sh
 
-      - name: Verify content libdpy imports resolve on the pinned tag (fast gate before render)
+      - name: Verify content libdpy imports resolve (fast gate before render)
         run: ./.venv/bin/python dev/tools/verify_libdpy_imports.py
 
       - name: Render site
         env:
-          QUARTO_PYTHON: ${{ github.workspace }}/.venv/bin/python
+          QUARTO_PYTHON: ${{ github.workspace }}/website/.venv/bin/python
           MPLBACKEND: Agg
         run: quarto render --execute
 
@@ -72,7 +92,12 @@ jobs:
         if: success()
         uses: actions/cache/save@v4
         with:
-          path: ${{ env.RENDER_CACHE_PATHS }}
+          path: |
+            website/_freeze
+            website/_generated/apps
+            website/_generated/wheels
+            website/_generated/animations
+            website/_generated/interactives_src
           key: ${{ steps.render-cache.outputs.key }}
 
       - name: Upload rendered site artifact
@@ -80,8 +105,8 @@ jobs:
         with:
           name: rendered-site
           path: |
-            _site
-            _generated/gallery.json
+            website/_site
+            website/_generated/gallery.json
           retention-days: 2
 
   smoke:
@@ -93,17 +118,19 @@ jobs:
         shard: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: website
 
       - uses: actions/download-artifact@v4
         with:
           name: rendered-site
-          path: .
+          path: website
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
-          cache-dependency-path: requirements-ci.txt
+          cache-dependency-path: website/requirements-ci.txt
 
       - name: Install Chrome (for WASM smoke tests)
         id: chrome
@@ -116,6 +143,7 @@ jobs:
           python -m venv .venv
           ./.venv/bin/pip install --upgrade pip
           ./.venv/bin/pip install -r requirements-ci.txt
+          ./dev/tools/sync_libdpy.sh
 
       - name: Sharded WASM and canvas browser smoke tests
         env:

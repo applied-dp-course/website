@@ -48,10 +48,9 @@ CI runs the pytest line **before** Quarto render (see [authoring/AUTHORING.md](a
 `tests/test_content_model.py` in the same commit.
 
 **Shipping a lecture:** run `./dev/tools/deliver_lecture.sh --slug <slug>` — a fail-closed gate that
-resolves libdpy imports on the pin, renders, checks routes, and smoke-tests; add `--push` to push and
+syncs in-tree libdpy, renders, checks routes, and smoke-tests; add `--push` to push and
 block on a green CI build+deploy. See [authoring/AUTHORING.md](authoring/AUTHORING.md) → *Delivery
-gate* (including *Common delivery pitfalls*). A local render passing, or a `pub_lib` tag existing, is
-**not** "shipped".
+gate* (including *Common delivery pitfalls*). A local render passing is **not** "shipped".
 
 **Quarantined dev tools:** `dev/tools/quarantine/` holds scripts that are **not** part of delivery
 (stale generators, experiments). Do not run them to regenerate committed content unless rewritten and
@@ -72,14 +71,15 @@ quarto render content/blog-posts/<slug>/post.ipynb    # render one notebook
 ./.venv/bin/python tests/run_smoke_tests.py --slug <slug>
 ```
 
-- **Pre-release libdpy checks:** `LIBDPY_SYNC=0 ./dev/tools/render.sh` renders against the currently
-  installed env instead of installing the pinned libdpy from `requirements.txt` (also noted in AUTHORING).
+- **In-tree libdpy:** `./dev/tools/sync_libdpy.sh` installs sibling `code_base_dev/libdpy` editable
+  before render. Set `LIBDPY_SYNC=0` to skip re-sync when the venv is already current.
 - **PR smoke gate:** pull requests run scoped, blocking WASM smoke tests for changed lecture slugs.
   The full suite runs nightly (`smoke-nightly.yml`) across four parallel shards after a single
   render. **Require the PR build-check job via branch protection** — direct pushes to `main`
   deploy without smoke.
 - **CI render cache:** GitHub Actions restores `_freeze/` and `_generated/` from a prior run.
-  Cache keys are scoped to the libdpy pin; partial restores never cross pins. Within a job,
+  Cache keys are scoped to the in-tree libdpy version + source fingerprint; partial restores never
+  cross library changes. Within a job,
   `build_interactives.py` skips unchanged WASM apps. Full-site `quarto render --execute` respects
   project `freeze: auto` (only re-executes notebooks whose source changed); `--execute` is the
   default and does not override freeze on a global project render.
