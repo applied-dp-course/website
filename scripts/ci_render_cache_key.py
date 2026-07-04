@@ -39,13 +39,16 @@ def _libdpy_source_root() -> Path:
             return path.resolve()
         raise SystemExit(f"LIBDPY_SOURCE is not a libdpy tree: {override}")
 
-    sibling = (SITE_ROOT.parent / "code_base_dev" / "libdpy").resolve()
-    if (sibling / "pyproject.toml").is_file():
-        return sibling
+    for candidate in (
+        (SITE_ROOT / "libdpy").resolve(),  # Stage 1 monorepo
+        (SITE_ROOT.parent / "code_base_dev" / "libdpy").resolve(),  # Stage 0 sibling
+    ):
+        if (candidate / "pyproject.toml").is_file():
+            return candidate
 
     raise SystemExit(
-        "could not find in-tree libdpy (expected ../code_base_dev/libdpy beside website; "
-        "set LIBDPY_SOURCE for overrides)"
+        "could not find in-tree libdpy (expected libdpy/ under site root or "
+        "../code_base_dev/libdpy beside website; set LIBDPY_SOURCE for overrides)"
     )
 
 
