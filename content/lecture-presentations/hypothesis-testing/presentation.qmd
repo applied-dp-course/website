@@ -48,8 +48,7 @@ except ImportError:
 #| output: false
 #| include: false
 from libdpy.visualization.privacy_plots import PrivacyPlot
-from libdpy.visualization.roc_plots import make_roc_decision_declarative_figure
-from libdpy.assignment_specific.dp_as_hypothesis_testing.utils import desicion_rule_params
+from libdpy.visualization.roc_plots import ROCDecisionVisualizer
 from libdpy.assignment_specific.dp_as_hypothesis_testing.lecture_figures import (
     make_analytic_roc_curve_figure,
     make_analytic_roc_curves_by_std_figure,
@@ -240,14 +239,26 @@ make_empty_roc_plane_figure(title='ROC plane')
 Sweeping the threshold traces a curve in the ROC plane.
 
 ```{python}
-make_roc_decision_declarative_figure(desicion_rule_params, dist_neg, dist_pos, True)
+ROCDecisionVisualizer(
+    dist0_family="norm",
+    dist0_args=(0.0, 1.0),
+    dist1_family="norm",
+    dist1_args=(1.0, 1.0),
+    by_threshold=True,
+).embed()
 ```
 
 ## Connecting the threshold to the ROC
 ### Uniform distributions
 
 ```{python}
-make_roc_decision_declarative_figure(desicion_rule_params, uniform(0, 3), uniform(1, 3), True)
+ROCDecisionVisualizer(
+    dist0_family="uniform",
+    dist0_args=(0.0, 3.0),
+    dist1_family="uniform",
+    dist1_args=(1.0, 3.0),
+    by_threshold=True,
+).embed()
 ```
 
 ## Neyman–Pearson lemma
@@ -256,7 +267,13 @@ Every optimal decision rule is a threshold on the log probability ratio.
 If the log probability ratio is monotonic in $x$, a threshold on the value itself is optimal.
 
 ```{python}
-make_roc_decision_declarative_figure(desicion_rule_params, dist_neg, dist_pos, False)
+ROCDecisionVisualizer(
+    dist0_family="norm",
+    dist0_args=(0.0, 1.0),
+    dist1_family="norm",
+    dist1_args=(1.0, 1.0),
+    by_threshold=False,
+).embed()
 ```
 
 ## Privacy as a bound on the ROC curve
