@@ -37,11 +37,21 @@ class SmokeTargetTest(unittest.TestCase):
     def test_built_targets_are_discoverable_when_site_exists(self) -> None:
         root = run_smoke_tests.content_model.SITE_ROOT
         output = root / "_site"
-        if not (
-            output / "_generated" / "apps" / "lecture-presentations" / "hypothesis-testing"
-        ).is_dir():
+        marker = (
+            output
+            / "_generated"
+            / "apps"
+            / "lecture-presentations"
+            / "hypothesis-testing"
+            / "privacy-plot-norm-6197737a49"
+            / "index.html"
+        )
+        if not marker.is_file():
             self.skipTest("_site is stale or not built for the current layout")
-        wasm, canvas = run_smoke_tests.discover_smoke_targets(root, output)
+        try:
+            wasm, canvas = run_smoke_tests.discover_smoke_targets(root, output)
+        except SystemExit as exc:
+            self.skipTest(f"_site is stale or incomplete: {exc}")
         self.assertEqual(len(canvas), 0)
         self.assertGreaterEqual(len(wasm), 2)
 

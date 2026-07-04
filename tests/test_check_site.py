@@ -36,9 +36,16 @@ class CheckSiteTest(unittest.TestCase):
 
     def test_built_site_passes_when_present(self) -> None:
         site = content_model.SITE_ROOT / "_site"
-        if not (
-            site / "_generated" / "apps" / "lecture-presentations" / "hypothesis-testing"
-        ).is_dir():
+        marker = (
+            site
+            / "_generated"
+            / "apps"
+            / "lecture-presentations"
+            / "hypothesis-testing"
+            / "privacy-plot-norm-6197737a49"
+            / "index.html"
+        )
+        if not marker.is_file():
             self.skipTest("_site is stale or not built for the current layout")
         self.assertEqual(check_site.check_local_site(site), [])
 

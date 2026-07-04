@@ -57,7 +57,16 @@ class PlotInventoryWebsiteTest(unittest.TestCase):
     def test_inventory_scan_strict_post_render(self) -> None:
         self._require_monorepo_inventory()
         site = SITE_ROOT / "_site"
-        if not site.is_dir():
+        marker = (
+            site
+            / "_generated"
+            / "apps"
+            / "lecture-presentations"
+            / "hypothesis-testing"
+            / "privacy-plot-norm-6197737a49"
+            / "index.html"
+        )
+        if not marker.is_file():
             self.skipTest("website/_site not built; run quarto render first")
 
         findings = collect_plot_inventory_findings(WORKSPACE, include_post_render=True)
