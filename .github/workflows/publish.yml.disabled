@@ -1,4 +1,7 @@
-name: Publish website
+name: Publish website (DISABLED — Stage 2)
+
+# DISABLED: Site builds in code_base_dev; this repo is an output mirror only.
+# Deploy runs via deploy-pages.yml when the monorepo publish-site workflow pushes _site/.
 
 # Build the Quarto site (which generates the marimo WASM interactives from libdpy),
 # verify routes and links, then deploy to GitHub Pages.

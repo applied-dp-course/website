@@ -1,0 +1,48 @@
+name: Deploy GitHub Pages
+
+# Stage 2 output mirror: the monorepo pushes rendered _site/ here; this workflow deploys it.
+# Do not build or render in this repo — source lives in code_base_dev.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  PAGES_BASE_URL: https://applied-dp-course.github.io/website
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage site files for Pages (exclude repo metadata)
+        run: |
+          mkdir -p /tmp/pages-root
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='README.md' \
+            ./ /tmp/pages-root/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: /tmp/pages-root
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

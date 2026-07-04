@@ -1,4 +1,6 @@
-name: Nightly WASM smoke tests
+name: Nightly WASM smoke tests (DISABLED — Stage 2)
+
+# DISABLED: Full smoke runs from code_base_dev/.github/workflows/smoke-nightly.yml.
 
 # Full-site browser smoke suite for every exported interactive. Runs on a schedule
 # instead of blocking every deploy (scoped PR smoke is the fast gate).
