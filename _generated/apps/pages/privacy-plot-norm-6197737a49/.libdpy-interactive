@@ -1,6 +1,6 @@
 name=privacy_plot
 artifact=privacy-plot-norm-6197737a49
 export_backend=wasm-marimo
-signature=4c675e66a3b4f52e029c86e4e67476bbdf63453c1b3fd45c4b976eb2ba549e36
-libdpy_version=0.2.26
+signature=80e31d4187e95b766004528a92eea4bd35a307579e50e210a4fbe7093eb51744
+libdpy_version=0.2.27
 marimo_version=0.23.9
