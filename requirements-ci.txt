@@ -1,4 +1,0 @@
-# CI-only extras layered on requirements.txt (see publish.yml / smoke-nightly.yml).
--r requirements.txt
-pytest
-websocket-client

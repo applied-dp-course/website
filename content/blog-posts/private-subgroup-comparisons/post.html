@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.43">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Private Estimation - cont — Self-study notebook – Applied Differential Privacy</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-1a8dcdf9b07556cb827066befe3bfc28.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<style>
+.cell-output-display img, .cell-output-display .plotly-graph-div { max-width: 100%; height: auto; }
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<style>
+/* course-nav-split */
+#quarto-header,
+#quarto-header .navbar,
+#quarto-header .navbar-collapse {
+  overflow: visible;
+}
+
+.navbar .nav-item.course-nav-split-item {
+  position: static;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-main,
+.navbar .nav-item.course-nav-split-item > .course-nav-caret {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-main {
+  padding-right: 0.1rem;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret {
+  padding-left: 0.1rem;
+  padding-right: 0.55rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  line-height: inherit;
+  box-shadow: none;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret::after {
+  margin-left: 0;
+  vertical-align: 0.1em;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret:focus,
+.navbar .nav-item.course-nav-split-item > .course-nav-caret:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar .nav-item.course-nav-split-item:hover > .course-nav-main,
+.navbar .nav-item.course-nav-split-item:hover > .course-nav-caret,
+.navbar .nav-item.course-nav-split-item:focus-within > .course-nav-main,
+.navbar .nav-item.course-nav-split-item:focus-within > .course-nav-caret {
+  color: var(--bs-navbar-hover-color);
+}
+
+.navbar .nav-item.course-nav-split-item > .dropdown-menu {
+  position: absolute;
+  z-index: 1200;
+  margin-top: 0;
+  border-color: rgba(0, 0, 0, 0.12);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.navbar .nav-item.course-nav-split-item > .dropdown-menu.show {
+  z-index: 1200;
+}
+
+.hero,
+.offering-banner,
+.quick-links {
+  position: relative;
+  z-index: 1;
+}
+
+</style>
+<script>
+// course-nav-split-v1
+document.addEventListener("DOMContentLoaded", function () {
+  var menuItems = [
+    ["Syllabus", "syllabus.html"],
+    ["Lectures", "lectures.html"],
+    ["Class assignments", "class-assignments.html"],
+    ["Home assignments", "home-assignments.html"],
+    ["Past years", "archive.html"],
+  ];
+
+  document.querySelectorAll(".navbar-nav > .nav-item").forEach(function (item) {
+    if (item.classList.contains("course-nav-split-item")) {
+      return;
+    }
+    var toggle = item.querySelector(":scope > a.dropdown-toggle");
+    var menu = item.querySelector(":scope > ul.dropdown-menu");
+    if (!toggle || !menu) {
+      var simple = item.querySelector(":scope > a.nav-link .menu-text");
+      if (!simple || simple.textContent.trim() !== "Course") {
+        return;
+      }
+      var courseLink = item.querySelector(":scope > a.nav-link");
+      var courseHref = courseLink.getAttribute("href") || "pages/course.html";
+      var prefix = courseHref.replace(/course\.html$/, "");
+      item.classList.add("dropdown");
+      item.innerHTML = "";
+      toggle = document.createElement("a");
+      toggle.className = "nav-link dropdown-toggle";
+      toggle.href = "#";
+      toggle.setAttribute("role", "link");
+      toggle.setAttribute("data-bs-toggle", "dropdown");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = '<span class="menu-text">Course</span>';
+      menu = document.createElement("ul");
+      menu.className = "dropdown-menu";
+      menuItems.forEach(function (entry) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.className = "dropdown-item";
+        a.href = prefix + entry[1];
+        a.innerHTML = '<span class="dropdown-text">' + entry[0] + "</span>";
+        li.appendChild(a);
+        menu.appendChild(li);
+      });
+      item.appendChild(toggle);
+      item.appendChild(menu);
+    }
+    var label = toggle.querySelector(".menu-text");
+    if (!label || label.textContent.trim() !== "Course") {
+      return;
+    }
+    var syllabusLink = menu.querySelector('a[href*="syllabus"]');
+    var courseHref = syllabusLink
+      ? syllabusLink.getAttribute("href").replace("syllabus.html", "course.html")
+      : "pages/course.html";
+    var link = document.createElement("a");
+    link.className = "nav-link course-nav-main";
+    link.href = courseHref;
+    link.innerHTML = toggle.innerHTML;
+    if (window.location.pathname.endsWith("/course.html")) {
+      link.classList.add("active");
+      link.setAttribute("aria-current", "page");
+    }
+    var caret = document.createElement("button");
+    caret.type = "button";
+    caret.className = "nav-link course-nav-caret dropdown-toggle";
+    caret.setAttribute("data-bs-toggle", "dropdown");
+    caret.setAttribute("aria-expanded", "false");
+    caret.setAttribute("aria-label", "Course sections");
+    if (toggle.id) {
+      caret.id = toggle.id;
+      menu.setAttribute("aria-labelledby", toggle.id);
+    }
+    toggle.replaceWith(link, caret);
+    item.classList.add("course-nav-split-item");
+    if (window.bootstrap && window.bootstrap.Dropdown) {
+      window.bootstrap.Dropdown.getOrCreateInstance(caret);
+    }
+  });
+});
+
+</script>
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Applied Differential Privacy</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-course" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Course</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-course">    
+        <li>
+    <a class="dropdown-item" href="../../../pages/syllabus.html">
+ <span class="dropdown-text">Syllabus</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/lectures.html">
+ <span class="dropdown-text">Lectures</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/class-assignments.html">
+ <span class="dropdown-text">Class assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/home-assignments.html">
+ <span class="dropdown-text">Home assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/archive.html">
+ <span class="dropdown-text">Past years</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../../pages/tools.html"> 
+<span class="menu-text">Interactive tools</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../pages/assignments.html"> 
+<span class="menu-text">Interactive assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../pages/blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Private Estimation - cont — Self-study notebook</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+<p class="subtitle lead">Applied Data Privacy</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-page">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This is the <strong>self-study</strong> companion to the lecture deck: full narrative + all code, meant to be read and run. For the slide version (code hidden), open the <a href="../../lecture-presentations/private-subgroup-comparisons/presentation.html">presentation deck</a>.</p>
+<div id="2" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.utils <span class="im">import</span> (</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    DEFAULT_DELTA,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    DEFAULT_SEED,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    gaussian_noise_std,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.lecture_figures <span class="im">import</span> (</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    DEFAULT_BETA,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    DEFAULT_COUNT_SUM_AUDIT_TRIALS,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    DEFAULT_SUBGROUP_SAMPLING_DRAW_SIZE,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    DEFAULT_REPAIR_AUDIT_TRIALS,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_FAIL,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_RELEASE,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_TEST,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    PTR_EPS_RELEASE,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    PTR_EPS_TEST,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    SubgroupRepairSpec,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    audit_noisy_count_sum_panel,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    audit_smooth_sensitivity_panel,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    build_oracle_ls_failure_artifact,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    build_ptr_failure_artifact,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    build_support_comparison_artifact,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    build_subgroup_sampling_artifact,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    build_fair_comparison_neighbor_pair,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    prepare_fair_comparison_frame,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    evaluate_shared_subgroup_accuracy,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    global_sensitivity_release_theory_laws,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    evaluate_subgroup_accuracy,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    make_subgroup_accuracy_leaderboard_figure,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    make_subgroup_private_methods_population_error_figure,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    make_ptr_failure_probability_figure,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    make_support_comparison_figure,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    make_subgroup_sampling_distribution_figure,</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    ptr_conditional_release_theory_laws,</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Part II — private control flow</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    build_report_noisy_max_race_artifact,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    make_report_noisy_max_race_figure,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    build_report_noisy_max_accuracy_artifact,</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    make_report_noisy_max_accuracy_figure,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    build_above_threshold_ladder_artifact,</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    make_above_threshold_ladder_figure,</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    build_guess_quality_artifact,</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    make_guess_quality_figure,</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.visualization.roc_plots <span class="im">import</span> (</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    TheoryROCVisualizer,</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    make_empirical_roc_selected_threshold_figure,</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.mechanisms <span class="im">import</span> (</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    global_sensitivity_release,</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    noisy_count_sum_release,</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    oracle_local_sensitivity_output_law,</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    ptr_support_release,</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    replacement_ls_bound,</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    smooth_sensitivity_release,</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    subgroup_counts,</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    subgroup_difference,</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.witnesses <span class="im">import</span> (</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    DEFAULT_EPS_TOTAL,</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    DEFAULT_SUPPORT_THRESHOLD,</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    DEFAULT_TAU,</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    DEFAULT_WALKTHROUGH_GROUP_COLUMN,</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>    DEFAULT_WALKTHROUGH_N_ROWS,</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>    DEFAULT_FAIR_COMPARISON_MIN_SMALL,</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    DEFAULT_FAIR_COMPARISON_MAX_SMALL,</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>    DEFAULT_FAIR_COMPARISON_N,</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>    PUBLIC_CLIP_LOWER,</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>    PUBLIC_CLIP_UPPER,</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>    PUBLIC_REFERENCE_MEAN,</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>    PUBLIC_VALUE_UPPER,</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    frame_to_arrays,</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>    prepare_fulton_subgroup_frame,</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> DEFAULT_SEED</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>EPS_TOTAL <span class="op">=</span> DEFAULT_EPS_TOTAL</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>DELTA <span class="op">=</span> DEFAULT_DELTA</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(SEED)</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>DOLLAR_SCALE <span class="op">=</span> PUBLIC_REFERENCE_MEAN</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>frame <span class="op">=</span> prepare_fair_comparison_frame(seed<span class="op">=</span>SEED)</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>x, groups <span class="op">=</span> frame_to_arrays(frame, group_column<span class="op">=</span>DEFAULT_WALKTHROUGH_GROUP_COLUMN)</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>_, sex_groups <span class="op">=</span> frame_to_arrays(frame, group_column<span class="op">=</span><span class="st">"sex_group"</span>)</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>population_df <span class="op">=</span> prepare_fulton_subgroup_frame(n_rows<span class="op">=</span><span class="dv">1_000_000</span>, seed<span class="op">=</span>SEED)</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>population_x, population_sex_groups <span class="op">=</span> frame_to_arrays(population_df)</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>_, population_latino_groups <span class="op">=</span> frame_to_arrays(population_df, group_column<span class="op">=</span><span class="st">"latino_group"</span>)</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>LEADERBOARD_N <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>LEADERBOARD_N_DATASETS <span class="op">=</span> <span class="dv">40</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>LEADERBOARD_N_RUNS <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> subgroup_value_fn(df):</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df[<span class="st">"x"</span>].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> subgroup_group_fn(df):</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df[DEFAULT_WALKTHROUGH_GROUP_COLUMN].to_numpy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="lecture-6-private-subgroup-comparisons-after-clipping" class="level1">
+<h1>Lecture 6 — Private Subgroup Comparisons After Clipping</h1>
+<p><strong>Thesis:</strong> After a private step has controlled the salary scale, subgroup analysis is about <strong>denominators and private control flow</strong>, not extreme outliers.</p>
+<p><strong>PUBLIC CONTRACT:</strong> We start from public quantities obtained privately in Lecture 5: a clipping interval and a reference average salary. For Fulton, use the true 5%–95% income quantile range and clipped population mean as public post-processing information:</p>
+<p><span class="math display">\[
+[L,U] = [q_{0.05}, q_{0.95}] = [0, 141{,}450],
+\qquad
+\mu_{\mathrm{ref}} = \mathbb{E}[\mathrm{clip}(Y; L, U)].
+\]</span></p>
+<section id="s0-roadmap" class="level2">
+<h2 class="anchored" data-anchor-id="s0-roadmap">S0 — Roadmap</h2>
+<p><strong>Part I — one subgroup question, valid release.</strong> Same rhythm as Lecture 5: define one statistic, inspect sampling variability, try oracle local sensitivity, audit why it fails, then repair with private control flow. After <strong>each valid private mechanism</strong>, run a privacy audit and read the signed-error <strong>accuracy leaderboard</strong> on Latino walkthrough resamples.</p>
+<p><strong>Part II — private control flow.</strong> A choice is a release too. <code>ReportNoisyMax</code> for the most common value (no public data); <code>AboveThreshold</code> for a threshold crossing made cheap by a public guess — which recovers the clip bound Part I assumed.</p>
+</section>
+<section id="s1-the-statistic" class="level2">
+<h2 class="anchored" data-anchor-id="s1-the-statistic">S1 — The statistic</h2>
+<p>Target: difference of average mean-scaled clipped salaries between two public groups. Main demo: <strong>Latino workers vs everyone else</strong> (n=1,000, minority support in the 50–100 range). We also track <strong>sex-code groups</strong> as a stable-support contrast.</p>
+<section id="formal-anchor-statistic-and-denominator-floor" class="level3">
+<h3 class="anchored" data-anchor-id="formal-anchor-statistic-and-denominator-floor">Formal anchor: statistic and denominator floor</h3>
+<p>Fixed-size <strong>replacement adjacency</strong>; public denominator floor <span class="math inline">\(\tau\)</span> when counts are released.</p>
+<div id="7" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>walkthrough_counts <span class="op">=</span> subgroup_counts(groups)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sex_counts <span class="op">=</span> subgroup_counts(sex_groups)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>true_delta <span class="op">=</span> subgroup_difference(x, groups)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>sex_delta <span class="op">=</span> subgroup_difference(x, sex_groups)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>walkthrough_ls <span class="op">=</span> replacement_ls_bound(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    walkthrough_counts[<span class="st">'A'</span>], walkthrough_counts[<span class="st">'B'</span>], value_range<span class="op">=</span>PUBLIC_VALUE_UPPER</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>sex_ls <span class="op">=</span> replacement_ls_bound(sex_counts[<span class="st">'A'</span>], sex_counts[<span class="st">'B'</span>], value_range<span class="op">=</span>PUBLIC_VALUE_UPPER)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Latino walkthrough (n=</span><span class="sc">{</span>DEFAULT_WALKTHROUGH_N_ROWS<span class="sc">}</span><span class="ss">): </span><span class="sc">{</span>walkthrough_counts<span class="sc">}</span><span class="ss">; LS bound </span><span class="sc">{</span>walkthrough_ls<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sex-code on same sample: </span><span class="sc">{</span>sex_counts<span class="sc">}</span><span class="ss">; LS bound </span><span class="sc">{</span>sex_ls<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Latino Delta: </span><span class="sc">{</span>true_delta<span class="sc">:.4f}</span><span class="ss">; Sex-code Delta: </span><span class="sc">{</span>sex_delta<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Latino walkthrough (n=1000): {'A': 938, 'B': 62}; LS bound 0.0739
+Sex-code on same sample: {'A': 471, 'B': 529}; LS bound 0.0170
+Latino Delta: 0.6184; Sex-code Delta: 0.4917</code></pre>
+</div>
+</div>
+<div id="8" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    fair_x, fair_groups, fair_x_prime, fair_groups_prime,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    fair_out_idx, fair_counts, fair_counts_prime,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">=</span> build_fair_comparison_neighbor_pair(seed<span class="op">=</span>SEED)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Fair comparison D: </span><span class="sc">{</span>fair_counts<span class="sc">}</span><span class="ss"> (min=</span><span class="sc">{</span><span class="bu">min</span>(fair_counts.values())<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Fair comparison D': </span><span class="sc">{</span>fair_counts_prime<span class="sc">}</span><span class="ss"> (min=</span><span class="sc">{</span><span class="bu">min</span>(fair_counts_prime.values())<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Moved index </span><span class="sc">{</span>fair_out_idx<span class="sc">}</span><span class="ss"> from smaller group </span><span class="sc">{</span>fair_groups[fair_out_idx]<span class="sc">!r}</span><span class="ss"> -&gt; </span><span class="sc">{</span>fair_groups_prime[fair_out_idx]<span class="sc">!r}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fair comparison D: {'A': 938, 'B': 62} (min=62)
+Fair comparison D': {'A': 939, 'B': 61} (min=61)
+Moved index 10 from smaller group 'B' -&gt; 'A'</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="s2-sampling-variability-before-privacy" class="level2">
+<h2 class="anchored" data-anchor-id="s2-sampling-variability-before-privacy">S2 — Sampling variability before privacy</h2>
+<p>Before adding privacy noise, ask how much the <strong>normalized average salary gap</strong> moves under ordinary sampling alone. From the full Fulton population (<span class="math inline">\(N \approx 25{,}766\)</span>) we draw <span class="math inline">\(n=1{,}000\)</span> records with replacement, compute the gap, and repeat 40 times. The histogram is the sampling distribution; the vertical line is the full-population target. This baseline is <strong>not a private release</strong> — it separates sampling error from privacy noise.</p>
+<section id="sex-code-groups-stable-5050-support" class="level3">
+<h3 class="anchored" data-anchor-id="sex-code-groups-stable-5050-support">Sex-code groups (stable ~50–50 support)</h3>
+<p>Stable denominators keep the sampling distribution relatively tight. The population sex-code gap is about <span class="math inline">\(0.55\)</span> in mean-scaled units (<span class="math inline">\(\approx \$18{,}500\)</span> after multiplying by <span class="math inline">\(\mu\)</span>).</p>
+<div id="11" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sex_sampling <span class="op">=</span> build_subgroup_sampling_artifact(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    population_x, population_sex_groups, sample_size<span class="op">=</span>DEFAULT_SUBGROUP_SAMPLING_DRAW_SIZE, n_samples<span class="op">=</span><span class="dv">2000</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    comparison_label<span class="op">=</span><span class="st">'sex-code groups'</span>, seed<span class="op">=</span>SEED,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_sampling_distribution_figure(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    sex_sampling, title<span class="op">=</span><span class="st">'Sampling variability — sex-code groups (Fulton)'</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="latino-workers-vs-everyone-else-5-minority" class="level3">
+<h3 class="anchored" data-anchor-id="latino-workers-vs-everyone-else-5-minority">Latino workers vs everyone else (~5% minority)</h3>
+<p>The same resampling design on a rarer cut: minority denominators are smaller, so the histogram is wider even before privacy. The population gap is about <span class="math inline">\(0.46\)</span> mean-scaled units (<span class="math inline">\(\approx \$15{,}400\)</span>).</p>
+<div id="13" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>latino_sampling <span class="op">=</span> build_subgroup_sampling_artifact(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    population_x, population_latino_groups, sample_size<span class="op">=</span>DEFAULT_SUBGROUP_SAMPLING_DRAW_SIZE, n_samples<span class="op">=</span><span class="dv">2000</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    comparison_label<span class="op">=</span><span class="st">'Latino vs everyone else'</span>, seed<span class="op">=</span>SEED,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_sampling_distribution_figure(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    latino_sampling, title<span class="op">=</span><span class="st">'Sampling variability — Latino walkthrough comparison'</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="s3-global-sensitivity-is-pessimistic" class="level2">
+<h2 class="anchored" data-anchor-id="s3-global-sensitivity-is-pessimistic">S3 — Global sensitivity is pessimistic</h2>
+<p>If tiny groups are allowed in the domain, <span class="math inline">\(GS_\Delta \le 2B\)</span>, where <span class="math inline">\(B=U/\mu\)</span>. This is a valid worst-case bound for the total-function release, but it pays for datasets with nearly empty groups.</p>
+<p>For this lecture, the point is the formula, not a plot of a reciprocal curve. The global release is valid; it is usually not the useful baseline for subgroup comparisons with decent support.</p>
+<div id="15" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gs_result <span class="op">=</span> global_sensitivity_release(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    x, groups, EPS_TOTAL, rng, value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER, delta<span class="op">=</span>DELTA,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Global-sensitivity noise scale: </span><span class="sc">{</span>gs_result[<span class="st">'noise_scale'</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Walkthrough LS / eps: </span><span class="sc">{</span>walkthrough_ls <span class="op">/</span> EPS_TOTAL<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"privacy_status: </span><span class="sc">{</span>gs_result[<span class="st">'privacy_status'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"released Delta (mean-scaled): </span><span class="sc">{</span>gs_result[<span class="st">'estimate'</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"released Delta (dollars): $</span><span class="sc">{</span>gs_result[<span class="st">'estimate'</span>] <span class="op">*</span> DOLLAR_SCALE<span class="sc">:,.0f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Global-sensitivity noise scale: 15.8943
+Walkthrough LS / eps: 0.0739
+privacy_status: valid
+released Delta (mean-scaled): 5.4617
+released Delta (dollars): $182,550</code></pre>
+</div>
+</div>
+<section id="theory-privacy-audit-global-sensitivity-release" class="level3">
+<h3 class="anchored" data-anchor-id="theory-privacy-audit-global-sensitivity-release">Theory privacy audit — global sensitivity release</h3>
+<p>Global sensitivity calibrates a <strong>fixed</strong> Gaussian scale <span class="math inline">\(2B/\varepsilon\)</span> on every dataset. On a typical balanced neighbor pair the gap shift is tiny relative to <span class="math inline">\(\sigma\)</span>, so the two output laws look almost identical — but the analytical ROC still certifies the governing <span class="math inline">\(\varepsilon\)</span> meets the claimed budget.</p>
+<div id="17" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>TheoryROCVisualizer(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    distribution<span class="op">=</span><span class="st">'Gaussian'</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    scale<span class="op">=</span><span class="fl">15.894319728207908</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    delta<span class="op">=</span><span class="fl">0.01</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    selectable_distribution<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    loc_negative<span class="op">=</span><span class="fl">0.6183934157149957</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    scale_negative<span class="op">=</span><span class="fl">15.894319728207908</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    loc_positive<span class="op">=</span><span class="fl">0.6106134406021159</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    scale_positive<span class="op">=</span><span class="fl">15.894319728207908</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    compute_epsilon<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    show_compute_epsilon_toggle<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    show_governing_point<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/blog-posts/private-subgroup-comparisons/theory-roc-gaussian-13519da316/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+</div>
+</div>
+</section>
+<section id="accuracy-leaderboard-global-sensitivity-release" class="level3">
+<h3 class="anchored" data-anchor-id="accuracy-leaderboard-global-sensitivity-release">Accuracy leaderboard — global sensitivity release</h3>
+<p>Lecture 5 signed-error decomposition on Latino walkthrough resamples.</p>
+<div id="19" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> global_mechanism(values, group_labels, run_rng):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> global_sensitivity_release(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        values, group_labels, EPS_TOTAL, run_rng, value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER, delta<span class="op">=</span>DELTA,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>global_rows <span class="op">=</span> evaluate_subgroup_accuracy(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    population_df, global_mechanism, n<span class="op">=</span>LEADERBOARD_N, n_datasets<span class="op">=</span>LEADERBOARD_N_DATASETS,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>LEADERBOARD_N_RUNS, seed<span class="op">=</span>SEED, min_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MIN_SMALL, max_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MAX_SMALL, group_fn<span class="op">=</span>subgroup_group_fn, value_fn<span class="op">=</span>subgroup_value_fn,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'global sensitivity'</span>, privacy_status<span class="op">=</span><span class="st">'valid'</span>, epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_accuracy_leaderboard_figure(global_rows, title<span class="op">=</span><span class="st">'Global sensitivity release'</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-10-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="s4-temptation-oracle-local-sensitivity" class="level2">
+<h2 class="anchored" data-anchor-id="s4-temptation-oracle-local-sensitivity">S4 — Temptation: oracle local sensitivity</h2>
+<p>Bad proposal: Gaussian noise scaled to a <strong>data-dependent</strong> local-sensitivity bound — not private when hidden support moves the scale.</p>
+<p>First on the <strong>fair comparison Fulton pair</strong> from S1: one replacement moves a worker <strong>from the smaller Latino subgroup into the majority group</strong> (salary unchanged).</p>
+<p>The analytical Gaussian ROC uses the same fair-comparison neighbor pair with a common calibrated std (oracle-LS thought experiment on identical noise scale).</p>
+<div id="23" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>TheoryROCVisualizer(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    distribution<span class="op">=</span><span class="st">'Gaussian'</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    scale<span class="op">=</span><span class="fl">0.014609825128944782</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    delta<span class="op">=</span><span class="fl">0.01</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    selectable_distribution<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    loc_negative<span class="op">=</span><span class="fl">0.6183934157149957</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    scale_negative<span class="op">=</span><span class="fl">0.014609825128944782</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    loc_positive<span class="op">=</span><span class="fl">0.6106134406021159</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    scale_positive<span class="op">=</span><span class="fl">0.014609825128944782</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    bound_epsilon<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    show_governing_point<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/blog-posts/private-subgroup-comparisons/theory-roc-gaussian-cc73c6c083/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+</div>
+</div>
+<p>Now move to an engineered sparse-support pair. One replacement moves the <strong>clip-upper earner</strong> from the 3-person minority group <code>B</code> into <code>A</code>. Support drops 3→2, so the oracle local-sensitivity bound — and therefore the Gaussian noise std — jumps on <code>D'</code>.</p>
+<div id="25" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sparse_oracle <span class="op">=</span> build_oracle_ls_failure_artifact(seed<span class="op">=</span>SEED)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"D counts=</span><span class="sc">{</span>sparse_oracle<span class="sc">.</span>counts_d<span class="sc">}</span><span class="ss">, D' counts=</span><span class="sc">{</span>sparse_oracle<span class="sc">.</span>counts_d_prime<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>D counts={'A': 8, 'B': 3}, D' counts={'A': 9, 'B': 2}</code></pre>
+</div>
+</div>
+<p>This is the primary privacy-failure ROC for the sparse pair. One replacement moves the <strong>clip-upper earner</strong> from <code>B</code> to <code>A</code> (salary unchanged), changing support 3→2 and shifting the deterministic subgroup gap by about <strong>1.7 mean-scaled units</strong> (sign flip). The broken oracle-LS proposal calibrates <strong>different data-dependent Gaussian stds</strong> on <code>D</code> and <code>D'</code>. The governing ε exceeds the claimed budget.</p>
+<div id="27" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>TheoryROCVisualizer(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    distribution<span class="op">=</span><span class="st">'Gaussian'</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    scale<span class="op">=</span><span class="fl">5.108888484066827</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    delta<span class="op">=</span><span class="fl">0.01</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    selectable_distribution<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    loc_negative<span class="op">=-</span><span class="fl">1.3266757601823869</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    scale_negative<span class="op">=</span><span class="fl">5.108888484066827</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    loc_positive<span class="op">=</span><span class="fl">0.34117503892853895</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    scale_positive<span class="op">=</span><span class="fl">8.940554847116948</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    compute_epsilon<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    show_compute_epsilon_toggle<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    show_governing_point<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/blog-posts/private-subgroup-comparisons/theory-roc-gaussian-d0690a1d39/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+</div>
+</div>
+<p><strong>Diagnosis.</strong> Local sensitivity is an excellent diagnostic, but a bad noise scale. The sparse ROC shows the output <em>distribution</em> changes between true neighbors because the mechanism’s Gaussian std depends on hidden subgroup support — so this proposal is <strong>not private</strong> under fixed-size replacement adjacency.</p>
+</section>
+<section id="s5-valid-repair-1-noisy-counts-and-noisy-sums" class="level2">
+<h2 class="anchored" data-anchor-id="s5-valid-repair-1-noisy-counts-and-noisy-sums">S5 — Valid repair 1: noisy counts and noisy sums</h2>
+<p>Release four Gaussian queries, then post-process with public denominator floor <span class="math inline">\(\tau\)</span>. Counts are not free, but they are often the honest output.</p>
+<div id="30" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>count_sum <span class="op">=</span> noisy_count_sum_release(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    x, groups, EPS_TOTAL<span class="op">/</span><span class="dv">4</span>, EPS_TOTAL<span class="op">/</span><span class="dv">4</span>, EPS_TOTAL<span class="op">/</span><span class="dv">4</span>, EPS_TOTAL<span class="op">/</span><span class="dv">4</span>, DEFAULT_TAU, rng,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(count_sum[<span class="st">'privacy_status'</span>])</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Private Delta estimate (mean-scaled): </span><span class="sc">{</span>count_sum[<span class="st">'estimate'</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Private Delta estimate (dollars): $</span><span class="sc">{</span>count_sum[<span class="st">'estimate'</span>] <span class="op">*</span> DOLLAR_SCALE<span class="sc">:,.0f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>valid
+Private Delta estimate (mean-scaled): 1.3214
+Private Delta estimate (dollars): $44,166</code></pre>
+</div>
+</div>
+<section id="empirical-privacy-audit-noisy-counts-and-sums" class="level3">
+<h3 class="anchored" data-anchor-id="empirical-privacy-audit-noisy-counts-and-sums">Empirical privacy audit — noisy counts and sums</h3>
+<div id="32" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>count_sum_audit <span class="op">=</span> audit_noisy_count_sum_panel(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    fair_x, fair_groups, fair_x_prime, fair_groups_prime,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    eps_total<span class="op">=</span>EPS_TOTAL, tau<span class="op">=</span>DEFAULT_TAU, delta<span class="op">=</span>DELTA,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    n_trials<span class="op">=</span>DEFAULT_COUNT_SUM_AUDIT_TRIALS, seed<span class="op">=</span>SEED, claimed_eps<span class="op">=</span>EPS_TOTAL,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"tau*=</span><span class="sc">{</span>count_sum_audit<span class="sc">.</span>tau_star<span class="sc">:.3g}</span><span class="ss">, eps_plug=</span><span class="sc">{</span>count_sum_audit<span class="sc">.</span>eps_plug<span class="sc">:.3g}</span><span class="ss">, separates=</span><span class="sc">{</span>count_sum_audit<span class="sc">.</span>separates<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Static figure while heavy empirical-audit WASM is deferred (Phase-1 4c).</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>fig, <span class="op">*</span>_ <span class="op">=</span> make_empirical_roc_selected_threshold_figure(</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    count_sum_audit.samples_neg, count_sum_audit.samples_pos, DELTA,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>tau*=1.13, eps_plug=0.112, separates=False</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-15-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-15-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="accuracy-leaderboard-noisy-counts-and-sums" class="level3">
+<h3 class="anchored" data-anchor-id="accuracy-leaderboard-noisy-counts-and-sums">Accuracy leaderboard — noisy counts and sums</h3>
+<div id="34" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_sum_mechanism(values, group_labels, run_rng):</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    q <span class="op">=</span> EPS_TOTAL <span class="op">/</span> <span class="dv">4</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> noisy_count_sum_release(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        values, group_labels, q, q, q, q, DEFAULT_TAU, run_rng, value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>count_sum_rows <span class="op">=</span> evaluate_subgroup_accuracy(</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    population_df, count_sum_mechanism, n<span class="op">=</span>LEADERBOARD_N, n_datasets<span class="op">=</span>LEADERBOARD_N_DATASETS,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>LEADERBOARD_N_RUNS, seed<span class="op">=</span>SEED, min_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MIN_SMALL, max_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MAX_SMALL, group_fn<span class="op">=</span>subgroup_group_fn, value_fn<span class="op">=</span>subgroup_value_fn,</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'noisy counts and sums'</span>, privacy_status<span class="op">=</span><span class="st">'valid'</span>, epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_accuracy_leaderboard_figure(count_sum_rows, title<span class="op">=</span><span class="st">'Noisy counts and sums'</span>)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="s6-valid-repair-2-propose-test-release" class="level2">
+<h2 class="anchored" data-anchor-id="s6-valid-repair-2-propose-test-release">S6 — Valid repair 2: Propose-Test-Release</h2>
+<section id="formal-definition-ptr-support-certification" class="level3">
+<h3 class="anchored" data-anchor-id="formal-definition-ptr-support-certification">Formal definition: PTR support certification</h3>
+<p>Ledger: <span class="math inline">\(\varepsilon=\varepsilon_{\mathrm{test}}+\varepsilon_{\mathrm{release}}\)</span>, <span class="math inline">\(\delta=\delta_{\mathrm{test}}+\delta_{\mathrm{release}}+\delta_{\mathrm{fail}}\)</span>. Bad set <span class="math inline">\(\mathcal B_m=\{D:\min(n_A,n_B)&lt;m\}\)</span>; distance <span class="math inline">\(d(D,\mathcal B_m)=\max\{\min(n_A,n_B)-m+1,0\}\)</span>. Buffer <span class="math inline">\(b=\sigma_{\mathrm{test}}\Phi^{-1}(1-\delta_{\mathrm{fail}})\)</span> so <span class="math inline">\(P(\text{accept}\mid d=0)=\delta_{\mathrm{fail}}\)</span>.</p>
+<div id="37" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ptr <span class="op">=</span> ptr_support_release(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    x, groups, DEFAULT_SUPPORT_THRESHOLD, PTR_EPS_TEST, PTR_EPS_RELEASE,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_TEST, PTR_DELTA_RELEASE, PTR_DELTA_FAIL, rng, value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"status=</span><span class="sc">{</span>ptr[<span class="st">'status'</span>]<span class="sc">!r}</span><span class="ss">, accepted=</span><span class="sc">{</span>ptr<span class="sc">.</span>get(<span class="st">'accepted'</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"epsilon ledger: </span><span class="sc">{</span>ptr[<span class="st">'epsilon'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"delta ledger: </span><span class="sc">{</span>ptr[<span class="st">'delta'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ptr.get(<span class="st">'estimate'</span>) <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">and</span> np.isfinite(ptr[<span class="st">'estimate'</span>]):</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"released Delta (mean-scaled): </span><span class="sc">{</span>ptr[<span class="st">'estimate'</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>status='released', accepted=True
+epsilon ledger: {'test': 0.4, 'release': 0.6, 'total': 1.0}
+delta ledger: {'test': 0.016666666666666666, 'release': 0.016666666666666666, 'fail': 0.016666666666666666, 'total': 0.05}
+released Delta (mean-scaled): 0.7103</code></pre>
+</div>
+</div>
+</section>
+<section id="ptr-test-failure-probability" class="level3">
+<h3 class="anchored" data-anchor-id="ptr-test-failure-probability">PTR test failure probability</h3>
+<p>The private support test abstains when the noisy distance falls below the public buffer. The curve shows the <strong>analytic</strong> probability of that test failure as true <span class="math inline">\(\min(n_A,n_B)\)</span> varies at fixed threshold <span class="math inline">\(m\)</span>. The horizontal line marks the chosen failure probability <span class="math inline">\(\delta\)</span>; the second line marks <span class="math inline">\(P(\text{release}\mid\text{distance}=0)\)</span> on the bad-set boundary.</p>
+<div id="39" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ptr_failure <span class="op">=</span> build_ptr_failure_artifact(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    support_values<span class="op">=</span>np.arange(<span class="dv">1</span>, <span class="dv">121</span>, dtype<span class="op">=</span><span class="bu">int</span>),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    ptr_threshold<span class="op">=</span>DEFAULT_SUPPORT_THRESHOLD, eps_test<span class="op">=</span>PTR_EPS_TEST,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    delta_test<span class="op">=</span>PTR_DELTA_TEST, delta_release<span class="op">=</span>PTR_DELTA_RELEASE, delta_fail<span class="op">=</span>PTR_DELTA_FAIL,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_ptr_failure_probability_figure(</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    ptr_failure, title<span class="op">=</span><span class="st">'PTR support test failure probability vs true minimum support'</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    marker_min_count<span class="op">=</span><span class="bu">min</span>(walkthrough_counts.values()),</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    marker_label<span class="op">=</span><span class="ss">f"Latino walkthrough (min n=</span><span class="sc">{</span><span class="bu">min</span>(walkthrough_counts.values())<span class="sc">}</span><span class="ss">)"</span>,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-18-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="theory-privacy-audit-ptr-conditional-release" class="level3">
+<h3 class="anchored" data-anchor-id="theory-privacy-audit-ptr-conditional-release">Theory privacy audit — PTR conditional release</h3>
+<p>Once the private support test accepts, PTR releases a Gaussian with <strong>fixed</strong> sensitivity <span class="math inline">\(2B/(m-1)\)</span>. Audit with <code>TheoryROCVisualizer</code> on a neighbor pair where <span class="math inline">\(\Delta(D)\)</span> and <span class="math inline">\(\Delta(D')\)</span> separate visibly at the release scale.</p>
+<div id="41" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>TheoryROCVisualizer(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    distribution<span class="op">=</span><span class="st">'Gaussian'</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    scale<span class="op">=</span><span class="fl">0.7186256358849121</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    delta<span class="op">=</span><span class="fl">0.016666666666666666</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    selectable_distribution<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    loc_negative<span class="op">=</span><span class="fl">0.6183934157149957</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    scale_negative<span class="op">=</span><span class="fl">0.7186256358849121</span>,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    loc_positive<span class="op">=</span><span class="fl">0.6106134406021159</span>,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    scale_positive<span class="op">=</span><span class="fl">0.7186256358849121</span>,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    compute_epsilon<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    show_compute_epsilon_toggle<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    show_governing_point<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/blog-posts/private-subgroup-comparisons/theory-roc-gaussian-7e39247e45/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+</div>
+</div>
+</section>
+<section id="accuracy-leaderboard-ptr-support" class="level3">
+<h3 class="anchored" data-anchor-id="accuracy-leaderboard-ptr-support">Accuracy leaderboard — PTR support</h3>
+<p>Conditional on release; abstentions skipped.</p>
+<div id="43" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ptr_mechanism(values, group_labels, run_rng):</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ptr_support_release(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>        values, group_labels, DEFAULT_SUPPORT_THRESHOLD, PTR_EPS_TEST, PTR_EPS_RELEASE,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>        PTR_DELTA_TEST, PTR_DELTA_RELEASE, PTR_DELTA_FAIL, run_rng, value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>ptr_rows <span class="op">=</span> evaluate_subgroup_accuracy(</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    population_df, ptr_mechanism, n<span class="op">=</span>LEADERBOARD_N, n_datasets<span class="op">=</span>LEADERBOARD_N_DATASETS,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>LEADERBOARD_N_RUNS, seed<span class="op">=</span>SEED, min_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MIN_SMALL, max_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MAX_SMALL, group_fn<span class="op">=</span>subgroup_group_fn, value_fn<span class="op">=</span>subgroup_value_fn,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'PTR support'</span>, privacy_status<span class="op">=</span><span class="st">'valid PTR'</span>, epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_accuracy_leaderboard_figure(ptr_rows, title<span class="op">=</span><span class="st">'PTR support release'</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="s7-valid-repair-3-smooth-sensitivity" class="level2">
+<h2 class="anchored" data-anchor-id="s7-valid-repair-3-smooth-sensitivity">S7 — Valid repair 3: smooth sensitivity</h2>
+<section id="formal-definition-smooth-sensitivity-upper-bound" class="level3">
+<h3 class="anchored" data-anchor-id="formal-definition-smooth-sensitivity-upper-bound">Formal definition: smooth sensitivity upper bound</h3>
+<p><span class="math inline">\(S^\beta(D)=\max_k e^{-\beta k}A_k(D)\)</span>. NRS Laplace release <span class="math inline">\(\tilde\Delta = \Delta(D) + (2S^\beta(D)/\varepsilon)\cdot\mathrm{Lap}(1)\)</span> when <span class="math inline">\(\beta \le \varepsilon/(2\ln(2/\delta))\)</span>.</p>
+<div id="46" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>smooth <span class="op">=</span> smooth_sensitivity_release(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    x, groups, epsilon<span class="op">=</span>EPS_TOTAL, beta<span class="op">=</span>DEFAULT_BETA, rng<span class="op">=</span>rng, delta<span class="op">=</span>DELTA, value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"privacy_status: </span><span class="sc">{</span>smooth[<span class="st">'privacy_status'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"smooth bound: </span><span class="sc">{</span>smooth[<span class="st">'smooth_sensitivity'</span>]<span class="sc">:.4f}</span><span class="ss">, Laplace scale: </span><span class="sc">{</span>smooth[<span class="st">'noise_scale'</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"released Delta: </span><span class="sc">{</span>smooth[<span class="st">'estimate'</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>privacy_status: valid
+smooth bound: 0.1388, Laplace scale: 0.2775
+released Delta: 0.8540</code></pre>
+</div>
+</div>
+</section>
+<section id="empirical-privacy-audit-smooth-sensitivity" class="level3">
+<h3 class="anchored" data-anchor-id="empirical-privacy-audit-smooth-sensitivity">Empirical privacy audit — smooth sensitivity</h3>
+<div id="48" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>smooth_audit <span class="op">=</span> audit_smooth_sensitivity_panel(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    fair_x, fair_groups, fair_x_prime, fair_groups_prime,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    epsilon<span class="op">=</span>EPS_TOTAL, beta<span class="op">=</span>DEFAULT_BETA, delta<span class="op">=</span>DELTA, n_trials<span class="op">=</span>DEFAULT_REPAIR_AUDIT_TRIALS,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>SEED, claimed_eps<span class="op">=</span>EPS_TOTAL, value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"eps_plug=</span><span class="sc">{</span>smooth_audit<span class="sc">.</span>eps_plug<span class="sc">:.3g}</span><span class="ss">, separates=</span><span class="sc">{</span>smooth_audit<span class="sc">.</span>separates<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Static figure while heavy empirical-audit WASM is deferred (Phase-1 4c).</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>fig, <span class="op">*</span>_ <span class="op">=</span> make_empirical_roc_selected_threshold_figure(</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    smooth_audit.samples_neg, smooth_audit.samples_pos, DELTA,</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>eps_plug=0, separates=False</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-22-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-22-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="accuracy-leaderboard-smooth-sensitivity" class="level3">
+<h3 class="anchored" data-anchor-id="accuracy-leaderboard-smooth-sensitivity">Accuracy leaderboard — smooth sensitivity</h3>
+<div id="50" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> smooth_mechanism(values, group_labels, run_rng):</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> smooth_sensitivity_release(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>        values, group_labels, EPS_TOTAL, DEFAULT_BETA, run_rng, delta<span class="op">=</span>DELTA, value_bound<span class="op">=</span>PUBLIC_VALUE_UPPER,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>smooth_rows <span class="op">=</span> evaluate_subgroup_accuracy(</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    population_df, smooth_mechanism, n<span class="op">=</span>LEADERBOARD_N, n_datasets<span class="op">=</span>LEADERBOARD_N_DATASETS,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>LEADERBOARD_N_RUNS, seed<span class="op">=</span>SEED, min_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MIN_SMALL, max_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MAX_SMALL, group_fn<span class="op">=</span>subgroup_group_fn, value_fn<span class="op">=</span>subgroup_value_fn,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'smooth sensitivity'</span>, privacy_status<span class="op">=</span><span class="st">'valid smooth sensitivity'</span>, epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_accuracy_leaderboard_figure(smooth_rows, title<span class="op">=</span><span class="st">'Smooth sensitivity release'</span>)</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-23-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="released-estimate-vs-population-gap-all-valid-private-methods" class="level3">
+<h3 class="anchored" data-anchor-id="released-estimate-vs-population-gap-all-valid-private-methods">Released estimate vs population gap — all valid private methods</h3>
+<p>Same Latino walkthrough resamples for all four mechanisms. Each curve is the distribution of <strong>released private gaps</strong> on the normalized salary scale; the vertical line is the full-population target (~0.46 mean-scaled units).</p>
+<div id="52" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>private_method_specs <span class="op">=</span> [</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    SubgroupRepairSpec(global_mechanism, <span class="st">'global sensitivity'</span>, <span class="st">'valid'</span>, EPS_TOTAL),</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    SubgroupRepairSpec(count_sum_mechanism, <span class="st">'noisy counts and sums'</span>, <span class="st">'valid'</span>, EPS_TOTAL),</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    SubgroupRepairSpec(ptr_mechanism, <span class="st">'PTR support'</span>, <span class="st">'valid PTR'</span>, EPS_TOTAL),</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    SubgroupRepairSpec(smooth_mechanism, <span class="st">'smooth sensitivity'</span>, <span class="st">'valid smooth sensitivity'</span>, EPS_TOTAL),</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>private_method_rows <span class="op">=</span> evaluate_shared_subgroup_accuracy(</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    population_df, private_method_specs, n<span class="op">=</span>LEADERBOARD_N, n_datasets<span class="op">=</span>LEADERBOARD_N_DATASETS,</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>LEADERBOARD_N_RUNS, seed<span class="op">=</span>SEED, min_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MIN_SMALL, max_small_support<span class="op">=</span>DEFAULT_FAIR_COMPARISON_MAX_SMALL, group_fn<span class="op">=</span>subgroup_group_fn, value_fn<span class="op">=</span>subgroup_value_fn,</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_private_methods_population_error_figure(</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    private_method_rows,</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'Released estimate vs population gap — valid private subgroup mechanisms'</span>,</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-24-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-24-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="s8-common-support-comparison-part-i-part-ii-bridge" class="level2">
+<h2 class="anchored" data-anchor-id="s8-common-support-comparison-part-i-part-ii-bridge">S8 — Common support comparison (Part I → Part II bridge)</h2>
+<p>Fix PTR threshold <span class="math inline">\(m\)</span> and vary true minimum support <span class="math inline">\(\min(n_A,n_B)\)</span> on the same axis.</p>
+<p><strong>Read the plot:</strong> red squares are PTR abstention probability (left axis); circles/triangles are mean <span class="math inline">\(|\widehat{\Delta}-\Delta|\)</span> for count/sum, PTR (conditional on release), and smooth sensitivity (right axis). When support is tiny, PTR mostly abstains and smooth sensitivity pays large noise; as support grows, count/sum and smooth improve and PTR eventually releases. <strong>Key detail:</strong> PTR does not start releasing exactly at the nominal threshold — the private support test needs a buffer, so release begins above <span class="math inline">\(m\)</span>, not at equality.</p>
+<div id="54" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>support_artifact <span class="op">=</span> build_support_comparison_artifact(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    min_support_values<span class="op">=</span>np.array([<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">12</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">50</span>, <span class="dv">80</span>, <span class="dv">120</span>]),</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    ptr_threshold<span class="op">=</span>DEFAULT_SUPPORT_THRESHOLD, n_large<span class="op">=</span><span class="dv">700</span>, n_trials<span class="op">=</span><span class="dv">120</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    eps_total<span class="op">=</span>EPS_TOTAL, tau<span class="op">=</span>DEFAULT_TAU, seed<span class="op">=</span>SEED,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_support_comparison_figure(support_artifact)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-25-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-25-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="part-ii-private-control-flow-choosing-without-releasing-everything" class="level2">
+<h2 class="anchored" data-anchor-id="part-ii-private-control-flow-choosing-without-releasing-everything">Part II — Private control flow: choosing without releasing everything</h2>
+<p>Part I always released a <strong>number</strong> — a group gap with calibrated noise. But analysts also <strong>make choices</strong>, and a choice is a data release too: reporting a raw <code>argmax</code> or the first index over a threshold can be flipped by a single record. Part II shows two mechanisms for that, differing on one axis — <strong>whether public data helps</strong>:</p>
+<ul>
+<li><strong>Demo A — Report Noisy Max</strong> (no public data): the most common number of years of education.</li>
+<li><strong>Demo B — AboveThreshold</strong> (public guess): find the clipping bound <span class="math inline">\(U\)</span> that Part I <em>assumed</em> was already public.</li>
+</ul>
+<section id="demo-a-report-noisy-max-the-most-common-value" class="level3">
+<h3 class="anchored" data-anchor-id="demo-a-report-noisy-max-the-most-common-value">Demo A — Report Noisy Max: the most common value</h3>
+<p>The candidate answers (education codes 1–16) are <strong>public</strong> — just the column’s domain. Only the counts are private. The non-private mode <span class="math inline">\(\arg\max_e n_e\)</span> can flip under one record when the top bins are near-tied, so we produce it privately: add i.i.d. noise to <strong>every</strong> count and return the noisy argmax. Each count has sensitivity 1 (one person sits in one bin), so this is <span class="math inline">\(\varepsilon\)</span>-DP (equivalently, the exponential mechanism). Bars are true counts; dots are one noisy draw.</p>
+<div id="57" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>race_artifact <span class="op">=</span> build_report_noisy_max_race_artifact(seed<span class="op">=</span>SEED)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_report_noisy_max_race_figure(race_artifact)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"true mode = </span><span class="sc">{</span>race_artifact<span class="sc">.</span>nonprivate_mode<span class="sc">}</span><span class="ss">; noisy-max selected = </span><span class="sc">{</span>race_artifact<span class="sc">.</span>selected<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>true mode = 13; noisy-max selected = 13</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-26-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-26-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="report-noisy-max-accuracy-vs.-budget" class="level3">
+<h3 class="anchored" data-anchor-id="report-noisy-max-accuracy-vs.-budget">Report Noisy Max accuracy vs.&nbsp;budget</h3>
+<p>Repeated draws: how often the noisy argmax recovers the true mode as <span class="math inline">\(\varepsilon\)</span> grows. A large top-bin <strong>margin</strong> survives noise; a near-tie does not. On this modest sample the top education bins are nearly tied, so accuracy climbs steadily with the budget — the clean privacy–utility tradeoff for unordered selection.</p>
+<div id="59" class="cell" data-execution_count="26">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>accuracy_artifact <span class="op">=</span> build_report_noisy_max_accuracy_artifact(seed<span class="op">=</span>SEED, n_repeats<span class="op">=</span><span class="dv">200</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_report_noisy_max_accuracy_figure(accuracy_artifact)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-27-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="demo-b-abovethreshold-with-a-public-guess-finding-a-clipping-bound" class="level3">
+<h3 class="anchored" data-anchor-id="demo-b-abovethreshold-with-a-public-guess-finding-a-clipping-bound">Demo B — AboveThreshold with a public guess: finding a clipping bound</h3>
+<p>Where did Part I’s public clip bound <span class="math inline">\(U\)</span> come from? It is a high-salary quantile (here <span class="math inline">\(p=0.95\)</span>). Public data — a national statistic, a prior year — gives a <strong>guess</strong> <span class="math inline">\(\tilde U\)</span>. We lay a short candidate grid around it and ask AboveThreshold for the first value whose count <span class="math inline">\(c_v = |\{y_i \le v\}|\)</span> clears <span class="math inline">\(T = pN\)</span>. Each <span class="math inline">\(c_v\)</span> has sensitivity 1, and AboveThreshold halts at the first crossing; the halt value is the private quantile estimate. Bars are true counts; the halted candidate is highlighted.</p>
+<div id="61" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ladder_artifact <span class="op">=</span> build_above_threshold_ladder_artifact(seed<span class="op">=</span>SEED, epsilon<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_above_threshold_ladder_figure(ladder_artifact)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"private halt (clip bound) = $</span><span class="sc">{</span>ladder_artifact<span class="sc">.</span>halt_value<span class="sc">:,.0f}</span><span class="ss">; "</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"true </span><span class="sc">{</span>ladder_artifact<span class="sc">.</span>quantile<span class="sc">:.0%}</span><span class="ss"> quantile = $</span><span class="sc">{</span>ladder_artifact<span class="sc">.</span>true_quantile<span class="sc">:,.0f}</span><span class="ss">; "</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Part-I public U = $</span><span class="sc">{</span>PUBLIC_CLIP_UPPER<span class="sc">:,.0f}</span><span class="ss">"</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>private halt (clip bound) = $143,000; true 95% quantile = $141,450; Part-I public U = $141,450</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="27">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-28-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-28-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="a-good-public-guess-makes-abovethreshold-cheap" class="level3">
+<h3 class="anchored" data-anchor-id="a-good-public-guess-makes-abovethreshold-cheap">A good public guess makes AboveThreshold cheap</h3>
+<p>AboveThreshold’s privacy cost does not grow with the number of probed candidates, so a whole grid costs about <strong>one query</strong>. What matters is <strong>where the probes land</strong>. Below, both grids use the <strong>same number of probes</strong> — same privacy, same noise — a narrow grid around a good guess vs.&nbsp;a wide grid with no guess. The good guess spends its probes where the crossing is, so it is several times more accurate at every budget.</p>
+<div id="63" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>guess_quality_artifact <span class="op">=</span> build_guess_quality_artifact(seed<span class="op">=</span>SEED, n_repeats<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_guess_quality_figure(guess_quality_artifact)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="28">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-29-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-29-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="closing-the-loop" class="level3">
+<h3 class="anchored" data-anchor-id="closing-the-loop">Closing the loop</h3>
+<p>The AboveThreshold halt value is exactly the kind of public clip bound <span class="math inline">\([L,U]\)</span> that Part I assumed at the outset — a public guess, confirmed privately. Demo A returned an answer directly (the mode); Demo B produced an <strong>input</strong> that feeds a Part-I release. Both spent privacy on a <strong>choice</strong>, not on a numeric average: that is private control flow.</p>
+</section>
+</section>
+<section id="summary-and-bridge" class="level2">
+<h2 class="anchored" data-anchor-id="summary-and-bridge">Summary and bridge</h2>
+<p>We can now privately <strong>make a choice</strong>, not just release a number: Report Noisy Max picks the most common value with no public data, and AboveThreshold finds a threshold crossing — using a public guess to make the search cheap and closing the loop by producing the clip bound Part I assumed.</p>
+<p>Next: private search as a general design pattern, public priors, and preparing models for private learning.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Built with Quarto. All computation imported from libdpy (pub_lib).</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script id="libdpy-auto-load" type="application/javascript">
+(function () {
+  function activate(container) {
+    var iframe = container.querySelector("iframe[data-libdpy-src]");
+    if (!iframe || iframe.getAttribute("src")) {
+      return;
+    }
+    var loading = container.querySelector(".libdpy-interactive-loading");
+    if (loading) {
+      loading.style.display = "flex";
+    }
+    iframe.setAttribute("src", iframe.getAttribute("data-libdpy-src"));
+  }
+
+  function scan() {
+    document.querySelectorAll(".libdpy-interactive").forEach(activate);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", scan);
+  } else {
+    scan();
+  }
+})();
+
+</script>
+</body></html>

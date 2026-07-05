@@ -1,0 +1,6 @@
+name=privacy_plot
+artifact=privacy-plot-norm-laplace-uniform-06b3767cd2
+export_backend=wasm-marimo
+signature=238678b4e57576da08d707ef603942fd4822e6f2931c7b9e66457c77a669084f
+libdpy_version=0.2.26
+marimo_version=0.23.9

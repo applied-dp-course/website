@@ -1,5 +1,0 @@
----
-title: "Schedule"
----
-
-The weekly plan now lives on the [Syllabus](syllabus.qmd) page.

@@ -1,0 +1,6 @@
+name=theory_roc_visualizer
+artifact=theory-roc-laplace-f6bad2e12f
+export_backend=wasm-marimo
+signature=d38d891b8757dfc82468c81a46596b80f610ec558c1c1d852df5acf0d3063b13
+libdpy_version=0.2.26
+marimo_version=0.23.9

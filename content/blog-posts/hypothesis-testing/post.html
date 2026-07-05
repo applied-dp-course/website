@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.43">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>DP as Hypothesis Testing — Self-study notebook – Applied Differential Privacy</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-1a8dcdf9b07556cb827066befe3bfc28.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<style>
+/* keep wide notebook figures inside the column instead of clipping on the right */
+.cell-output-display img, .cell-output-display .plotly-graph-div { max-width: 100%; height: auto; }
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<style>
+/* course-nav-split */
+#quarto-header,
+#quarto-header .navbar,
+#quarto-header .navbar-collapse {
+  overflow: visible;
+}
+
+.navbar .nav-item.course-nav-split-item {
+  position: static;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-main,
+.navbar .nav-item.course-nav-split-item > .course-nav-caret {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-main {
+  padding-right: 0.1rem;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret {
+  padding-left: 0.1rem;
+  padding-right: 0.55rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  line-height: inherit;
+  box-shadow: none;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret::after {
+  margin-left: 0;
+  vertical-align: 0.1em;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret:focus,
+.navbar .nav-item.course-nav-split-item > .course-nav-caret:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar .nav-item.course-nav-split-item:hover > .course-nav-main,
+.navbar .nav-item.course-nav-split-item:hover > .course-nav-caret,
+.navbar .nav-item.course-nav-split-item:focus-within > .course-nav-main,
+.navbar .nav-item.course-nav-split-item:focus-within > .course-nav-caret {
+  color: var(--bs-navbar-hover-color);
+}
+
+.navbar .nav-item.course-nav-split-item > .dropdown-menu {
+  position: absolute;
+  z-index: 1200;
+  margin-top: 0;
+  border-color: rgba(0, 0, 0, 0.12);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.navbar .nav-item.course-nav-split-item > .dropdown-menu.show {
+  z-index: 1200;
+}
+
+.hero,
+.offering-banner,
+.quick-links {
+  position: relative;
+  z-index: 1;
+}
+
+</style>
+<script>
+// course-nav-split-v1
+document.addEventListener("DOMContentLoaded", function () {
+  var menuItems = [
+    ["Syllabus", "syllabus.html"],
+    ["Lectures", "lectures.html"],
+    ["Class assignments", "class-assignments.html"],
+    ["Home assignments", "home-assignments.html"],
+    ["Past years", "archive.html"],
+  ];
+
+  document.querySelectorAll(".navbar-nav > .nav-item").forEach(function (item) {
+    if (item.classList.contains("course-nav-split-item")) {
+      return;
+    }
+    var toggle = item.querySelector(":scope > a.dropdown-toggle");
+    var menu = item.querySelector(":scope > ul.dropdown-menu");
+    if (!toggle || !menu) {
+      var simple = item.querySelector(":scope > a.nav-link .menu-text");
+      if (!simple || simple.textContent.trim() !== "Course") {
+        return;
+      }
+      var courseLink = item.querySelector(":scope > a.nav-link");
+      var courseHref = courseLink.getAttribute("href") || "pages/course.html";
+      var prefix = courseHref.replace(/course\.html$/, "");
+      item.classList.add("dropdown");
+      item.innerHTML = "";
+      toggle = document.createElement("a");
+      toggle.className = "nav-link dropdown-toggle";
+      toggle.href = "#";
+      toggle.setAttribute("role", "link");
+      toggle.setAttribute("data-bs-toggle", "dropdown");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = '<span class="menu-text">Course</span>';
+      menu = document.createElement("ul");
+      menu.className = "dropdown-menu";
+      menuItems.forEach(function (entry) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.className = "dropdown-item";
+        a.href = prefix + entry[1];
+        a.innerHTML = '<span class="dropdown-text">' + entry[0] + "</span>";
+        li.appendChild(a);
+        menu.appendChild(li);
+      });
+      item.appendChild(toggle);
+      item.appendChild(menu);
+    }
+    var label = toggle.querySelector(".menu-text");
+    if (!label || label.textContent.trim() !== "Course") {
+      return;
+    }
+    var syllabusLink = menu.querySelector('a[href*="syllabus"]');
+    var courseHref = syllabusLink
+      ? syllabusLink.getAttribute("href").replace("syllabus.html", "course.html")
+      : "pages/course.html";
+    var link = document.createElement("a");
+    link.className = "nav-link course-nav-main";
+    link.href = courseHref;
+    link.innerHTML = toggle.innerHTML;
+    if (window.location.pathname.endsWith("/course.html")) {
+      link.classList.add("active");
+      link.setAttribute("aria-current", "page");
+    }
+    var caret = document.createElement("button");
+    caret.type = "button";
+    caret.className = "nav-link course-nav-caret dropdown-toggle";
+    caret.setAttribute("data-bs-toggle", "dropdown");
+    caret.setAttribute("aria-expanded", "false");
+    caret.setAttribute("aria-label", "Course sections");
+    if (toggle.id) {
+      caret.id = toggle.id;
+      menu.setAttribute("aria-labelledby", toggle.id);
+    }
+    toggle.replaceWith(link, caret);
+    item.classList.add("course-nav-split-item");
+    if (window.bootstrap && window.bootstrap.Dropdown) {
+      window.bootstrap.Dropdown.getOrCreateInstance(caret);
+    }
+  });
+});
+
+</script>
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Applied Differential Privacy</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-course" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Course</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-course">    
+        <li>
+    <a class="dropdown-item" href="../../../pages/syllabus.html">
+ <span class="dropdown-text">Syllabus</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/lectures.html">
+ <span class="dropdown-text">Lectures</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/class-assignments.html">
+ <span class="dropdown-text">Class assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/home-assignments.html">
+ <span class="dropdown-text">Home assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/archive.html">
+ <span class="dropdown-text">Past years</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../../pages/tools.html"> 
+<span class="menu-text">Interactive tools</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../pages/assignments.html"> 
+<span class="menu-text">Interactive assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../pages/blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">DP as Hypothesis Testing — Self-study notebook</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+<p class="subtitle lead">Applied Data Privacy — Lecture 3</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-page">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This is the <strong>self-study</strong> companion to the lecture deck: full narrative + all code, meant to be read and run. For the slide version (code hidden), open the <a href="../../../content/lecture-presentations/hypothesis-testing/presentation.html">presentation deck</a>.</p>
+<section id="hypothesis-testing-and-binary-classification" class="level2">
+<h2 class="anchored" data-anchor-id="hypothesis-testing-and-binary-classification">Hypothesis Testing and Binary Classification</h2>
+<p>In the statistical literature, hypothesis testing typically refers to the comparison of two hypotheses: The null hypothesis, <span class="math inline">\(H_0\)</span>, and the alternative hypothesis, <span class="math inline">\(H_1\)</span>. In the CS community, the more common terminology is binarry classification, where the negative hypothesis is compared to the positive one. We will use these two descriptions interchangably.</p>
+<p>In this lecture we will focus on the simple setting, where the hypotheses are both distributions of the same family with the same scale and different means. For example, <span class="math inline">\(\mathbf{H_0}\)</span>: <span class="math inline">\(x \sim \mathcal{N}(\mu_0, \sigma^2)\)</span> (negative) and <span class="math inline">\(\mathbf{H_1}\)</span>: <span class="math inline">\(x \sim \mathcal{N}(\mu_1, \sigma ^ 2)\)</span> (positive). Throughout this exercise, we assume w.l.o.g. that <span class="math inline">\(\mu_1 &gt; \mu_0 .\)</span></p>
+<div id="4" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dist_neg <span class="op">=</span> norm(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dist_pos <span class="op">=</span> norm(<span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>make_hypothesis_distributions_figure(dist_neg, dist_pos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="desicion-rule" class="level2">
+<h2 class="anchored" data-anchor-id="desicion-rule">Desicion rule</h2>
+<p>A desicion rule is a function from the domain of the distributions (the reals, in this case) to <span class="math inline">\(\{0, 1\}\)</span>, which given a sampled value guesses if it was sampeled from <span class="math inline">\(H_0\)</span> or <span class="math inline">\(H_1\)</span>. It might be non-deterministic.</p>
+<p>Throughout this lecture we will consider a natural desicion rule - threshold, that is, given a threshold <span class="math inline">\(\tau\)</span>, if <span class="math inline">\(x &lt; \tau\)</span> we guess it is negative and if <span class="math inline">\(x &gt; \tau\)</span> we guess it is positive (since these are continous distributions, the probability that <span class="math inline">\(x=\tau\)</span> is <span class="math inline">\(0\)</span>).</p>
+<div id="6" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tau <span class="op">=</span> <span class="fl">0.35</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>make_threshold_decision_rule_figure(dist_neg, dist_pos, tau)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="fpr-and-tpf" class="level2">
+<h2 class="anchored" data-anchor-id="fpr-and-tpf">FPR and TPF</h2>
+<p>Any two distributions and a desicion rule, define four regions: * True Positives (elements drawn from <span class="math inline">\(H_1\)</span> that the desicion rule marked as positive) * False Negative (elements drawn from <span class="math inline">\(H_1\)</span> that the desicion rule marked as negative) * True Negative (elements drawn from <span class="math inline">\(H_0\)</span> that the desicion rule marked as negative) * False Positives (elements drawn from <span class="math inline">\(H_0\)</span> that the desicion rule marked as positive)</p>
+<div id="8" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>make_fpr_tpr_confusion_panels_figure(dist_neg, dist_pos, tau)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Using these notions we can define the key quntities we use: * The probability that an element drawn from <span class="math inline">\(H_1\)</span> will be marked as positive is the True Positive Ratio (TPR) * The probability that an element drawn from <span class="math inline">\(H_0\)</span> will be marked as positive is the False Positive Ratio (FPR)</p>
+<p>In the case of a threshold desicion rule we have <span class="math inline">\(~FPR := \underset{X \sim H_0}{\mathbb{P}}(X &gt; \tau)~\)</span> and <span class="math inline">\(~TPR := \underset{X \sim H_1}{\mathbb{P}}(X &gt; \tau)\)</span>.</p>
+</section>
+<section id="roc-plane" class="level2">
+<h2 class="anchored" data-anchor-id="roc-plane">ROC plane</h2>
+<p>Naturally, there is a tradeoff between the TPR and FPR. We can increase the TPR by choosing a desiion rule that tends to guess “positive” more frequently, but this will result in a higher FPR and vice versa.</p>
+<p>This tradeoff is represented by the ROC plane. Any desicion rule is represents by a point with coordinates (FPR, TPR). The diagonal <span class="math inline">\(y=x\)</span> is induced by randomly guessing “positive” w.p. <span class="math inline">\(p\)</span> (which will be equal to FPR and TPR). For any FPR, there is some maximal achievable TPR. The collection of these points is called the ROC curve.</p>
+<div id="11" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>make_analytic_roc_curve_figure(dist_neg, dist_pos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Of course, this curve depends on <span class="math inline">\(\mu_{1}-\mu_{0}\)</span> and <span class="math inline">\(\sigma\)</span>.</p>
+<div id="13" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>make_analytic_roc_curves_by_std_figure([<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="case-study-two-binomials" class="level2">
+<h2 class="anchored" data-anchor-id="case-study-two-binomials">Case study, two Binomials</h2>
+<p>Consider two Binomial random variables: <span class="math inline">\(H_0 = \text{Bin}(0.5, 5)\)</span> and <span class="math inline">\(H_1 = \text{Bin}(0.25, 5)\)</span>. * What are all the possible decision rules? * Compute the FPR and TPR for all possible decisions * Draw the ROC curve</p>
+<div id="15" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>make_empty_roc_plane_figure()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-9-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="connecting-the-threshold-to-the-roc" class="level2">
+<h2 class="anchored" data-anchor-id="connecting-the-threshold-to-the-roc">Connecting the threshold to the ROC</h2>
+<div id="17" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># You will implement similar functions in the class exercise.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="18" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ROCDecisionVisualizer(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    dist0_family<span class="op">=</span><span class="st">"norm"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    dist0_args<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">1.0</span>),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    dist1_family<span class="op">=</span><span class="st">"norm"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    dist1_args<span class="op">=</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    by_threshold<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/blog-posts/hypothesis-testing/roc-decision-4bac7ab47e/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+</div>
+</div>
+<p>This is not limited to Gaussian distributions.</p>
+<div id="20" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ROCDecisionVisualizer(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    dist0_family<span class="op">=</span><span class="st">"uniform"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    dist0_args<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">3.0</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    dist1_family<span class="op">=</span><span class="st">"uniform"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    dist1_args<span class="op">=</span>(<span class="fl">1.0</span>, <span class="fl">3.0</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    by_threshold<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/blog-posts/hypothesis-testing/roc-decision-f4fad854c4/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+</div>
+</div>
+</section>
+<section id="neyman-pearson-lemma" class="level2">
+<h2 class="anchored" data-anchor-id="neyman-pearson-lemma">Neyman Pearson lemma</h2>
+<p>It seems like the desicion rule we considered so far is optimal, that is, it achieved the highest TPR for a given FPR, thus laying on the ROC curve. But is it a coincidence, and how can we guarantee this property?</p>
+<p>The Neyman Pearson lemma provides a simple and elegant answer - all optimal desicion rules are a threshold on the log probability ratio:</p>
+<p>Any desicion rule of the form <span class="math inline">\(D(x) = \begin{cases} P &amp; \ln \left(\frac{f_{1}(x)}{f_{0}(x)} \right) &gt; \tau \\ N &amp;  \ln \left(\frac{f_{1}(x)}{f_{0}(x)} \right) &lt; \tau \\ \end{cases}\)</span> for some <span class="math inline">\(\tau \in \mathbb{R}\)</span> is an optimal desicion rule, where <span class="math inline">\(f_{i}(x)\)</span> is the pdf of <span class="math inline">\(x\)</span> under hypothesis <span class="math inline">\(i\)</span> (if the distributions are not continous, the desicion rule needs to account for the case that the log probability ratio is equal to <span class="math inline">\(\tau\)</span>).</p>
+<p>If the log probability ratio is monotonic in the value <span class="math inline">\(x\)</span>, as is the case with most probability distributions with the same variance and different mean, a threshold on the value is optimal.</p>
+<p>We can not present the previous plot, this time controling FPR rather than of <span class="math inline">\(\tau\)</span>.</p>
+<div id="23" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ROCDecisionVisualizer(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    dist0_family<span class="op">=</span><span class="st">"norm"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    dist0_args<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">1.0</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    dist1_family<span class="op">=</span><span class="st">"norm"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    dist1_args<span class="op">=</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    by_threshold<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/blog-posts/hypothesis-testing/roc-decision-1474ef07aa/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+</div>
+</div>
+</section>
+<section id="back-to-privacy" class="level2">
+<h2 class="anchored" data-anchor-id="back-to-privacy">Back to privacy</h2>
+<p>We recall that we model the privacy threat as an attempt of the attacker to distinguish between two hypotheses, <span class="math inline">\(H_0\)</span> - the user was not in the dataset, and <span class="math inline">\(H_1\)</span> - the user was in the dataset. In this case, the two distributions represent the probability of the mechanism’s outputs given the dataset.</p>
+<p>In our running example, where <span class="math inline">\(H_0 =\mathcal{N}(\mu_0, \sigma^2)\)</span> and <span class="math inline">\(H_1 = \mathcal{N}(\mu_1, \sigma ^ 2)\)</span>, this corresponds to a setting where the values of the dataset without the user is <span class="math inline">\(0\)</span>, its value with the user is <span class="math inline">\(1\)</span>, and the mechanism releases this value after adding noise sampeled from <span class="math inline">\(x \sim \mathcal{N}(0, \sigma ^ 2)\)</span>.</p>
+<p>The closer the ROC curve is to the diagonal, the harder it is for the attacker to succeed in its guesses, so a natural privacy definition is to upper bound this curve. The bound can be expressed in many ways. One simple option is using a linear function, such that <span class="math inline">\(\text{TPR} \le m \cdot \text{FPR} + n\)</span> where <span class="math inline">\(m\)</span> is the slope and <span class="math inline">\(n\)</span> is the shift (and its reflected part for the top half).</p>
+<div id="25" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>PrivacyPlot(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    sensitivity<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    std<span class="op">=</span><span class="fl">1.5</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    distribution_types<span class="op">=</span>[norm],</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/blog-posts/hypothesis-testing/privacy-plot-norm-6197737a49/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+</div>
+</div>
+<p>Did we just develope a new (and more natural)privacy definition than Differential privacy?</p>
+<p>Apperently no. The tradeoff function is bounded by the lines <span class="math inline">\(\text{TPR} \le m \cdot \text{FPR} + n\)</span> iff it is <span class="math inline">\(\ln(m), n)\)</span>-DP. Isn’t that a miracle?</p>
+<p>Let’s use this insight to reason about the privacy of several other noise addition mechanisms:</p>
+<div id="27" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>PrivacyPlot(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    sensitivity<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    std<span class="op">=</span><span class="fl">1.5</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    distribution_types<span class="op">=</span>[norm, laplace, uniform],</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/blog-posts/hypothesis-testing/privacy-plot-norm-laplace-uniform-06b3767cd2/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Built with Quarto. All computation imported from libdpy (pub_lib).</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script id="libdpy-auto-load" type="application/javascript">
+(function () {
+  function activate(container) {
+    var iframe = container.querySelector("iframe[data-libdpy-src]");
+    if (!iframe || iframe.getAttribute("src")) {
+      return;
+    }
+    var loading = container.querySelector(".libdpy-interactive-loading");
+    if (loading) {
+      loading.style.display = "flex";
+    }
+    iframe.setAttribute("src", iframe.getAttribute("data-libdpy-src"));
+  }
+
+  function scan() {
+    document.querySelectorAll(".libdpy-interactive").forEach(activate);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", scan);
+  } else {
+    scan();
+  }
+})();
+
+</script>
+</body></html>

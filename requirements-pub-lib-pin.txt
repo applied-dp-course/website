@@ -1,3 +1,0 @@
-# Student / Colab pip install pin (pub_lib tag @vX.Y.Z).
-# Not used by dev or CI — those install sibling code_base_dev/libdpy via sync_libdpy.sh.
-libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git@v0.2.24

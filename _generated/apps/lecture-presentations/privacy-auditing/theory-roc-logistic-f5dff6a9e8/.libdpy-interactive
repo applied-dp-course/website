@@ -1,0 +1,6 @@
+name=theory_roc_visualizer
+artifact=theory-roc-logistic-f5dff6a9e8
+export_backend=wasm-marimo
+signature=eb1e9658e025df71370502cc8fd22f0a03368eb35e5e2b39f727adcad137b7fd
+libdpy_version=0.2.26
+marimo_version=0.23.9
