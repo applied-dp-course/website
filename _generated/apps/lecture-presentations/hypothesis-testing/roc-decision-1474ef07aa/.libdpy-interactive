@@ -1,6 +1,6 @@
 name=roc_decision_explorer
 artifact=roc-decision-1474ef07aa
 export_backend=plotly-declarative
-signature=9201723afae52a051a52258433a44d84868efa4ea17ab2cfe299bcc6ece02252
+signature=8fc3853b1062c3c93b53a9014cb0f2d24d1bb47ab2a8f6889a1c78121df8546a
 libdpy_version=0.2.27
 marimo_version=0.23.9
