@@ -1,6 +1,6 @@
 name=empirical_roc_visualizer
 artifact=empirical-roc-sum-of-logistic-distributions-e465e3ce57
 export_backend=wasm-marimo
-signature=139ea2a38d5b06c163d840cad2140cdc44a61d7120806f15e34a3013c2ddf79d
+signature=1336c2025114a849b8a68518d2ce51134f4a73a4a78c30ea1dcf14dc74d4a772
 libdpy_version=0.2.27
 marimo_version=0.23.9

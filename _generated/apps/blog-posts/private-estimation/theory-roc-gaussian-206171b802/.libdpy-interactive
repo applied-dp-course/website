@@ -1,6 +1,6 @@
 name=theory_roc_visualizer
 artifact=theory-roc-gaussian-206171b802
 export_backend=wasm-marimo
-signature=df91ca81a4e0c866130402c1e602c6fa7bf5468cb3364c16a4a9d21dbdc83417
+signature=fcc6d56a83a2a1e885491a202f7b3830007a3bd48f63b7c44d07d7f32f5e334d
 libdpy_version=0.2.27
 marimo_version=0.23.9

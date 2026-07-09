@@ -1,0 +1,6 @@
+name=ols_influence_geometry
+artifact=ols-influence-geometry
+export_backend=wasm-marimo
+signature=ec1b55030d96b7de5e171ae8afe71ece48b5d91f76d1d98c642b7b222ddb49a1
+libdpy_version=0.2.27
+marimo_version=0.23.9
