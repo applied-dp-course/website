@@ -1,6 +1,0 @@
-name=naive_safe_epsilon_histogram
-artifact=naive-safe-epsilon-histogram
-export_backend=wasm-marimo
-signature=cd1c3fe071d5e1cb89dd8063cc93acc21e9590d7ef97ceebb35c2fe0003ed35c
-libdpy_version=0.2.27
-marimo_version=0.23.9

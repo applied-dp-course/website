@@ -1,0 +1,412 @@
+{
+  "artifacts": {
+    "empirical-audit-6025863018|7925292ccc020c68b85980c9ab032784e8937c4c85ac919ab178aba6944f2f94": {
+      "artifact_name": "empirical-audit-6025863018",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/empirical-audit-6025863018-7925292ccc02",
+      "signature": "7925292ccc020c68b85980c9ab032784e8937c4c85ac919ab178aba6944f2f94",
+      "source": "content/blog-posts/private-estimation/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "empirical-audit-6025863018",
+          "source": "content/blog-posts/private-estimation/post.ipynb",
+          "source_parent": "blog-posts/private-estimation"
+        }
+      ]
+    },
+    "empirical-roc-sum-of-logistic-distributions-e465e3ce57|1336c2025114a849b8a68518d2ce51134f4a73a4a78c30ea1dcf14dc74d4a772": {
+      "artifact_name": "empirical-roc-sum-of-logistic-distributions-e465e3ce57",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-1336c2025114",
+      "signature": "1336c2025114a849b8a68518d2ce51134f4a73a4a78c30ea1dcf14dc74d4a772",
+      "source": "content/blog-posts/privacy-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "empirical-roc-sum-of-logistic-distributions-e465e3ce57",
+          "source": "content/lecture-presentations/privacy-auditing/presentation.qmd",
+          "source_parent": "lecture-presentations/privacy-auditing"
+        },
+        {
+          "artifact_name": "empirical-roc-sum-of-logistic-distributions-e465e3ce57",
+          "source": "content/blog-posts/privacy-auditing/post.ipynb",
+          "source_parent": "blog-posts/privacy-auditing"
+        }
+      ]
+    },
+    "naive-safe-epsilon-histogram|cd1c3fe071d5e1cb89dd8063cc93acc21e9590d7ef97ceebb35c2fe0003ed35c": {
+      "artifact_name": "naive-safe-epsilon-histogram",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/naive-safe-epsilon-histogram-cd1c3fe071d5",
+      "signature": "cd1c3fe071d5e1cb89dd8063cc93acc21e9590d7ef97ceebb35c2fe0003ed35c",
+      "source": "content/blog-posts/privacy-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "naive-safe-epsilon-histogram",
+          "source": "content/lecture-presentations/privacy-auditing/presentation.qmd",
+          "source_parent": "lecture-presentations/privacy-auditing"
+        },
+        {
+          "artifact_name": "naive-safe-epsilon-histogram",
+          "source": "content/blog-posts/privacy-auditing/post.ipynb",
+          "source_parent": "blog-posts/privacy-auditing"
+        }
+      ]
+    },
+    "ols-influence-geometry|ec1b55030d96b7de5e171ae8afe71ece48b5d91f76d1d98c642b7b222ddb49a1": {
+      "artifact_name": "ols-influence-geometry",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/ols-influence-geometry-ec1b55030d96",
+      "signature": "ec1b55030d96b7de5e171ae8afe71ece48b5d91f76d1d98c642b7b222ddb49a1",
+      "source": "content/blog-posts/private-linear-regression/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "ols-influence-geometry",
+          "source": "content/lecture-presentations/private-linear-regression/presentation.qmd",
+          "source_parent": "lecture-presentations/private-linear-regression"
+        },
+        {
+          "artifact_name": "ols-influence-geometry",
+          "source": "content/blog-posts/private-linear-regression/post.ipynb",
+          "source_parent": "blog-posts/private-linear-regression"
+        }
+      ]
+    },
+    "privacy-plot-norm-6197737a49|963c604330e09cfd3ef9da59af3e7b1b0b7819de42b74dd60f3090c705cf2a46": {
+      "artifact_name": "privacy-plot-norm-6197737a49",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/privacy-plot-norm-6197737a49-963c604330e0",
+      "signature": "963c604330e09cfd3ef9da59af3e7b1b0b7819de42b74dd60f3090c705cf2a46",
+      "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "privacy-plot-norm-6197737a49",
+          "source": "pages/index.qmd",
+          "source_parent": "pages"
+        },
+        {
+          "artifact_name": "privacy-plot-norm-6197737a49",
+          "source": "content/lecture-presentations/hypothesis-testing/presentation.qmd",
+          "source_parent": "lecture-presentations/hypothesis-testing"
+        },
+        {
+          "artifact_name": "privacy-plot-norm-6197737a49",
+          "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+          "source_parent": "blog-posts/hypothesis-testing"
+        },
+        {
+          "artifact_name": "privacy-plot-norm-6197737a49",
+          "source": "content/tools/privacy-tradeoff-explorer/index.qmd",
+          "source_parent": "tools/privacy-tradeoff-explorer"
+        },
+        {
+          "artifact_name": "privacy-plot-norm-6197737a49",
+          "source": "content/site-posts/gaussian-privacy-tradeoff/index.qmd",
+          "source_parent": "site-posts/gaussian-privacy-tradeoff"
+        }
+      ]
+    },
+    "privacy-plot-norm-laplace-ce9c999a7a|a4d1be336d12f507d36adaa28432df7980ab782f680d6be312e19d2963ca98a5": {
+      "artifact_name": "privacy-plot-norm-laplace-ce9c999a7a",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/privacy-plot-norm-laplace-ce9c999a7a-a4d1be336d12",
+      "signature": "a4d1be336d12f507d36adaa28432df7980ab782f680d6be312e19d2963ca98a5",
+      "source": "content/blog-posts/privacy-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "privacy-plot-norm-laplace-ce9c999a7a",
+          "source": "content/lecture-presentations/privacy-auditing/presentation.qmd",
+          "source_parent": "lecture-presentations/privacy-auditing"
+        },
+        {
+          "artifact_name": "privacy-plot-norm-laplace-ce9c999a7a",
+          "source": "content/blog-posts/privacy-auditing/post.ipynb",
+          "source_parent": "blog-posts/privacy-auditing"
+        }
+      ]
+    },
+    "privacy-plot-norm-laplace-uniform-06b3767cd2|a060429d2e08720231a3a86e94e10cc4495f677d8142b47a555d6c4ff08a49bf": {
+      "artifact_name": "privacy-plot-norm-laplace-uniform-06b3767cd2",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/privacy-plot-norm-laplace-uniform-06b3767cd2-a060429d2e08",
+      "signature": "a060429d2e08720231a3a86e94e10cc4495f677d8142b47a555d6c4ff08a49bf",
+      "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "privacy-plot-norm-laplace-uniform-06b3767cd2",
+          "source": "content/lecture-presentations/hypothesis-testing/presentation.qmd",
+          "source_parent": "lecture-presentations/hypothesis-testing"
+        },
+        {
+          "artifact_name": "privacy-plot-norm-laplace-uniform-06b3767cd2",
+          "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+          "source_parent": "blog-posts/hypothesis-testing"
+        }
+      ]
+    },
+    "roc-decision-1474ef07aa|27d7e889bd9bbc5d2ce434f172858b5132c9249d061ddc993dd6f3299d3ac330": {
+      "artifact_name": "roc-decision-1474ef07aa",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/roc-decision-1474ef07aa-27d7e889bd9b",
+      "signature": "27d7e889bd9bbc5d2ce434f172858b5132c9249d061ddc993dd6f3299d3ac330",
+      "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "roc-decision-1474ef07aa",
+          "source": "content/lecture-presentations/hypothesis-testing/presentation.qmd",
+          "source_parent": "lecture-presentations/hypothesis-testing"
+        },
+        {
+          "artifact_name": "roc-decision-1474ef07aa",
+          "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+          "source_parent": "blog-posts/hypothesis-testing"
+        }
+      ]
+    },
+    "roc-decision-4bac7ab47e|b1dea88042e2e109369a7c6d905e44fa621c3d5e6843cdab078079b9af7b3a46": {
+      "artifact_name": "roc-decision-4bac7ab47e",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/roc-decision-4bac7ab47e-b1dea88042e2",
+      "signature": "b1dea88042e2e109369a7c6d905e44fa621c3d5e6843cdab078079b9af7b3a46",
+      "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "roc-decision-4bac7ab47e",
+          "source": "content/lecture-presentations/hypothesis-testing/presentation.qmd",
+          "source_parent": "lecture-presentations/hypothesis-testing"
+        },
+        {
+          "artifact_name": "roc-decision-4bac7ab47e",
+          "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+          "source_parent": "blog-posts/hypothesis-testing"
+        }
+      ]
+    },
+    "roc-decision-f4fad854c4|f9a88ca27edd5c99668c739f60df59fe4d7190739fd2f4b8f191231d2e0ca9e1": {
+      "artifact_name": "roc-decision-f4fad854c4",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/roc-decision-f4fad854c4-f9a88ca27edd",
+      "signature": "f9a88ca27edd5c99668c739f60df59fe4d7190739fd2f4b8f191231d2e0ca9e1",
+      "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "roc-decision-f4fad854c4",
+          "source": "content/lecture-presentations/hypothesis-testing/presentation.qmd",
+          "source_parent": "lecture-presentations/hypothesis-testing"
+        },
+        {
+          "artifact_name": "roc-decision-f4fad854c4",
+          "source": "content/blog-posts/hypothesis-testing/post.ipynb",
+          "source_parent": "blog-posts/hypothesis-testing"
+        }
+      ]
+    },
+    "theory-roc-gaussian-13519da316|aca4a4eaf2d8a53d3f89c326c8b71c30d30d0768e23ce597678dc9266f584e79": {
+      "artifact_name": "theory-roc-gaussian-13519da316",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-gaussian-13519da316-aca4a4eaf2d8",
+      "signature": "aca4a4eaf2d8a53d3f89c326c8b71c30d30d0768e23ce597678dc9266f584e79",
+      "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-gaussian-13519da316",
+          "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
+          "source_parent": "blog-posts/private-subgroup-comparisons"
+        }
+      ]
+    },
+    "theory-roc-gaussian-188c721dff|2eb583942192481c16fe872ff39d18023fb18fa6ec5d8766c142ab58d790c827": {
+      "artifact_name": "theory-roc-gaussian-188c721dff",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-gaussian-188c721dff-2eb583942192",
+      "signature": "2eb583942192481c16fe872ff39d18023fb18fa6ec5d8766c142ab58d790c827",
+      "source": "content/blog-posts/private-estimation/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-gaussian-188c721dff",
+          "source": "content/blog-posts/private-estimation/post.ipynb",
+          "source_parent": "blog-posts/private-estimation"
+        }
+      ]
+    },
+    "theory-roc-gaussian-206171b802|fcc6d56a83a2a1e885491a202f7b3830007a3bd48f63b7c44d07d7f32f5e334d": {
+      "artifact_name": "theory-roc-gaussian-206171b802",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-gaussian-206171b802-fcc6d56a83a2",
+      "signature": "fcc6d56a83a2a1e885491a202f7b3830007a3bd48f63b7c44d07d7f32f5e334d",
+      "source": "content/blog-posts/private-estimation/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-gaussian-206171b802",
+          "source": "content/blog-posts/private-estimation/post.ipynb",
+          "source_parent": "blog-posts/private-estimation"
+        }
+      ]
+    },
+    "theory-roc-gaussian-549429866e|9394b8d524ded339ef6ebb335e0370a503c04a965318b8a36d3ca832550ed15f": {
+      "artifact_name": "theory-roc-gaussian-549429866e",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-gaussian-549429866e-9394b8d524de",
+      "signature": "9394b8d524ded339ef6ebb335e0370a503c04a965318b8a36d3ca832550ed15f",
+      "source": "content/blog-posts/privacy-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-gaussian-549429866e",
+          "source": "content/lecture-presentations/privacy-auditing/presentation.qmd",
+          "source_parent": "lecture-presentations/privacy-auditing"
+        },
+        {
+          "artifact_name": "theory-roc-gaussian-549429866e",
+          "source": "content/blog-posts/privacy-auditing/post.ipynb",
+          "source_parent": "blog-posts/privacy-auditing"
+        }
+      ]
+    },
+    "theory-roc-gaussian-7d8db735a6|7302f2bf18d553121bdb7c7c1b9b6310730da49c12e9cf2a4ae0892e3b8f9a5d": {
+      "artifact_name": "theory-roc-gaussian-7d8db735a6",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-gaussian-7d8db735a6-7302f2bf18d5",
+      "signature": "7302f2bf18d553121bdb7c7c1b9b6310730da49c12e9cf2a4ae0892e3b8f9a5d",
+      "source": "content/blog-posts/private-estimation/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-gaussian-7d8db735a6",
+          "source": "content/blog-posts/private-estimation/post.ipynb",
+          "source_parent": "blog-posts/private-estimation"
+        }
+      ]
+    },
+    "theory-roc-gaussian-7e39247e45|5c9234ba9c2efbb666fd706b39145efded8c94e86257f533c5d30d672edd6c62": {
+      "artifact_name": "theory-roc-gaussian-7e39247e45",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-gaussian-7e39247e45-5c9234ba9c2e",
+      "signature": "5c9234ba9c2efbb666fd706b39145efded8c94e86257f533c5d30d672edd6c62",
+      "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-gaussian-7e39247e45",
+          "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
+          "source_parent": "blog-posts/private-subgroup-comparisons"
+        }
+      ]
+    },
+    "theory-roc-gaussian-c32c318b84|eec6c51d4d324cfa7415640b32883c8c50ad2ed3f6a1458c73ca44ab261eaf49": {
+      "artifact_name": "theory-roc-gaussian-c32c318b84",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-gaussian-c32c318b84-eec6c51d4d32",
+      "signature": "eec6c51d4d324cfa7415640b32883c8c50ad2ed3f6a1458c73ca44ab261eaf49",
+      "source": "content/blog-posts/private-estimation/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-gaussian-c32c318b84",
+          "source": "content/blog-posts/private-estimation/post.ipynb",
+          "source_parent": "blog-posts/private-estimation"
+        }
+      ]
+    },
+    "theory-roc-gaussian-cc73c6c083|6183434b09195472d8c0550981e54d81f6b3d0a84739d19507d198b1753f52e3": {
+      "artifact_name": "theory-roc-gaussian-cc73c6c083",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-gaussian-cc73c6c083-6183434b0919",
+      "signature": "6183434b09195472d8c0550981e54d81f6b3d0a84739d19507d198b1753f52e3",
+      "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-gaussian-cc73c6c083",
+          "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
+          "source_parent": "blog-posts/private-subgroup-comparisons"
+        }
+      ]
+    },
+    "theory-roc-gaussian-d0690a1d39|2cf65c5f82f4b5acba28fcfa3fbf8d583e26fa08f4e002009c3c99269b26431a": {
+      "artifact_name": "theory-roc-gaussian-d0690a1d39",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-gaussian-d0690a1d39-2cf65c5f82f4",
+      "signature": "2cf65c5f82f4b5acba28fcfa3fbf8d583e26fa08f4e002009c3c99269b26431a",
+      "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-gaussian-d0690a1d39",
+          "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
+          "source_parent": "blog-posts/private-subgroup-comparisons"
+        }
+      ]
+    },
+    "theory-roc-laplace-f6bad2e12f|1ea5358474f21fc8127b3b93ba67a78859f634278abaea857cee114c3b180060": {
+      "artifact_name": "theory-roc-laplace-f6bad2e12f",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-laplace-f6bad2e12f-1ea5358474f2",
+      "signature": "1ea5358474f21fc8127b3b93ba67a78859f634278abaea857cee114c3b180060",
+      "source": "content/blog-posts/privacy-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-laplace-f6bad2e12f",
+          "source": "content/lecture-presentations/privacy-auditing/presentation.qmd",
+          "source_parent": "lecture-presentations/privacy-auditing"
+        },
+        {
+          "artifact_name": "theory-roc-laplace-f6bad2e12f",
+          "source": "content/blog-posts/privacy-auditing/post.ipynb",
+          "source_parent": "blog-posts/privacy-auditing"
+        }
+      ]
+    },
+    "theory-roc-logistic-f5dff6a9e8|4fad5cc6defbef83ecb323d4a31e9e6abc07493978d1cfe70fccbd7830ffb0ae": {
+      "artifact_name": "theory-roc-logistic-f5dff6a9e8",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/theory-roc-logistic-f5dff6a9e8-4fad5cc6defb",
+      "signature": "4fad5cc6defbef83ecb323d4a31e9e6abc07493978d1cfe70fccbd7830ffb0ae",
+      "source": "content/blog-posts/privacy-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "theory-roc-logistic-f5dff6a9e8",
+          "source": "content/lecture-presentations/privacy-auditing/presentation.qmd",
+          "source_parent": "lecture-presentations/privacy-auditing"
+        },
+        {
+          "artifact_name": "theory-roc-logistic-f5dff6a9e8",
+          "source": "content/blog-posts/privacy-auditing/post.ipynb",
+          "source_parent": "blog-posts/privacy-auditing"
+        }
+      ]
+    }
+  },
+  "uses": {
+    "blog-posts/hypothesis-testing|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-963c604330e0",
+    "blog-posts/hypothesis-testing|privacy-plot-norm-laplace-uniform-06b3767cd2": "shared/privacy-plot-norm-laplace-uniform-06b3767cd2-a060429d2e08",
+    "blog-posts/hypothesis-testing|roc-decision-1474ef07aa": "shared/roc-decision-1474ef07aa-27d7e889bd9b",
+    "blog-posts/hypothesis-testing|roc-decision-4bac7ab47e": "shared/roc-decision-4bac7ab47e-b1dea88042e2",
+    "blog-posts/hypothesis-testing|roc-decision-f4fad854c4": "shared/roc-decision-f4fad854c4-f9a88ca27edd",
+    "blog-posts/privacy-auditing|empirical-roc-sum-of-logistic-distributions-e465e3ce57": "shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-1336c2025114",
+    "blog-posts/privacy-auditing|naive-safe-epsilon-histogram": "shared/naive-safe-epsilon-histogram-cd1c3fe071d5",
+    "blog-posts/privacy-auditing|privacy-plot-norm-laplace-ce9c999a7a": "shared/privacy-plot-norm-laplace-ce9c999a7a-a4d1be336d12",
+    "blog-posts/privacy-auditing|theory-roc-gaussian-549429866e": "shared/theory-roc-gaussian-549429866e-9394b8d524de",
+    "blog-posts/privacy-auditing|theory-roc-laplace-f6bad2e12f": "shared/theory-roc-laplace-f6bad2e12f-1ea5358474f2",
+    "blog-posts/privacy-auditing|theory-roc-logistic-f5dff6a9e8": "shared/theory-roc-logistic-f5dff6a9e8-4fad5cc6defb",
+    "blog-posts/private-estimation|empirical-audit-6025863018": "shared/empirical-audit-6025863018-7925292ccc02",
+    "blog-posts/private-estimation|theory-roc-gaussian-188c721dff": "shared/theory-roc-gaussian-188c721dff-2eb583942192",
+    "blog-posts/private-estimation|theory-roc-gaussian-206171b802": "shared/theory-roc-gaussian-206171b802-fcc6d56a83a2",
+    "blog-posts/private-estimation|theory-roc-gaussian-7d8db735a6": "shared/theory-roc-gaussian-7d8db735a6-7302f2bf18d5",
+    "blog-posts/private-estimation|theory-roc-gaussian-c32c318b84": "shared/theory-roc-gaussian-c32c318b84-eec6c51d4d32",
+    "blog-posts/private-linear-regression|ols-influence-geometry": "shared/ols-influence-geometry-ec1b55030d96",
+    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-13519da316": "shared/theory-roc-gaussian-13519da316-aca4a4eaf2d8",
+    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-7e39247e45": "shared/theory-roc-gaussian-7e39247e45-5c9234ba9c2e",
+    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-cc73c6c083": "shared/theory-roc-gaussian-cc73c6c083-6183434b0919",
+    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-d0690a1d39": "shared/theory-roc-gaussian-d0690a1d39-2cf65c5f82f4",
+    "lecture-presentations/hypothesis-testing|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-963c604330e0",
+    "lecture-presentations/hypothesis-testing|privacy-plot-norm-laplace-uniform-06b3767cd2": "shared/privacy-plot-norm-laplace-uniform-06b3767cd2-a060429d2e08",
+    "lecture-presentations/hypothesis-testing|roc-decision-1474ef07aa": "shared/roc-decision-1474ef07aa-27d7e889bd9b",
+    "lecture-presentations/hypothesis-testing|roc-decision-4bac7ab47e": "shared/roc-decision-4bac7ab47e-b1dea88042e2",
+    "lecture-presentations/hypothesis-testing|roc-decision-f4fad854c4": "shared/roc-decision-f4fad854c4-f9a88ca27edd",
+    "lecture-presentations/privacy-auditing|empirical-roc-sum-of-logistic-distributions-e465e3ce57": "shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-1336c2025114",
+    "lecture-presentations/privacy-auditing|naive-safe-epsilon-histogram": "shared/naive-safe-epsilon-histogram-cd1c3fe071d5",
+    "lecture-presentations/privacy-auditing|privacy-plot-norm-laplace-ce9c999a7a": "shared/privacy-plot-norm-laplace-ce9c999a7a-a4d1be336d12",
+    "lecture-presentations/privacy-auditing|theory-roc-gaussian-549429866e": "shared/theory-roc-gaussian-549429866e-9394b8d524de",
+    "lecture-presentations/privacy-auditing|theory-roc-laplace-f6bad2e12f": "shared/theory-roc-laplace-f6bad2e12f-1ea5358474f2",
+    "lecture-presentations/privacy-auditing|theory-roc-logistic-f5dff6a9e8": "shared/theory-roc-logistic-f5dff6a9e8-4fad5cc6defb",
+    "lecture-presentations/private-linear-regression|ols-influence-geometry": "shared/ols-influence-geometry-ec1b55030d96",
+    "pages|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-963c604330e0",
+    "site-posts/gaussian-privacy-tradeoff|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-963c604330e0",
+    "tools/privacy-tradeoff-explorer|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-963c604330e0"
+  },
+  "version": 1
+}

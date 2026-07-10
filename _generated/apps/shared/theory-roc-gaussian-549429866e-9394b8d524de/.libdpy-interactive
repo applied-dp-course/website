@@ -1,0 +1,8 @@
+name=theory_roc_visualizer
+artifact=theory-roc-gaussian-549429866e
+export_backend=wasm-marimo
+signature=9394b8d524ded339ef6ebb335e0370a503c04a965318b8a36d3ca832550ed15f
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/theory-roc-gaussian-549429866e-9394b8d524de
+canonical_source=content/blog-posts/privacy-auditing/post.ipynb

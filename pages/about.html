@@ -247,38 +247,41 @@ document.addEventListener("DOMContentLoaded", function () {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-course">    
         <li>
+    <a class="dropdown-item" href="../pages/course.html">
+ <span class="dropdown-text">Overview</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../pages/syllabus.html">
  <span class="dropdown-text">Syllabus</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../pages/lectures.html">
- <span class="dropdown-text">Lectures</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/class-assignments.html">
- <span class="dropdown-text">Class assignments</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/home-assignments.html">
- <span class="dropdown-text">Home assignments</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../pages/archive.html">
- <span class="dropdown-text">Past years</span></a>
+ <span class="dropdown-text">Past offerings and recordings</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-materials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Materials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-materials">    
+        <li>
+    <a class="dropdown-item" href="../pages/lectures.html">
+ <span class="dropdown-text">Lectures and self-study notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/assignments.html">
+ <span class="dropdown-text">Exercises and assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/tools.html">
+ <span class="dropdown-text">Interactive tools</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../pages/tools.html"> 
-<span class="menu-text">Interactive tools</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/assignments.html"> 
-<span class="menu-text">Interactive assignments</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/blog.html"> 
-<span class="menu-text">Blog</span></a>
+    <a class="nav-link active" href="../pages/about.html" aria-current="page"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -298,10 +301,8 @@ document.addEventListener("DOMContentLoaded", function () {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#computation-library" id="toc-computation-library" class="nav-link active" data-scroll-target="#computation-library">Computation library</a></li>
-  <li><a href="#source-repository" id="toc-source-repository" class="nav-link" data-scroll-target="#source-repository">Source repository</a></li>
-  <li><a href="#site-stack" id="toc-site-stack" class="nav-link" data-scroll-target="#site-stack">Site stack</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#who-this-course-is-for" id="toc-who-this-course-is-for" class="nav-link active" data-scroll-target="#who-this-course-is-for">Who this course is for</a></li>
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link" data-scroll-target="#learning-outcomes">Learning outcomes</a></li>
   </ul>
 </nav>
     </div>
@@ -327,25 +328,25 @@ document.addEventListener("DOMContentLoaded", function () {
 </header>
 
 
-<p>This site is the public home for <strong>Applied Differential Privacy</strong> — lecture decks, self-study notebooks, assignments, and browser-based interactives.</p>
-<section id="computation-library" class="level2">
-<h2 class="anchored" data-anchor-id="computation-library">Computation library</h2>
-<p>All plots, simulations, and widgets are imported from <a href="https://github.com/applied-dp-course/pub_lib"><code>libdpy</code></a> (published as <code>pub_lib</code>). This repository contains course content, metadata, rendering scripts, and thin wiring only — no duplicated numerical code.</p>
+<p>Applied Differential Privacy studies how useful statistical and machine-learning systems can be built from sensitive data while limiting what their outputs reveal about any one person. The course begins with attacks on anonymized data and accurate aggregate releases, using their failures to motivate differential privacy as a rigorous adversarial guarantee. Students then learn to interpret privacy through hypothesis testing, audit randomized algorithms empirically, and design private methods for estimation, subgroup analysis, regression, classification, and iterative learning. A final block develops the principles and limitations of private synthetic data.</p>
+<p>The course is taught through concrete problems, visual experiments, and interactive notebooks. Each topic follows a recurring pattern: propose a plausible method, expose its failure on a carefully chosen example or neighboring dataset, and build a valid repair. The emphasis is not only on proving privacy, but also on understanding statistical error, model assumptions, and the practical choices that determine whether a private result remains useful.</p>
+<section id="who-this-course-is-for" class="level2">
+<h2 class="anchored" data-anchor-id="who-this-course-is-for">Who this course is for</h2>
+<p>The course is intended for advanced undergraduate and graduate students in computer science, data science, statistics, and related quantitative fields. Undergraduate probability, basic linear algebra, and working knowledge of Python are required; prior machine-learning experience is helpful but not required.</p>
 </section>
-<section id="source-repository" class="level2">
-<h2 class="anchored" data-anchor-id="source-repository">Source repository</h2>
+<section id="learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="learning-outcomes">Learning outcomes</h2>
+<p>By the end of the course, students should be able to:</p>
 <ul>
-<li>Course website: <a href="https://github.com/applied-dp-course/website">applied-dp-course/website</a></li>
-<li>Library: <a href="https://github.com/applied-dp-course/pub_lib">applied-dp-course/pub_lib</a></li>
+<li>explain how linkage, composition, reconstruction, and membership-inference attacks defeat informal privacy protections;</li>
+<li>interpret differential privacy as a bound on an adversary’s ability to distinguish neighboring datasets;</li>
+<li>construct an empirical privacy audit and state correctly what its lower bound does and does not prove;</li>
+<li>calculate or bound sensitivity, choose a private mechanism, and reason about composition and post-processing;</li>
+<li>diagnose the statistical failure of a private method and redesign its utility measure, clipping rule, support requirement, or point of noise injection;</li>
+<li>compare private statistical and machine-learning methods using both privacy status and common- footing utility measures; and</li>
+<li>evaluate a private synthetic-data method in terms of its privacy contract, preserved relationships, intended analytical workload, and failure modes.</li>
 </ul>
-</section>
-<section id="site-stack" class="level2">
-<h2 class="anchored" data-anchor-id="site-stack">Site stack</h2>
-<p>Pages are built with <a href="https://quarto.org/">Quarto</a> and deployed to GitHub Pages. Expensive interactives use client-side WASM (marimo + Pyodide); the page text loads first, then each widget starts loading once the document is ready.</p>
-</section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
-<p>For the theory behind the course materials, see the syllabus <a href="../pages/syllabus.html">topics and prerequisites</a> and the linked lecture notebooks.</p>
+<p>For current materials and logistics, start with the <a href="../pages/course.html">course overview</a>.</p>
 
 
 </section>
@@ -775,7 +776,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Built with Quarto. All computation imported from libdpy (pub_lib).</p>
+<p>Applied Differential Privacy · Built with Quarto.</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;

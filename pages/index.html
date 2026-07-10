@@ -250,38 +250,41 @@ document.addEventListener("DOMContentLoaded", function () {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-course">    
         <li>
+    <a class="dropdown-item" href="../pages/course.html">
+ <span class="dropdown-text">Overview</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../pages/syllabus.html">
  <span class="dropdown-text">Syllabus</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../pages/lectures.html">
- <span class="dropdown-text">Lectures</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/class-assignments.html">
- <span class="dropdown-text">Class assignments</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/home-assignments.html">
- <span class="dropdown-text">Home assignments</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../pages/archive.html">
- <span class="dropdown-text">Past years</span></a>
+ <span class="dropdown-text">Past offerings and recordings</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-materials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Materials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-materials">    
+        <li>
+    <a class="dropdown-item" href="../pages/lectures.html">
+ <span class="dropdown-text">Lectures and self-study notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/assignments.html">
+ <span class="dropdown-text">Exercises and assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/tools.html">
+ <span class="dropdown-text">Interactive tools</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../pages/tools.html"> 
-<span class="menu-text">Interactive tools</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/assignments.html"> 
-<span class="menu-text">Interactive assignments</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/blog.html"> 
-<span class="menu-text">Blog</span></a>
+    <a class="nav-link" href="../pages/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -311,16 +314,16 @@ document.addEventListener("DOMContentLoaded", function () {
 Applied Differential Privacy
 </p>
 <p class="tagline">
-A hands-on course on differential privacy and privacy-preserving machine learning.
+Learn to attack, audit, and build useful statistical and machine-learning systems with differential privacy.
 </p>
 </div>
 <div class="offering-banner">
 <!-- BEGIN AUTO-GENERATED OFFERING BANNER -->
-<p><strong>Fall 2026</strong></p>
+<p><strong>Current offering</strong></p>
 <ul>
 <li><strong>Dates:</strong> 2026-10-20 – 2027-01-26</li>
-<li><strong>Meeting:</strong> Tuesdays 10:00–12:00</li>
-<li><strong>Instructor(s):</strong> <a href="https://github.com/applied-dp-course">Course staff</a> <!-- END AUTO-GENERATED OFFERING BANNER --></li>
+<li><strong>Meeting:</strong> Tuesdays 10:00-12:00</li>
+<li><strong>Past recorded lectures:</strong> <a href="https://youtube.com/playlist?list=PLIH-xaQ1EbKo&amp;si=l63FTbjcgtCU012G">Recorded lectures</a> <!-- END AUTO-GENERATED OFFERING BANNER --></li>
 </ul>
 </div>
 <div class="quick-links">
@@ -337,22 +340,23 @@ A hands-on course on differential privacy and privacy-preserving machine learnin
 <p>Self-study notebooks and slide decks for each topic.</p>
 </div>
 <div class="quick-link-card">
-<p><a href="../pages/assignments.html"><strong>Interactive assignments</strong></a></p>
-<p>In-class and take-home problem sets.</p>
+<p><a href="../pages/assignments.html"><strong>Exercises and assignments</strong></a></p>
+<p>Hands-on work as an attacker, auditor, and private-algorithm designer.</p>
 </div>
 <div class="quick-link-card">
 <p><a href="../pages/tools.html"><strong>Interactive tools</strong></a></p>
 <p>Standalone and lecture interactives.</p>
 </div>
 </div>
-<p>Lectures pair narrative slides with <strong>live, in-browser interactivity</strong> — every computation is imported from the course library <a href="https://github.com/applied-dp-course/pub_lib"><code>libdpy</code></a>; this site only presents and wires it together.</p>
+<p>Applied Differential Privacy is a hands-on course about learning from sensitive data without losing sight of the people represented in it. Students examine privacy attacks, derive differential privacy through hypothesis testing, audit claimed guarantees, and design useful private methods for statistics, machine learning, and synthetic data.</p>
+<p>The course moves from attacks and rigorous definitions to private statistics, private machine learning, and synthetic data. Lectures pair narrative slides with self-study notes and live, in-browser experiments.</p>
 <section id="featured-interactive" class="level2">
 <h2 class="anchored" data-anchor-id="featured-interactive">Featured interactive</h2>
 <div class="featured-interactive">
-<p>Explore the Gaussian privacy tradeoff (same widget as the hypothesis-testing deck). The plot loads automatically after the page is ready; the first load downloads a Python runtime (~34 MB).</p>
-<div id="3c2450fc" class="cell" data-message="false" data-execution_count="1">
+<p>Explore the Gaussian privacy tradeoff from the hypothesis-testing lecture. The plot loads after the page is ready; the first use downloads a Python runtime (~34 MB).</p>
+<div id="909227fb" class="cell" data-message="false" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
-<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../_generated/apps/pages/privacy-plot-norm-6197737a49/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../_generated/apps/shared/privacy-plot-norm-6197737a49-963c604330e0/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </div>
@@ -788,7 +792,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Built with Quarto. All computation imported from libdpy (pub_lib).</p>
+<p>Applied Differential Privacy · Built with Quarto.</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;

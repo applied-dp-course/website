@@ -247,38 +247,41 @@ document.addEventListener("DOMContentLoaded", function () {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-course">    
         <li>
+    <a class="dropdown-item" href="../pages/course.html">
+ <span class="dropdown-text">Overview</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../pages/syllabus.html">
  <span class="dropdown-text">Syllabus</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../pages/lectures.html">
- <span class="dropdown-text">Lectures</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/class-assignments.html">
- <span class="dropdown-text">Class assignments</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/home-assignments.html">
- <span class="dropdown-text">Home assignments</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../pages/archive.html">
- <span class="dropdown-text">Past years</span></a>
+ <span class="dropdown-text">Past offerings and recordings</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-materials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Materials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-materials">    
+        <li>
+    <a class="dropdown-item" href="../pages/lectures.html">
+ <span class="dropdown-text">Lectures and self-study notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/assignments.html">
+ <span class="dropdown-text">Exercises and assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/tools.html">
+ <span class="dropdown-text">Interactive tools</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../pages/tools.html"> 
-<span class="menu-text">Interactive tools</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/assignments.html"> 
-<span class="menu-text">Interactive assignments</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/blog.html"> 
-<span class="menu-text">Blog</span></a>
+    <a class="nav-link" href="../pages/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -318,42 +321,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <div class="offering-banner">
 <!-- BEGIN AUTO-GENERATED OFFERING BANNER -->
-<p><strong>Fall 2026</strong></p>
+<p><strong>Current offering</strong></p>
 <ul>
 <li><strong>Dates:</strong> 2026-10-20 – 2027-01-26</li>
-<li><strong>Meeting:</strong> Tuesdays 10:00–12:00</li>
-<li><strong>Instructor(s):</strong> <a href="https://github.com/applied-dp-course">Course staff</a> <!-- END AUTO-GENERATED OFFERING BANNER --></li>
+<li><strong>Meeting:</strong> Tuesdays 10:00-12:00</li>
+<li><strong>Past recorded lectures:</strong> <a href="https://youtube.com/playlist?list=PLIH-xaQ1EbKo&amp;si=l63FTbjcgtCU012G">Recorded lectures</a> <!-- END AUTO-GENERATED OFFERING BANNER --></li>
 </ul>
 </div>
-<p>Applied Differential Privacy is a hands-on course on differential privacy and privacy-preserving machine learning. Lectures pair narrative slides with self-study notebooks; computation is imported from the course library <a href="https://github.com/applied-dp-course/pub_lib"><code>libdpy</code></a>.</p>
+<p>Applied Differential Privacy is a hands-on course about learning from sensitive data without losing sight of the people represented in it. Students examine privacy attacks, derive differential privacy through hypothesis testing, audit claimed guarantees, and design useful private methods for statistics, machine learning, and synthetic data.</p>
+<section id="how-the-course-fits-together" class="level2">
+<h2 class="anchored" data-anchor-id="how-the-course-fits-together">How the course fits together</h2>
+<p>The course follows one cumulative question: <strong>How can we learn useful information from sensitive data while controlling what any one person can cause an observer to learn?</strong> We begin with attacks and failed informal protections; design private statistical methods; study how privacy changes machine learning; and conclude with private synthetic data as a reusable, but limited, data product.</p>
+</section>
 <section id="prerequisites" class="level2">
 <h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
-<p>Familiarity with undergraduate probability, basic linear algebra, and Python. Prior exposure to machine learning is helpful but not required.</p>
-</section>
-<section id="grading-and-policies" class="level2">
-<h2 class="anchored" data-anchor-id="grading-and-policies">Grading and policies</h2>
-<p>Grading breakdown, collaboration rules, and late-work policies are set by the instructor each term and announced on the course forum.</p>
+<p>Undergraduate probability, basic linear algebra, and working knowledge of Python. Familiarity with statistical estimation and machine learning is helpful but not required. Students should be comfortable reading mathematical notation and using computational experiments to investigate an algorithm.</p>
 </section>
 <section id="logistics-current-offering" class="level2">
 <h2 class="anchored" data-anchor-id="logistics-current-offering">Logistics (current offering)</h2>
 <!-- BEGIN AUTO-GENERATED SYLLABUS LOGISTICS -->
-<section id="fall-2026" class="level3">
-<h3 class="anchored" data-anchor-id="fall-2026">Fall 2026</h3>
+<section id="current-offering" class="level3">
+<h3 class="anchored" data-anchor-id="current-offering">Current offering</h3>
 <ul>
 <li><strong>Dates:</strong> 2026-10-20 – 2027-01-26</li>
-<li><strong>Meeting:</strong> Tuesdays 10:00–12:00</li>
-<li><strong>Instructor(s):</strong> <a href="https://github.com/applied-dp-course">Course staff</a> <!-- END AUTO-GENERATED SYLLABUS LOGISTICS --></li>
+<li><strong>Meeting:</strong> Tuesdays 10:00-12:00</li>
+<li><strong>Past recorded lectures:</strong> <a href="https://youtube.com/playlist?list=PLIH-xaQ1EbKo&amp;si=l63FTbjcgtCU012G">Recorded lectures</a> <!-- END AUTO-GENERATED SYLLABUS LOGISTICS --></li>
 </ul>
 </section>
 </section>
 <section id="course-pages" class="level2">
 <h2 class="anchored" data-anchor-id="course-pages">Course pages</h2>
 <ul>
-<li><strong><a href="../pages/syllabus.html">Syllabus</a></strong> — weekly plan with links to lectures, notebooks, and assignments</li>
-<li><strong><a href="../pages/lectures.html">Lectures</a></strong> — self-study notebooks and slide decks for each topic</li>
-<li><strong><a href="../pages/class-assignments.html">Class assignments</a></strong> — in-class interactive problem sets</li>
-<li><strong><a href="../pages/home-assignments.html">Home assignments</a></strong> — take-home problem sets</li>
-<li><strong><a href="../pages/archive.html">Past years</a></strong> — schedules from previous offerings</li>
+<li><strong><a href="../pages/syllabus.html">Syllabus</a></strong> — weekly topics, material links, and publication status</li>
+<li><strong><a href="../pages/lectures.html">Lectures and self-study notes</a></strong> — the cumulative lecture sequence</li>
+<li><strong><a href="../pages/assignments.html">Exercises and assignments</a></strong> — work tied to the lecture topics</li>
+<li><strong><a href="../pages/archive.html">Past offerings and recordings</a></strong> — earlier classroom recordings and schedules</li>
 </ul>
 
 
@@ -784,7 +786,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Built with Quarto. All computation imported from libdpy (pub_lib).</p>
+<p>Applied Differential Privacy · Built with Quarto.</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;

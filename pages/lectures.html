@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Lectures – Applied Differential Privacy</title>
+<title>Lectures and self-study notes – Applied Differential Privacy</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -247,38 +247,41 @@ document.addEventListener("DOMContentLoaded", function () {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-course">    
         <li>
+    <a class="dropdown-item" href="../pages/course.html">
+ <span class="dropdown-text">Overview</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../pages/syllabus.html">
  <span class="dropdown-text">Syllabus</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../pages/lectures.html">
- <span class="dropdown-text">Lectures</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/class-assignments.html">
- <span class="dropdown-text">Class assignments</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/home-assignments.html">
- <span class="dropdown-text">Home assignments</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../pages/archive.html">
- <span class="dropdown-text">Past years</span></a>
+ <span class="dropdown-text">Past offerings and recordings</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-materials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Materials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-materials">    
+        <li>
+    <a class="dropdown-item" href="../pages/lectures.html">
+ <span class="dropdown-text">Lectures and self-study notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/assignments.html">
+ <span class="dropdown-text">Exercises and assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/tools.html">
+ <span class="dropdown-text">Interactive tools</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../pages/tools.html"> 
-<span class="menu-text">Interactive tools</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/assignments.html"> 
-<span class="menu-text">Interactive assignments</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/blog.html"> 
-<span class="menu-text">Blog</span></a>
+    <a class="nav-link" href="../pages/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -304,7 +307,14 @@ document.addEventListener("DOMContentLoaded", function () {
   <li><a href="#privacy-auditing" id="toc-privacy-auditing" class="nav-link" data-scroll-target="#privacy-auditing">Privacy Auditing</a></li>
   <li><a href="#private-estimation" id="toc-private-estimation" class="nav-link" data-scroll-target="#private-estimation">Private Estimation</a></li>
   <li><a href="#private-subgroup-comparisons-after-clipping" id="toc-private-subgroup-comparisons-after-clipping" class="nav-link" data-scroll-target="#private-subgroup-comparisons-after-clipping">Private Subgroup Comparisons After Clipping</a></li>
+  <li><a href="#private-linear-regression" id="toc-private-linear-regression" class="nav-link" data-scroll-target="#private-linear-regression">Private linear regression</a></li>
   <li><a href="#mnist-linear-query-classifier" id="toc-mnist-linear-query-classifier" class="nav-link" data-scroll-target="#mnist-linear-query-classifier">MNIST linear-query classifier</a></li>
+  <li><a href="#machine-learning-privacy-attacks-and-auditing" id="toc-machine-learning-privacy-attacks-and-auditing" class="nav-link" data-scroll-target="#machine-learning-privacy-attacks-and-auditing">Machine-learning privacy attacks and auditing</a></li>
+  <li><a href="#dp-sgd-stability-and-generalization" id="toc-dp-sgd-stability-and-generalization" class="nav-link" data-scroll-target="#dp-sgd-stability-and-generalization">DP-SGD, stability, and generalization</a></li>
+  <li><a href="#private-parametric-synthesis" id="toc-private-parametric-synthesis" class="nav-link" data-scroll-target="#private-parametric-synthesis">Private parametric synthesis</a></li>
+  <li><a href="#marginals-are-not-a-dataset" id="toc-marginals-are-not-a-dataset" class="nav-link" data-scroll-target="#marginals-are-not-a-dataset">Marginals are not a dataset</a></li>
+  <li><a href="#workload-aware-synthetic-data" id="toc-workload-aware-synthetic-data" class="nav-link" data-scroll-target="#workload-aware-synthetic-data">Workload-aware synthetic data</a></li>
+  <li><a href="#course-synthesis-and-project-presentations" id="toc-course-synthesis-and-project-presentations" class="nav-link" data-scroll-target="#course-synthesis-and-project-presentations">Course synthesis and project presentations</a></li>
   </ul>
 </nav>
     </div>
@@ -313,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lectures</h1>
+<h1 class="title">Lectures and self-study notes</h1>
 </div>
 
 
@@ -330,66 +340,120 @@ document.addEventListener("DOMContentLoaded", function () {
 </header>
 
 
-<p>Each lecture pairs a self-study notebook with a slide deck. All computation is imported from the course library <a href="https://github.com/applied-dp-course/pub_lib"><code>libdpy</code></a>. Order follows the current offering <a href="../pages/syllabus.html">syllabus</a>.</p>
+<p>The lectures form one cumulative investigation of individual influence and useful learning from sensitive data. Each topic begins with an attack, tempting proposal, or statistical problem; makes the failure visible through a small example or experiment; and develops the formal privacy tool needed to repair it. Use the self-study notes for full explanations and executable examples, and the slides for the shorter classroom narrative. Planned topics are listed for orientation but do not yet have published materials.</p>
 <!-- BEGIN AUTO-GENERATED LECTURES -->
 <section id="k-anonymity" class="level2">
 <h2 class="anchored" data-anchor-id="k-anonymity">K-anonymity</h2>
 <p><em>Week 1</em></p>
-<p><em>Short introduction coming soon.</em></p>
+<p><strong>Status:</strong> Forthcoming</p>
+<p>Begin with modern and historical privacy failures, then examine k-anonymity as a plausible first defense. Composition, homogeneous groups, and auxiliary information show why hiding identity is not the same as hiding sensitive facts—and why the course needs a stronger adversarial definition.</p>
 </section>
 <section id="reconstruction-attacks" class="level2">
 <h2 class="anchored" data-anchor-id="reconstruction-attacks">Reconstruction Attacks</h2>
 <p><em>Week 2</em></p>
-<p><em>Short introduction coming soon.</em></p>
+<p><strong>Status:</strong> Available</p>
+<p>See how accurate answers to many aggregate questions become constraints on a hidden database. Brute force, least squares, and linear programming reveal both why reconstruction is possible and why enough defensive noise is unavoidable.</p>
 <ul>
-<li><strong>Blog post</strong> — <a href="../content/blog-posts/reconstruction-attacks/post.html">Blog post</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
-<li><strong>Presentation</strong> — <a href="../content/lecture-presentations/reconstruction-attacks/presentation.html">Presentation</a></li>
+<li><a href="../content/blog-posts/reconstruction-attacks/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
+<li><a href="../content/lecture-presentations/reconstruction-attacks/presentation.html">Slides</a></li>
 </ul>
 </section>
 <section id="dp-as-hypothesis-testing" class="level2">
 <h2 class="anchored" data-anchor-id="dp-as-hypothesis-testing">DP as Hypothesis Testing</h2>
 <p><em>Week 3</em></p>
-<p><em>Short introduction coming soon.</em></p>
+<p><strong>Status:</strong> Available</p>
+<p>Model privacy leakage as the strongest adversary’s attempt to distinguish two neighboring datasets. Likelihood ratios, ROC curves, and decision rules lead to an operational interpretation of epsilon and delta rather than a definition presented without motivation.</p>
 <ul>
-<li><strong>Blog post</strong> — <a href="../content/blog-posts/hypothesis-testing/post.html">Blog post</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
-<li><strong>Presentation</strong> — <a href="../content/lecture-presentations/hypothesis-testing/presentation.html">Presentation</a></li>
+<li><a href="../content/blog-posts/hypothesis-testing/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
+<li><a href="../content/lecture-presentations/hypothesis-testing/presentation.html">Slides</a></li>
+<li><a href="../content/class-assignments/hypothesis-testing/assignment.html">Exercise</a></li>
 </ul>
 </section>
 <section id="privacy-auditing" class="level2">
 <h2 class="anchored" data-anchor-id="privacy-auditing">Privacy Auditing</h2>
 <p><em>Week 4</em></p>
-<p><em>Short introduction coming soon.</em></p>
+<p><strong>Status:</strong> Available</p>
+<p>Reverse the hypothesis-testing view of differential privacy: use sampled outputs and a fixed distinguishing event to obtain an empirical lower bound on privacy loss. Confidence intervals show why an apparent attack must be corrected for finite-sample uncertainty.</p>
 <ul>
-<li><strong>Blog post</strong> — <a href="../content/blog-posts/privacy-auditing/post.html">Blog post</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
-<li><strong>Presentation</strong> — <a href="../content/lecture-presentations/privacy-auditing/presentation.html">Presentation</a></li>
+<li><a href="../content/blog-posts/privacy-auditing/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
+<li><a href="../content/lecture-presentations/privacy-auditing/presentation.html">Slides</a></li>
 </ul>
 </section>
 <section id="private-estimation" class="level2">
 <h2 class="anchored" data-anchor-id="private-estimation">Private Estimation</h2>
 <p><em>Week 5</em></p>
-<p><em>Short introduction coming soon.</em></p>
+<p><strong>Status:</strong> Available</p>
+<p>Estimate means, medians, quantiles, and histograms while auditing tempting but invalid shortcuts. The central lesson is that useful privacy often comes from changing the utility measure or privatizing data-dependent choices—not simply adding noise to an ordinary estimator.</p>
 <ul>
-<li><strong>Blog post</strong> — <a href="../content/blog-posts/private-estimation/post.html">Blog post</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-estimation/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
-<li><strong>Presentation</strong> — <a href="../content/lecture-presentations/private-estimation/presentation.html">Presentation</a></li>
+<li><a href="../content/blog-posts/private-estimation/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-estimation/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
+<li><a href="../content/lecture-presentations/private-estimation/presentation.html">Slides</a></li>
 </ul>
 </section>
 <section id="private-subgroup-comparisons-after-clipping" class="level2">
 <h2 class="anchored" data-anchor-id="private-subgroup-comparisons-after-clipping">Private Subgroup Comparisons After Clipping</h2>
 <p><em>Week 6</em></p>
-<p><em>Short introduction coming soon.</em></p>
+<p><strong>Status:</strong> Available</p>
+<p>Once the value range is controlled, subgroup analysis becomes a problem of denominators and data-dependent stability. Compare global sensitivity, invalid oracle local sensitivity, noisy counts and sums, propose-test-release, and smooth sensitivity, then introduce private selection and thresholding.</p>
 <ul>
-<li><strong>Blog post</strong> — <a href="../content/blog-posts/private-subgroup-comparisons/post.html">Blog post</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-subgroup-comparisons/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
-<li><strong>Presentation</strong> — <a href="../content/lecture-presentations/private-subgroup-comparisons/presentation.html">Presentation</a></li>
+<li><a href="../content/blog-posts/private-subgroup-comparisons/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-subgroup-comparisons/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
+<li><a href="../content/lecture-presentations/private-subgroup-comparisons/presentation.html">Slides</a></li>
+</ul>
+</section>
+<section id="private-linear-regression" class="level2">
+<h2 class="anchored" data-anchor-id="private-linear-regression">Private linear regression</h2>
+<p><em>Week 7</em></p>
+<p><strong>Status:</strong> Available</p>
+<p>Move from private scalar statistics to a private model. Regression geometry, leverage, and conditioning explain why input and output perturbation can fail, while noisy sufficient statistics and regularization show where privacy noise can be injected more effectively.</p>
+<ul>
+<li><a href="../content/blog-posts/private-linear-regression/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-linear-regression/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
+<li><a href="../content/lecture-presentations/private-linear-regression/presentation.html">Slides</a></li>
 </ul>
 </section>
 <section id="mnist-linear-query-classifier" class="level2">
 <h2 class="anchored" data-anchor-id="mnist-linear-query-classifier">MNIST linear-query classifier</h2>
 <p><em>Week 8</em></p>
-<p><em>Short introduction coming soon.</em></p>
+<p><strong>Status:</strong> Available</p>
+<p>Build a visual classifier whose weights are themselves a bounded vector-valued query. A model can look overwhelmed by privacy noise while still predicting accurately, motivating effective dimension and the distinction between population-level signal, generalization, and privacy leakage.</p>
 <ul>
-<li><strong>Blog post</strong> — <a href="../content/blog-posts/mnist-linear-query-classifier/post.html">Blog post</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/mnist-linear-query-classifier/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
-<li><strong>Presentation</strong> — <a href="../content/lecture-presentations/mnist-linear-query-classifier/presentation.html">Presentation</a> <!-- END AUTO-GENERATED LECTURES --></li>
+<li><a href="../content/blog-posts/mnist-linear-query-classifier/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/mnist-linear-query-classifier/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
+<li><a href="../content/lecture-presentations/mnist-linear-query-classifier/presentation.html">Slides</a></li>
 </ul>
+</section>
+<section id="machine-learning-privacy-attacks-and-auditing" class="level2">
+<h2 class="anchored" data-anchor-id="machine-learning-privacy-attacks-and-auditing">Machine-learning privacy attacks and auditing</h2>
+<p><em>Week 9</em></p>
+<p><strong>Status:</strong> Planned</p>
+<p>Use logistic-regression losses and margins to ask whether a trained model behaves differently because a particular record was included. Typical and worst-case membership audits reconnect machine learning to the ROC and confidence-bound tools developed earlier in the course.</p>
+</section>
+<section id="dp-sgd-stability-and-generalization" class="level2">
+<h2 class="anchored" data-anchor-id="dp-sgd-stability-and-generalization">DP-SGD, stability, and generalization</h2>
+<p><em>Week 10</em></p>
+<p><strong>Status:</strong> Planned</p>
+<p>Open the iterative training loop and identify each example’s gradient contribution. Per-example clipping, calibrated Gaussian noise, subsampling, and composition produce DP-SGD; re-auditing the trained model tests whether the repair controls the worst-case influence exposed previously.</p>
+</section>
+<section id="private-parametric-synthesis" class="level2">
+<h2 class="anchored" data-anchor-id="private-parametric-synthesis">Private parametric synthesis</h2>
+<p><em>Week 11</em></p>
+<p><strong>Status:</strong> Planned</p>
+<p>Study synthetic data as post-processing of private measurements, not as privacy by imitation. Begin with a transparent parametric example and expose the difference between mechanism error and model misspecification.</p>
+</section>
+<section id="marginals-are-not-a-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="marginals-are-not-a-dataset">Marginals are not a dataset</h2>
+<p><em>Week 12</em></p>
+<p><strong>Status:</strong> Planned</p>
+<p>See why accurate one-way marginals can still erase the relationships an analysis needs. The lecture introduces workload-aware utility through correlations and selected two-way measurements.</p>
+</section>
+<section id="workload-aware-synthetic-data" class="level2">
+<h2 class="anchored" data-anchor-id="workload-aware-synthetic-data">Workload-aware synthetic data</h2>
+<p><em>Week 13</em></p>
+<p><strong>Status:</strong> Planned</p>
+<p>Confront the product-domain cost of a full joint histogram, then design a generator around a declared set of analytical questions and honest held-out evaluation.</p>
+</section>
+<section id="course-synthesis-and-project-presentations" class="level2">
+<h2 class="anchored" data-anchor-id="course-synthesis-and-project-presentations">Course synthesis and project presentations</h2>
+<p><em>Week 14</em></p>
+<p><strong>Status:</strong> Planned</p>
+<p>Bring the course’s central question together: how can useful learning limit any one person’s influence? Students compare attacks, mechanisms, utility assumptions, and open limitations. <!-- END AUTO-GENERATED LECTURES --></p>
 
 
 </section>
@@ -819,7 +883,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Built with Quarto. All computation imported from libdpy (pub_lib).</p>
+<p>Applied Differential Privacy · Built with Quarto.</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;

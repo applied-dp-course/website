@@ -1,6 +1,0 @@
-name=empirical_roc_from_samples
-artifact=empirical-audit-6025863018
-export_backend=plotly-declarative
-signature=7925292ccc020c68b85980c9ab032784e8937c4c85ac919ab178aba6944f2f94
-libdpy_version=0.2.27
-marimo_version=0.23.9

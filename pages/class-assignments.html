@@ -247,38 +247,41 @@ document.addEventListener("DOMContentLoaded", function () {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-course">    
         <li>
+    <a class="dropdown-item" href="../pages/course.html">
+ <span class="dropdown-text">Overview</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../pages/syllabus.html">
  <span class="dropdown-text">Syllabus</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../pages/lectures.html">
- <span class="dropdown-text">Lectures</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/class-assignments.html">
- <span class="dropdown-text">Class assignments</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../pages/home-assignments.html">
- <span class="dropdown-text">Home assignments</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../pages/archive.html">
- <span class="dropdown-text">Past years</span></a>
+ <span class="dropdown-text">Past offerings and recordings</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-materials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Materials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-materials">    
+        <li>
+    <a class="dropdown-item" href="../pages/lectures.html">
+ <span class="dropdown-text">Lectures and self-study notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/assignments.html">
+ <span class="dropdown-text">Exercises and assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../pages/tools.html">
+ <span class="dropdown-text">Interactive tools</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../pages/tools.html"> 
-<span class="menu-text">Interactive tools</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/assignments.html"> 
-<span class="menu-text">Interactive assignments</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/blog.html"> 
-<span class="menu-text">Blog</span></a>
+    <a class="nav-link" href="../pages/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -327,13 +330,13 @@ document.addEventListener("DOMContentLoaded", function () {
 </header>
 
 
-<p>In-class problem sets with interactive notebooks. Due dates come from the current term <a href="../pages/syllabus.html">syllabus</a>.</p>
+<p>In-class problem sets with interactive notebooks. They ask you to construct attacks, analyze decision rules, and test privacy claims rather than only apply a finished formula. Due dates come from the current term <a href="../pages/syllabus.html">syllabus</a>.</p>
 <!-- BEGIN AUTO-GENERATED CLASS ASSIGNMENTS -->
 <section id="class-assignments" class="level2">
 <h2 class="anchored" data-anchor-id="class-assignments">Class assignments</h2>
 <section id="hypothesis-testing-assignment" class="level3">
 <h3 class="anchored" data-anchor-id="hypothesis-testing-assignment">Hypothesis Testing Assignment</h3>
-<p><em>Assignment explanation coming soon.</em></p>
+<p>Construct decision rules for neighboring datasets, plot their ROC behavior, and connect the strongest distinguisher to the operational meaning of differential privacy.</p>
 <ul>
 <li><strong>Related lecture:</strong> <a href="../content/lecture-presentations/hypothesis-testing/presentation.html">DP as Hypothesis Testing</a></li>
 <li><strong>Notebook</strong> — <a href="../content/class-assignments/hypothesis-testing/assignment.html">notebook</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/class-assignments/hypothesis-testing/assignment.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></li>
@@ -770,7 +773,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Built with Quarto. All computation imported from libdpy (pub_lib).</p>
+<p>Applied Differential Privacy · Built with Quarto.</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;
