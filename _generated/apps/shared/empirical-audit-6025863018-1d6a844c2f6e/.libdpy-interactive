@@ -1,0 +1,8 @@
+name=empirical_roc_from_samples
+artifact=empirical-audit-6025863018
+export_backend=plotly-declarative
+signature=1d6a844c2f6e6fa8486633f3617f46d0c11e05b7542d62171e4a9c7178e013b2
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/empirical-audit-6025863018-1d6a844c2f6e
+canonical_source=content/blog-posts/private-estimation/post.ipynb

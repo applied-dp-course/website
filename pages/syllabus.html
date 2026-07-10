@@ -296,27 +296,8 @@ document.addEventListener("DOMContentLoaded", function () {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#week-1-k-anonymity" id="toc-week-1-k-anonymity" class="nav-link active" data-scroll-target="#week-1-k-anonymity">Week 1 — K-anonymity</a></li>
-  <li><a href="#week-2-reconstruction-attacks" id="toc-week-2-reconstruction-attacks" class="nav-link" data-scroll-target="#week-2-reconstruction-attacks">Week 2 — Reconstruction attacks</a></li>
-  <li><a href="#week-3-dp-as-hypothesis-testing" id="toc-week-3-dp-as-hypothesis-testing" class="nav-link" data-scroll-target="#week-3-dp-as-hypothesis-testing">Week 3 — DP as hypothesis testing</a></li>
-  <li><a href="#week-4-privacy-auditing" id="toc-week-4-privacy-auditing" class="nav-link" data-scroll-target="#week-4-privacy-auditing">Week 4 — Privacy auditing</a></li>
-  <li><a href="#week-5-private-estimation" id="toc-week-5-private-estimation" class="nav-link" data-scroll-target="#week-5-private-estimation">Week 5 — Private estimation</a></li>
-  <li><a href="#week-6-private-subgroup-comparisons-after-clipping" id="toc-week-6-private-subgroup-comparisons-after-clipping" class="nav-link" data-scroll-target="#week-6-private-subgroup-comparisons-after-clipping">Week 6 — Private Subgroup Comparisons After Clipping</a></li>
-  <li><a href="#week-7-private-linear-regression" id="toc-week-7-private-linear-regression" class="nav-link" data-scroll-target="#week-7-private-linear-regression">Week 7 — Private linear regression</a></li>
-  <li><a href="#week-8-mnist-linear-query-classifier" id="toc-week-8-mnist-linear-query-classifier" class="nav-link" data-scroll-target="#week-8-mnist-linear-query-classifier">Week 8 — MNIST linear-query classifier</a></li>
-  <li><a href="#week-9-machine-learning-privacy-attacks-and-auditing" id="toc-week-9-machine-learning-privacy-attacks-and-auditing" class="nav-link" data-scroll-target="#week-9-machine-learning-privacy-attacks-and-auditing">Week 9 — Machine-learning privacy attacks and auditing</a></li>
-  <li><a href="#week-10-dp-sgd-stability-and-generalization" id="toc-week-10-dp-sgd-stability-and-generalization" class="nav-link" data-scroll-target="#week-10-dp-sgd-stability-and-generalization">Week 10 — DP-SGD, stability, and generalization</a></li>
-  <li><a href="#week-11-private-parametric-synthesis" id="toc-week-11-private-parametric-synthesis" class="nav-link" data-scroll-target="#week-11-private-parametric-synthesis">Week 11 — Private parametric synthesis</a></li>
-  <li><a href="#week-12-marginals-are-not-a-dataset" id="toc-week-12-marginals-are-not-a-dataset" class="nav-link" data-scroll-target="#week-12-marginals-are-not-a-dataset">Week 12 — Marginals are not a dataset</a></li>
-  <li><a href="#week-13-workload-aware-synthetic-data" id="toc-week-13-workload-aware-synthetic-data" class="nav-link" data-scroll-target="#week-13-workload-aware-synthetic-data">Week 13 — Workload-aware synthetic data</a></li>
-  <li><a href="#week-14-course-synthesis-and-project-presentations" id="toc-week-14-course-synthesis-and-project-presentations" class="nav-link" data-scroll-target="#week-14-course-synthesis-and-project-presentations">Week 14 — Course synthesis and project presentations</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -342,91 +323,171 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <p>The weekly plan distinguishes <strong>available</strong> materials from <strong>planned</strong> topics. Each week groups the resources students use for that week; planned topics are not publication claims. Return to the <a href="../pages/course.html">course overview</a> or browse <a href="../pages/archive.html">past offerings and recordings</a>.</p>
 <!-- BEGIN AUTO-GENERATED SCHEDULE -->
-<section id="week-1-k-anonymity" class="level3">
-<h3 class="anchored" data-anchor-id="week-1-k-anonymity">Week 1 — K-anonymity</h3>
-<p><strong>Date:</strong> 2026-10-20 <strong>Status:</strong> Forthcoming</p>
-<p><strong>Goal:</strong> Begin with modern and historical privacy failures, then examine k-anonymity as a plausible first defense. Composition, homogeneous groups, and auxiliary information show why hiding identity is not the same as hiding sensitive facts—and why the course needs a stronger adversarial definition.</p>
-</section>
-<section id="week-2-reconstruction-attacks" class="level3">
-<h3 class="anchored" data-anchor-id="week-2-reconstruction-attacks">Week 2 — Reconstruction attacks</h3>
-<p><strong>Date:</strong> 2026-10-27 <strong>Status:</strong> Available</p>
-<p><strong>Goal:</strong> See how accurate answers to many aggregate questions become constraints on a hidden database. Brute force, least squares, and linear programming reveal both why reconstruction is possible and why enough defensive noise is unavoidable.</p>
-<p><strong>Materials:</strong> <a href="../content/blog-posts/reconstruction-attacks/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a> · <a href="../content/lecture-presentations/reconstruction-attacks/presentation.html">Slides</a></p>
-</section>
-<section id="week-3-dp-as-hypothesis-testing" class="level3">
-<h3 class="anchored" data-anchor-id="week-3-dp-as-hypothesis-testing">Week 3 — DP as hypothesis testing</h3>
-<p><strong>Date:</strong> 2026-11-03 <strong>Status:</strong> Available</p>
-<p><strong>Goal:</strong> Model privacy leakage as the strongest adversary’s attempt to distinguish two neighboring datasets. Likelihood ratios, ROC curves, and decision rules lead to an operational interpretation of epsilon and delta rather than a definition presented without motivation.</p>
-<p><strong>Materials:</strong> <a href="../content/blog-posts/hypothesis-testing/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a> · <a href="../content/lecture-presentations/hypothesis-testing/presentation.html">Slides</a> · <a href="../content/class-assignments/hypothesis-testing/assignment.html">Exercise</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/class-assignments/hypothesis-testing/assignment.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></p>
-</section>
-<section id="week-4-privacy-auditing" class="level3">
-<h3 class="anchored" data-anchor-id="week-4-privacy-auditing">Week 4 — Privacy auditing</h3>
-<p><strong>Date:</strong> 2026-11-10 <strong>Status:</strong> Available</p>
-<p><strong>Goal:</strong> Reverse the hypothesis-testing view of differential privacy: use sampled outputs and a fixed distinguishing event to obtain an empirical lower bound on privacy loss. Confidence intervals show why an apparent attack must be corrected for finite-sample uncertainty.</p>
-<p><strong>Materials:</strong> <a href="../content/blog-posts/privacy-auditing/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a> · <a href="../content/lecture-presentations/privacy-auditing/presentation.html">Slides</a></p>
-</section>
-<section id="week-5-private-estimation" class="level3">
-<h3 class="anchored" data-anchor-id="week-5-private-estimation">Week 5 — Private estimation</h3>
-<p><strong>Date:</strong> 2026-11-17 <strong>Status:</strong> Available</p>
-<p><strong>Goal:</strong> Estimate means, medians, quantiles, and histograms while auditing tempting but invalid shortcuts. The central lesson is that useful privacy often comes from changing the utility measure or privatizing data-dependent choices—not simply adding noise to an ordinary estimator.</p>
-<p><strong>Materials:</strong> <a href="../content/blog-posts/private-estimation/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-estimation/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a> · <a href="../content/lecture-presentations/private-estimation/presentation.html">Slides</a></p>
-</section>
-<section id="week-6-private-subgroup-comparisons-after-clipping" class="level3">
-<h3 class="anchored" data-anchor-id="week-6-private-subgroup-comparisons-after-clipping">Week 6 — Private Subgroup Comparisons After Clipping</h3>
-<p><strong>Date:</strong> 2026-11-24 <strong>Status:</strong> Available</p>
-<p><strong>Goal:</strong> Once the value range is controlled, subgroup analysis becomes a problem of denominators and data-dependent stability. Compare global sensitivity, invalid oracle local sensitivity, noisy counts and sums, propose-test-release, and smooth sensitivity, then introduce private selection and thresholding.</p>
-<p><strong>Materials:</strong> <a href="../content/blog-posts/private-subgroup-comparisons/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-subgroup-comparisons/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a> · <a href="../content/lecture-presentations/private-subgroup-comparisons/presentation.html">Slides</a></p>
-</section>
-<section id="week-7-private-linear-regression" class="level3">
-<h3 class="anchored" data-anchor-id="week-7-private-linear-regression">Week 7 — Private linear regression</h3>
-<p><strong>Date:</strong> 2026-12-01 <strong>Status:</strong> Available</p>
-<p><strong>Goal:</strong> Move from private scalar statistics to a private model. Regression geometry, leverage, and conditioning explain why input and output perturbation can fail, while noisy sufficient statistics and regularization show where privacy noise can be injected more effectively.</p>
-<p><strong>Materials:</strong> <a href="../content/blog-posts/private-linear-regression/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-linear-regression/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a> · <a href="../content/lecture-presentations/private-linear-regression/presentation.html">Slides</a></p>
-</section>
-<section id="week-8-mnist-linear-query-classifier" class="level3">
-<h3 class="anchored" data-anchor-id="week-8-mnist-linear-query-classifier">Week 8 — MNIST linear-query classifier</h3>
-<p><strong>Date:</strong> 2026-12-08 <strong>Status:</strong> Available</p>
-<p><strong>Goal:</strong> Build a visual classifier whose weights are themselves a bounded vector-valued query. A model can look overwhelmed by privacy noise while still predicting accurately, motivating effective dimension and the distinction between population-level signal, generalization, and privacy leakage.</p>
-<p><strong>Materials:</strong> <a href="../content/blog-posts/mnist-linear-query-classifier/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/mnist-linear-query-classifier/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a> · <a href="../content/lecture-presentations/mnist-linear-query-classifier/presentation.html">Slides</a></p>
-</section>
-<section id="week-9-machine-learning-privacy-attacks-and-auditing" class="level3">
-<h3 class="anchored" data-anchor-id="week-9-machine-learning-privacy-attacks-and-auditing">Week 9 — Machine-learning privacy attacks and auditing</h3>
-<p><strong>Date:</strong> 2026-12-15 <strong>Status:</strong> Planned</p>
-<p><strong>Goal:</strong> Use logistic-regression losses and margins to ask whether a trained model behaves differently because a particular record was included. Typical and worst-case membership audits reconnect machine learning to the ROC and confidence-bound tools developed earlier in the course.</p>
-<p><strong>Notes:</strong> Planned — materials forthcoming.</p>
-</section>
-<section id="week-10-dp-sgd-stability-and-generalization" class="level3">
-<h3 class="anchored" data-anchor-id="week-10-dp-sgd-stability-and-generalization">Week 10 — DP-SGD, stability, and generalization</h3>
-<p><strong>Date:</strong> 2026-12-22 <strong>Status:</strong> Planned</p>
-<p><strong>Goal:</strong> Open the iterative training loop and identify each example’s gradient contribution. Per-example clipping, calibrated Gaussian noise, subsampling, and composition produce DP-SGD; re-auditing the trained model tests whether the repair controls the worst-case influence exposed previously.</p>
-<p><strong>Notes:</strong> Planned — materials forthcoming.</p>
-</section>
-<section id="week-11-private-parametric-synthesis" class="level3">
-<h3 class="anchored" data-anchor-id="week-11-private-parametric-synthesis">Week 11 — Private parametric synthesis</h3>
-<p><strong>Date:</strong> 2027-01-05 <strong>Status:</strong> Planned</p>
-<p><strong>Goal:</strong> Study synthetic data as post-processing of private measurements, not as privacy by imitation. Begin with a transparent parametric example and expose the difference between mechanism error and model misspecification.</p>
-<p><strong>Notes:</strong> Planned — materials forthcoming.</p>
-</section>
-<section id="week-12-marginals-are-not-a-dataset" class="level3">
-<h3 class="anchored" data-anchor-id="week-12-marginals-are-not-a-dataset">Week 12 — Marginals are not a dataset</h3>
-<p><strong>Date:</strong> 2027-01-12 <strong>Status:</strong> Planned</p>
-<p><strong>Goal:</strong> See why accurate one-way marginals can still erase the relationships an analysis needs. The lecture introduces workload-aware utility through correlations and selected two-way measurements.</p>
-<p><strong>Notes:</strong> Planned — materials forthcoming.</p>
-</section>
-<section id="week-13-workload-aware-synthetic-data" class="level3">
-<h3 class="anchored" data-anchor-id="week-13-workload-aware-synthetic-data">Week 13 — Workload-aware synthetic data</h3>
-<p><strong>Date:</strong> 2027-01-19 <strong>Status:</strong> Planned</p>
-<p><strong>Goal:</strong> Confront the product-domain cost of a full joint histogram, then design a generator around a declared set of analytical questions and honest held-out evaluation.</p>
-<p><strong>Notes:</strong> Planned — materials forthcoming.</p>
-</section>
-<section id="week-14-course-synthesis-and-project-presentations" class="level3">
-<h3 class="anchored" data-anchor-id="week-14-course-synthesis-and-project-presentations">Week 14 — Course synthesis and project presentations</h3>
-<p><strong>Date:</strong> 2027-01-26 <strong>Status:</strong> Planned</p>
-<p><strong>Goal:</strong> Bring the course’s central question together: how can useful learning limit any one person’s influence? Students compare attacks, mechanisms, utility assumptions, and open limitations.</p>
-<p><strong>Notes:</strong> Planned — format and materials forthcoming. <!-- END AUTO-GENERATED SCHEDULE --></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Week</th>
+<th>Date</th>
+<th>Topic</th>
+<th>Presentation</th>
+<th>Self-study</th>
+<th>Recording 1</th>
+<th>Recording 2</th>
+<th>Class assignment</th>
+<th>Home assignment</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>2026-10-20</td>
+<td>K-anonymity</td>
+<td>—</td>
+<td>—</td>
+<td><a href="https://www.youtube.com/watch?v=GVLqKl1uITI">Recording 1</a></td>
+<td><a href="https://www.youtube.com/watch?v=CNysui2LRPw">Recording 2</a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>2026-10-27</td>
+<td>Reconstruction attacks</td>
+<td><a href="../content/lecture-presentations/reconstruction-attacks/presentation.html">Slides</a></td>
+<td><a href="../content/blog-posts/reconstruction-attacks/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/reconstruction-attacks/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></td>
+<td><a href="https://www.youtube.com/watch?v=l6GCO2F4Lto">Recording 1</a></td>
+<td><a href="https://www.youtube.com/watch?v=idl3ZYFoABE">Recording 2</a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>2026-11-03</td>
+<td>DP as hypothesis testing</td>
+<td><a href="../content/lecture-presentations/hypothesis-testing/presentation.html">Slides</a></td>
+<td><a href="../content/blog-posts/hypothesis-testing/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/hypothesis-testing/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></td>
+<td><a href="https://www.youtube.com/watch?v=fLn6njsnC-k">Recording 1</a></td>
+<td><a href="https://www.youtube.com/watch?v=4bmcnwU7aSI">Recording 2</a></td>
+<td><a href="../content/class-assignments/hypothesis-testing/assignment.html">Exercise</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/class-assignments/hypothesis-testing/assignment.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>2026-11-10</td>
+<td>Privacy auditing</td>
+<td><a href="../content/lecture-presentations/privacy-auditing/presentation.html">Slides</a></td>
+<td><a href="../content/blog-posts/privacy-auditing/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/privacy-auditing/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></td>
+<td><a href="https://www.youtube.com/watch?v=uccrGQUAwXE">Recording 1</a></td>
+<td><a href="https://www.youtube.com/watch?v=H6jcXv2WHDM">Recording 2</a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>2026-11-17</td>
+<td>Private estimation</td>
+<td><a href="../content/lecture-presentations/private-estimation/presentation.html">Slides</a></td>
+<td><a href="../content/blog-posts/private-estimation/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-estimation/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></td>
+<td><a href="https://www.youtube.com/watch?v=FK3A7Q8mkfY">Recording 1</a></td>
+<td><a href="https://www.youtube.com/watch?v=cw_f8VePe38">Recording 2</a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>2026-11-24</td>
+<td>Private Subgroup Comparisons After Clipping</td>
+<td><a href="../content/lecture-presentations/private-subgroup-comparisons/presentation.html">Slides</a></td>
+<td><a href="../content/blog-posts/private-subgroup-comparisons/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-subgroup-comparisons/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></td>
+<td><a href="https://www.youtube.com/watch?v=Ekwi5hy5nxs">Recording 1</a></td>
+<td><a href="https://www.youtube.com/watch?v=DT0KW7e5CTE">Recording 2</a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>2026-12-01</td>
+<td>Private linear regression</td>
+<td><a href="../content/lecture-presentations/private-linear-regression/presentation.html">Slides</a></td>
+<td><a href="../content/blog-posts/private-linear-regression/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/private-linear-regression/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></td>
+<td><a href="https://www.youtube.com/watch?v=I_HyZTpjqKs">Recording 1</a></td>
+<td><a href="https://www.youtube.com/watch?v=JDDo9GaJD9w">Recording 2</a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>2026-12-08</td>
+<td>MNIST linear-query classifier</td>
+<td><a href="../content/lecture-presentations/mnist-linear-query-classifier/presentation.html">Slides</a></td>
+<td><a href="../content/blog-posts/mnist-linear-query-classifier/post.html">Self-study notes</a> · <a href="https://colab.research.google.com/github/applied-dp-course/website/blob/main/content/blog-posts/mnist-linear-query-classifier/post.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open in Colab"></a></td>
+<td><a href="https://www.youtube.com/watch?v=UOARLf5ppE8">Recording 1</a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>2026-12-15</td>
+<td>Machine-learning privacy attacks and auditing</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>Planned — materials forthcoming.</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>2026-12-22</td>
+<td>DP-SGD, stability, and generalization</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>Planned — materials forthcoming.</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td>2027-01-05</td>
+<td>Private parametric synthesis</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>Planned — materials forthcoming.</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>2027-01-12</td>
+<td>Marginals are not a dataset</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>Planned — materials forthcoming.</td>
+</tr>
+</tbody>
+</table>
+<!-- END AUTO-GENERATED SCHEDULE -->
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -149,7 +149,7 @@
 <div class="fragment">
 <p><strong>Row-DP contract:</strong> <span class="math inline">\(\|x_i\|_2\le 1\)</span>, <span class="math inline">\(|y_i|\le 1\)</span>, fixed-size replacement, <span class="math inline">\(\delta=1/n^2\)</span>.</p>
 </div>
-<div id="a97802c7" class="cell" data-execution_count="3">
+<div id="67de9a02" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-stdout">
 <pre><code>Benchmark: sml — n=3723, d=26 (train row-norm max=1.0000, |y| max=1.0000)
 Features: 26 standardized numeric covariates from the vendored continuous design matrix. The shipped matrix does not include semantic feature names.
@@ -165,7 +165,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 </section>
 <section id="non-private-ols-and-sufficient-statistics" class="slide level2">
 <h2>Non-private OLS and sufficient statistics</h2>
-<div id="439b4a1f" class="cell" data-execution_count="4">
+<div id="c3048920" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 <figure>
@@ -206,7 +206,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 <section id="label-dp-input-perturbation-is-indirect" class="slide level2">
 <h2>Label-DP input perturbation is indirect</h2>
 <p>Label noise under label-DP (<span class="math inline">\(X\)</span> public, <span class="math inline">\(y\)</span> private) is a <strong>real but narrow</strong> model — not the main row-DP contract. Input perturbation wastes budget: sensitivity <span class="math inline">\(2\)</span> per label vs <span class="math inline">\(2/n\)</span> for the statistic.</p>
-<div id="7a53038c" class="cell" data-execution_count="6">
+<div id="d1ba8c7e" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 <figure>
@@ -222,7 +222,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 </div>
 </div>
 </div>
-<div id="81adebe8" class="cell" data-execution_count="7">
+<div id="614a04f8" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 <figure>
@@ -242,7 +242,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 <section id="inputoutput-foils-fail-for-geometric-reasons" class="slide level2">
 <h2>Input/output foils fail for geometric reasons</h2>
 <p>Feature perturbation and output perturbation are <strong>diagnostics only</strong> under row-DP — not comparable repairs without a full mechanism spec.</p>
-<div id="93f6d213" class="cell" data-execution_count="8">
+<div id="32d25e42" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 <figure>
@@ -265,7 +265,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 </section>
 <section id="noise-breaks-ellipses-invertibility" class="slide level2">
 <h2>Noise breaks ellipses / invertibility</h2>
-<div id="01b833d8" class="cell" data-execution_count="9">
+<div id="96e28af0" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 <figure>
@@ -305,7 +305,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 </div>
 </div>
 </div>
-<div id="077f8320" class="cell" data-execution_count="10">
+<div id="f81e1285" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display" data-execution_count="10">
 <div>
 <figure>
@@ -325,7 +325,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 <section id="leaderboard-on-sml" class="slide level2">
 <h2>Leaderboard on <code>sml</code></h2>
 <p>Valid row-DP repairs vs diagnostics — <strong>separate panels by privacy status</strong>; diagnostic curves are <strong>not DP claims</strong>.</p>
-<div id="61bc45c6" class="cell" data-execution_count="11">
+<div id="9d40ca31" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 <figure>
