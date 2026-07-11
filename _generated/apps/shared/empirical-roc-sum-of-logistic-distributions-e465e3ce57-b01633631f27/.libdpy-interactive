@@ -1,0 +1,8 @@
+name=empirical_roc_visualizer
+artifact=empirical-roc-sum-of-logistic-distributions-e465e3ce57
+export_backend=wasm-marimo
+signature=b01633631f27fa98efcf05bed91f096ba775d947e3ae539e784204c2e52ffd65
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-b01633631f27
+canonical_source=content/blog-posts/privacy-auditing/post.ipynb

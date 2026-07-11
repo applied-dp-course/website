@@ -1,0 +1,8 @@
+name=ols_influence_geometry
+artifact=ols-influence-geometry
+export_backend=wasm-marimo
+signature=9848b0f81711edfe54c1f574010e629ed9837bfebd99749a9144e30897277cfc
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/ols-influence-geometry-9848b0f81711
+canonical_source=content/blog-posts/private-linear-regression/post.ipynb

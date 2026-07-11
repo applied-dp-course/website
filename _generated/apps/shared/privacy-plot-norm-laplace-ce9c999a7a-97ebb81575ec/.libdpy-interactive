@@ -1,0 +1,8 @@
+name=privacy_plot
+artifact=privacy-plot-norm-laplace-ce9c999a7a
+export_backend=wasm-marimo
+signature=97ebb81575ecce1318b5425040a1af80de070638b09f72ec506b15d21e0b7b31
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/privacy-plot-norm-laplace-ce9c999a7a-97ebb81575ec
+canonical_source=content/blog-posts/privacy-auditing/post.ipynb

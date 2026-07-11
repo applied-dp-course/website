@@ -1,8 +1,0 @@
-name=theory_roc_visualizer
-artifact=theory-roc-logistic-f5dff6a9e8
-export_backend=wasm-marimo
-signature=5149020a7c7dd43c1aabc72c12b26941f2689167006b8ebc07e59ef59be94d3e
-libdpy_version=0.2.27
-marimo_version=0.23.9
-shared_path=shared/theory-roc-logistic-f5dff6a9e8-5149020a7c7d
-canonical_source=content/blog-posts/privacy-auditing/post.ipynb

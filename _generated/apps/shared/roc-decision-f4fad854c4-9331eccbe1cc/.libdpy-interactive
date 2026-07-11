@@ -1,0 +1,8 @@
+name=roc_decision_explorer
+artifact=roc-decision-f4fad854c4
+export_backend=plotly-declarative
+signature=9331eccbe1cc7b3274d75879021dad3d66e729f2244f4829384ca71c4d23c139
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/roc-decision-f4fad854c4-9331eccbe1cc
+canonical_source=content/blog-posts/hypothesis-testing/post.ipynb
