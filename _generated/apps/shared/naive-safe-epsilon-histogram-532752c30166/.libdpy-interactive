@@ -1,0 +1,8 @@
+name=naive_safe_epsilon_histogram
+artifact=naive-safe-epsilon-histogram
+export_backend=wasm-marimo
+signature=532752c30166b56e6e416b31318f65d0939f9773ee848748754a7def2aeaf4a1
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/naive-safe-epsilon-histogram-532752c30166
+canonical_source=content/blog-posts/privacy-auditing/post.ipynb

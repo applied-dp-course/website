@@ -1,0 +1,8 @@
+name=theory_roc_visualizer
+artifact=theory-roc-laplace-f6bad2e12f
+export_backend=wasm-marimo
+signature=2fabd40b4751d39c7b430b1f1c111b86ea4336cd4364a02ad46946ca57db1ee2
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/theory-roc-laplace-f6bad2e12f-2fabd40b4751
+canonical_source=content/blog-posts/privacy-auditing/post.ipynb

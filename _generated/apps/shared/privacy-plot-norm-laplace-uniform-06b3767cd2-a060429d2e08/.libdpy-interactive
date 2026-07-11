@@ -1,8 +1,0 @@
-name=privacy_plot
-artifact=privacy-plot-norm-laplace-uniform-06b3767cd2
-export_backend=wasm-marimo
-signature=a060429d2e08720231a3a86e94e10cc4495f677d8142b47a555d6c4ff08a49bf
-libdpy_version=0.2.27
-marimo_version=0.23.9
-shared_path=shared/privacy-plot-norm-laplace-uniform-06b3767cd2-a060429d2e08
-canonical_source=content/blog-posts/hypothesis-testing/post.ipynb

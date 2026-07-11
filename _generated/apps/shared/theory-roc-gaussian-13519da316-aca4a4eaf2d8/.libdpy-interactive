@@ -1,8 +1,0 @@
-name=theory_roc_visualizer
-artifact=theory-roc-gaussian-13519da316
-export_backend=wasm-marimo
-signature=aca4a4eaf2d8a53d3f89c326c8b71c30d30d0768e23ce597678dc9266f584e79
-libdpy_version=0.2.27
-marimo_version=0.23.9
-shared_path=shared/theory-roc-gaussian-13519da316-aca4a4eaf2d8
-canonical_source=content/blog-posts/private-subgroup-comparisons/post.ipynb
