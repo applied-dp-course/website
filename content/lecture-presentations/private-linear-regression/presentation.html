@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head>
+<link href="../../../theme/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../site_libs/quarto-html/tabby.min.js"></script>
 <script src="../../../site_libs/quarto-html/popper.min.js"></script>
@@ -29,7 +30,7 @@
     }
   </style>
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-b9d2fe02cc32158b42e7eed6b5f25a77.css">
-  <link rel="stylesheet" href="slides.css">
+  <link rel="stylesheet" href="../../../theme/slides.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -149,7 +150,7 @@
 <div class="fragment">
 <p><strong>Row-DP contract:</strong> <span class="math inline">\(\|x_i\|_2\le 1\)</span>, <span class="math inline">\(|y_i|\le 1\)</span>, fixed-size replacement, <span class="math inline">\(\delta=1/n^2\)</span>.</p>
 </div>
-<div id="f22aece7" class="cell" data-execution_count="3">
+<div id="2ea81c87" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-stdout">
 <pre><code>Benchmark: sml — n=3723, d=26 (train row-norm max=1.0000, |y| max=1.0000)
 Features: 26 standardized numeric covariates from the vendored continuous design matrix. The shipped matrix does not include semantic feature names.
@@ -165,7 +166,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 </section>
 <section id="non-private-ols-and-sufficient-statistics" class="slide level2">
 <h2>Non-private OLS and sufficient statistics</h2>
-<div id="fef5bf7c" class="cell" data-execution_count="4">
+<div id="1050e34a" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 <figure>
@@ -189,7 +190,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 <h2>2D influence: drag one point</h2>
 <p>Move the highlighted point; compare OLS <strong>with</strong> vs <strong>without</strong> it (leave-one-out reference).</p>
 <div class="libdpy-interactive" data-libdpy-interactive="ols_influence_geometry" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:620px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;">
-<iframe src="../../../_generated/apps/shared/ols-influence-geometry-f53fb9709d39/index.html" width="100%" height="620" loading="lazy" title="Ols Influence Geometry" data-libdpy-interactive="ols_influence_geometry" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)">
+<iframe src="../../../_generated/apps/shared/ols-influence-geometry-34432efbf78b/index.html" width="100%" height="620" loading="lazy" title="Ols Influence Geometry" data-libdpy-interactive="ols_influence_geometry" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)">
 </iframe>
 <div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;">
 <div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;">
@@ -206,7 +207,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 <section id="label-dp-input-perturbation-is-indirect" class="slide level2">
 <h2>Label-DP input perturbation is indirect</h2>
 <p>Label noise under label-DP (<span class="math inline">\(X\)</span> public, <span class="math inline">\(y\)</span> private) is a <strong>real but narrow</strong> model — not the main row-DP contract. Input perturbation wastes budget: sensitivity <span class="math inline">\(2\)</span> per label vs <span class="math inline">\(2/n\)</span> for the statistic.</p>
-<div id="81cbaad5" class="cell" data-execution_count="6">
+<div id="41fcb47b" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 <figure>
@@ -222,7 +223,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 </div>
 </div>
 </div>
-<div id="142027c8" class="cell" data-execution_count="7">
+<div id="19f467c6" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 <figure>
@@ -242,7 +243,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 <section id="inputoutput-foils-fail-for-geometric-reasons" class="slide level2">
 <h2>Input/output foils fail for geometric reasons</h2>
 <p>Feature perturbation and output perturbation are <strong>diagnostics only</strong> under row-DP — not comparable repairs without a full mechanism spec.</p>
-<div id="dd164bc3" class="cell" data-execution_count="8">
+<div id="2c82f650" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 <figure>
@@ -265,7 +266,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 </section>
 <section id="noise-breaks-ellipses-invertibility" class="slide level2">
 <h2>Noise breaks ellipses / invertibility</h2>
-<div id="b5702925" class="cell" data-execution_count="9">
+<div id="e106edbe" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 <figure>
@@ -305,7 +306,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 </div>
 </div>
 </div>
-<div id="61067249" class="cell" data-execution_count="10">
+<div id="77f7bcfe" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display" data-execution_count="10">
 <div>
 <figure>
@@ -325,7 +326,7 @@ Target: Continuous regression response (last column of the vendored train matrix
 <section id="leaderboard-on-sml" class="slide level2">
 <h2>Leaderboard on <code>sml</code></h2>
 <p>Valid row-DP repairs vs diagnostics — <strong>separate panels by privacy status</strong>; diagnostic curves are <strong>not DP claims</strong>.</p>
-<div id="5631c5f7" class="cell" data-execution_count="11">
+<div id="98c64f4c" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 <figure>

@@ -64,15 +64,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../../">
+<link href="../../../theme/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="../../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-726f06993713be57330905d9e13eafeb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-760ea4b67ad7cb19168038ebc39d72c7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-0369c80c4127770e0cda08b006c0f997.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -297,6 +300,9 @@ document.addEventListener("DOMContentLoaded", function () {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../theme/favicon.svg" alt="Applied Differential Privacy" class="navbar-logo">
+    </a>
     <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Applied Differential Privacy</span>
     </a>
@@ -354,6 +360,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -368,11 +375,12 @@ document.addEventListener("DOMContentLoaded", function () {
    
   <ul>
   <li><a href="#real-benchmark-baseline-sml" id="toc-real-benchmark-baseline-sml" class="nav-link active" data-scroll-target="#real-benchmark-baseline-sml">Real benchmark baseline (<code>sml</code>)</a></li>
-  <li><a href="#interactive-geometry" id="toc-interactive-geometry" class="nav-link" data-scroll-target="#interactive-geometry">Interactive geometry</a></li>
-  <li><a href="#label-dp-input-perturbation-diagnostic" id="toc-label-dp-input-perturbation-diagnostic" class="nav-link" data-scroll-target="#label-dp-input-perturbation-diagnostic">Label-DP input perturbation (diagnostic)</a></li>
-  <li><a href="#output-perturbation-diagnostic" id="toc-output-perturbation-diagnostic" class="nav-link" data-scroll-target="#output-perturbation-diagnostic">Output perturbation (diagnostic)</a></li>
-  <li><a href="#noisy-sufficient-statistics-adassp-and-gram-sketch-repair" id="toc-noisy-sufficient-statistics-adassp-and-gram-sketch-repair" class="nav-link" data-scroll-target="#noisy-sufficient-statistics-adassp-and-gram-sketch-repair">Noisy sufficient statistics — AdaSSP and Gram-sketch repair</a></li>
+  <li><a href="#interactive-geometry-what-does-one-row-buy" id="toc-interactive-geometry-what-does-one-row-buy" class="nav-link" data-scroll-target="#interactive-geometry-what-does-one-row-buy">Interactive geometry: what does one row buy?</a></li>
+  <li><a href="#proposal-1-input-perturbation-label-dp-diagnostic" id="toc-proposal-1-input-perturbation-label-dp-diagnostic" class="nav-link" data-scroll-target="#proposal-1-input-perturbation-label-dp-diagnostic">Proposal 1: input perturbation (label-DP diagnostic)</a></li>
+  <li><a href="#proposal-2-output-perturbation-diagnostic-foil-fails" id="toc-proposal-2-output-perturbation-diagnostic-foil-fails" class="nav-link" data-scroll-target="#proposal-2-output-perturbation-diagnostic-foil-fails">Proposal 2: output perturbation (diagnostic foil — fails)</a></li>
+  <li><a href="#repair-noisy-sufficient-statistics-then-ridge" id="toc-repair-noisy-sufficient-statistics-then-ridge" class="nav-link" data-scroll-target="#repair-noisy-sufficient-statistics-then-ridge">Repair: noisy sufficient statistics, then ridge</a></li>
   <li><a href="#leaderboard-on-sml" id="toc-leaderboard-on-sml" class="nav-link" data-scroll-target="#leaderboard-on-sml">Leaderboard on <code>sml</code></a></li>
+  <li><a href="#closing-privacy-is-a-worst-case-statement-about-influence" id="toc-closing-privacy-is-a-worst-case-statement-about-influence" class="nav-link" data-scroll-target="#closing-privacy-is-a-worst-case-statement-about-influence">Closing: privacy is a worst-case statement about influence</a></li>
   </ul>
 </nav>
     </div>
@@ -411,8 +419,10 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">%</span>pip install <span class="op">-</span>q <span class="st">"libdpy[notebook] @ git+https://github.com/applied-dp-course/pub_lib.git@main"</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> libdpy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>When the released object is a <strong>model</strong>, but the mechanism is still <strong>noisy sufficient statistics</strong>.</p>
-<p><strong>Public contract (row-DP):</strong> <span class="math inline">\(\|x_i\|_2\le 1\)</span>, <span class="math inline">\(|y_i|\le 1\)</span>, fixed-size replacement, <span class="math inline">\(\delta=1/n^2\)</span>.</p>
+<p>Lectures 5 and 6 built differential privacy for statisticians: private means, quantiles, medians, subgroup gaps, and the local/smooth-sensitivity machinery that made one audited number safe to release. This lecture keeps the audit habit — proposal, diagnosis, repair — but changes what gets released. Instead of a scalar, the release is a <strong>model</strong>: a weight vector <span class="math inline">\(\hat w\)</span> that a downstream user will multiply against new feature vectors it has never seen. The question is the same one as always (how much can a single row move the release?), but the answer now depends on <strong>geometry</strong> — the shape of the feature cloud — in a way a scalar mean never had to.</p>
+<p><strong>Running example.</strong> We use the <em>Communities and Crime</em> benchmark (<code>sml</code> gate-selection below): each row describes a community, the feature columns are demographic and economic covariates, and the label is a crime-rate statistic. In a fully private pipeline the bounds on <span class="math inline">\(\|x_i\|_2\)</span> and <span class="math inline">\(|y_i|\)</span> would themselves have to be privately estimated — exactly the clipping problem Lecture 5 spent three sections repairing. Here those bounds are fixed so this lecture’s attention stays on regression.</p>
+<p><strong>Public contract (row-DP):</strong> <span class="math inline">\(\|x_i\|_2\le 1\)</span>, <span class="math inline">\(|y_i|\le 1\)</span>, adjacency is fixed-size row replacement, <span class="math inline">\(\delta=1/n^2\)</span>. Nothing about a row is public by default — not the features, not the label. That is the harder <em>element</em> contract, and getting it right is most of this lecture.</p>
+<p><strong>Where OLS lives inside the contract.</strong> Ordinary least squares solves <span class="math inline">\(\hat w=(X^\top X)^{-1}X^\top y\)</span>; ridge solves the stabilized version <span class="math inline">\(\hat w_\lambda=(X^\top X+\lambda I)^{-1}X^\top y\)</span>. Both formulas route through exactly two data-dependent objects: <span class="math inline">\(A=X^\top X\)</span> and <span class="math inline">\(b=X^\top y\)</span>. <span class="math inline">\(A\)</span> is pure feature geometry — which directions in feature space are backed by many rows and which are nearly empty. <span class="math inline">\(b\)</span> is the feature–label relationship — the direction the labels actually pull the fit toward. Privacy noise can land on <span class="math inline">\(A\)</span>, on <span class="math inline">\(b\)</span>, or on <span class="math inline">\(\hat w\)</span> itself, and <em>where</em> it lands turns out to matter more than the total amount of noise. That is the question the rest of this post answers.</p>
 <div id="2" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_linear_regression <span class="im">import</span> (</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    build_ols_geometry_witnesses,</span>
@@ -457,7 +467,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 <section id="real-benchmark-baseline-sml" class="level2">
 <h2 class="anchored" data-anchor-id="real-benchmark-baseline-sml">Real benchmark baseline (<code>sml</code>)</h2>
-<p>Gate-selected regression benchmark. Non-private OLS/ridge baseline — <strong>not private</strong>.</p>
+<p>Before touching privacy at all: what does the non-private fit look like? The next cell renders the plain OLS/ridge fit on the gate-selected <code>sml</code> regression benchmark (Communities &amp; Crime, after the normalization described above). <strong>This is not a mechanism.</strong> No noise has been added and nothing here is a privacy claim — it exists only to pin down the reference every private method below will be measured against. If a private release cannot beat “predict the mean,” it has not earned its noise.</p>
 <div id="4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>make_regression_baseline_figure(artifact)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
@@ -476,20 +486,35 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </section>
-<section id="interactive-geometry" class="level2">
-<h2 class="anchored" data-anchor-id="interactive-geometry">Interactive geometry</h2>
-<p>Drag one point; compare OLS <strong>with</strong> vs <strong>without</strong> it (leave-one-out reference). Fixed axes; two lines only in the notebook geometry profile.</p>
+<section id="interactive-geometry-what-does-one-row-buy" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-geometry-what-does-one-row-buy">Interactive geometry: what does one row buy?</h2>
+<p>Drop to two dimensions so a single row is visible. The picture below is the same OLS line-fitting problem as the baseline above, just small enough to reason through directly: one feature, one label, a handful of points.</p>
+<p><strong>Question to answer before dragging:</strong> if you move <em>one</em> point, does the fitted line move a lot or a little — and does the answer depend on <em>where</em> the point sits, or only on <em>how far</em> you move it?</p>
+<p>Two ideas govern the answer, and they will reappear under every mechanism below:</p>
+<ul>
+<li><strong>Leverage</strong> is a point’s voice in the regression problem — how much the fitted line’s direction depends on that one point’s feature location. A point near the center of the feature cloud has almost no leverage: the other points already agree on where the line should go in that neighborhood, so moving the center point barely rotates anything. A point far out along a direction where the rest of the data provides little support has <em>high</em> leverage: it is close to the only evidence the fit has about that direction, so its label can swing the whole line.</li>
+<li><strong>Residual</strong> is the other half of influence. A high-leverage point only <em>matters</em> when its label disagrees with what the rest of the data would already predict there. A high-leverage point that happens to sit right on the trend moves nothing when nudged; the same point with a surprising label can drag the fit substantially.</li>
+</ul>
+<p>Drag the highlighted point below and compare the refit line to the frozen leave-one-out reference (the fit computed <strong>without</strong> that point). The gap between the two lines <em>is</em> the point’s influence — the same replacement-adjacency idea Lecture 5 used for the median and Lecture 6 used for subgroup gaps, now applied to a fitted model instead of a fitted number.</p>
 <div id="6" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>OLSInfluenceGeometryPlot(seed<span class="op">=</span><span class="dv">50</span>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
-<div class="libdpy-interactive" data-libdpy-interactive="ols_influence_geometry" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/ols-influence-geometry-f53fb9709d39/index.html" width="100%" height="750" title="Ols Influence Geometry" data-libdpy-interactive="ols_influence_geometry" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="ols_influence_geometry" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/ols-influence-geometry-34432efbf78b/index.html" width="100%" height="750" title="Ols Influence Geometry" data-libdpy-interactive="ols_influence_geometry" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
+<p><strong>Diagnosis.</strong> Two facts fall out of the drag experiment, and both are privacy-relevant, not just statistical trivia:</p>
+<ol type="1">
+<li><strong>Influence is not uniform across rows.</strong> A privacy mechanism that adds the same noise to every row (or the same noise regardless of position) is implicitly assuming every row has the same leverage. The picture above shows that assumption is false for essentially any real feature cloud.</li>
+<li><strong>Worst-case leverage, not typical leverage, sets the privacy bound.</strong> A typical row in the dense middle of the cloud can move a fraction of a degree; a single point placed at the edge of the feature ball can move the line by an amount limited only by the label bound. Differential privacy has to protect against the second row, even though almost every row looks like the first. This is the same worst-case-versus-typical-case tension from Lectures 5–6 (a substitution that barely moves the empirical mean versus one engineered to move it a lot), now restated in feature-space geometry instead of value space.</li>
+</ol>
+<p>Before adding any noise, one more distinction has to be nailed down: <em>which</em> part of a row is private? That question splits the rest of the lecture in two.</p>
+<p><strong>Label-DP versus element-DP.</strong> In <strong>label-DP</strong>, the feature vectors <span class="math inline">\(X\)</span> are treated as public and only the labels <span class="math inline">\(y\)</span> are private; a neighboring dataset keeps every feature vector fixed and replaces one label. This is a useful pedagogical stepping stone — in the 1D picture above, a label-only replacement can only move a point <strong>vertically</strong>. In <strong>element-DP</strong> (the row-DP contract this lecture actually targets), the whole record <span class="math inline">\((x,y)\)</span> may change: a neighboring dataset can replace both a feature vector and its label. Element-DP is strictly harder, because now the adversary also controls <em>where in feature space</em> the changed row lands — and the leverage argument above says that location, not just the label value, controls how much the fit can move. Every mechanism below is evaluated primarily under the harder element-DP contract; label-DP appears once, next, as a diagnostic warm-up because it isolates the “move only vertically” case before the full “move anywhere” case.</p>
 </section>
-<section id="label-dp-input-perturbation-diagnostic" class="level2">
-<h2 class="anchored" data-anchor-id="label-dp-input-perturbation-diagnostic">Label-DP input perturbation (diagnostic)</h2>
-<p>Noisy labels induce indirect noise on <span class="math inline">\(X^\top y\)</span>. Per-label sensitivity is <strong>2</strong> — wasteful when the learner only needs the statistic at sensitivity <span class="math inline">\(2/n\)</span>.</p>
-<div id="8" class="cell" data-execution_count="5">
+<section id="proposal-1-input-perturbation-label-dp-diagnostic" class="level2">
+<h2 class="anchored" data-anchor-id="proposal-1-input-perturbation-label-dp-diagnostic">Proposal 1: input perturbation (label-DP diagnostic)</h2>
+<p><strong>Proposal.</strong> The most direct private-regression strategy needs no new theory: add enough noise to each row so that releasing the noisy rows is private, then run ordinary OLS on the noisy data as post-processing. Whatever comes out is private because it is a deterministic function of an already-private release. This works for <em>any</em> mechanism downstream, not just OLS, which is exactly why it is tempting.</p>
+<p><strong>Why it is wasteful.</strong> Input perturbation is a row-DP mechanism in disguise of a local-DP one: because the noise must make <em>each individual row</em> safe to release on its own, the noise scale cannot shrink as <span class="math inline">\(n\)</span> grows — every one of the <span class="math inline">\(n\)</span> rows pays for its own privacy, rather than the <span class="math inline">\(n\)</span> rows jointly paying once for a shared statistic. Concretely, under label-DP a single label has sensitivity <span class="math inline">\(2\)</span> (it can move by the full <span class="math inline">\([-1,1]\)</span> range in either direction), so the noise added to <em>each</em> label must be calibrated to sensitivity <span class="math inline">\(2\)</span>. But the quantity the learner actually needs — the sufficient statistic <span class="math inline">\(b=X^\top y\)</span> — only has <em>per-row</em> sensitivity <span class="math inline">\(2/n\)</span>: one row’s label can move <span class="math inline">\(b\)</span> by at most <span class="math inline">\(2\cdot\max_i\|x_i\|_2 \le 2\)</span> in absolute terms, but that single row’s share of a sum over <span class="math inline">\(n\)</span> rows shrinks the <em>marginal</em> contribution as <span class="math inline">\(n\)</span> grows in the way input perturbation never gets to exploit. The next two figures make this diagnostic concrete: first the error distribution of the input-perturbed release, then the effect on the fitted line’s slope in a witness where noise-versus-signal is visible by eye.</p>
+<div id="9" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>make_mechanism_error_distribution_figure(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    artifact,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">"label_dp_input"</span>,</span>
@@ -511,7 +536,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </div>
-<div id="9" class="cell" data-execution_count="6">
+<div id="10" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>make_input_perturbation_low_slope_figure(geometry, epsilon<span class="op">=</span><span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
@@ -528,11 +553,14 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </div>
+<p><strong>Diagnosis (label-DP input perturbation, diagnostic foil — not the repair).</strong> The error distribution above is centered but wide, and the low-slope witness shows why: once every label carries independent sensitivity-<span class="math inline">\(2\)</span> noise, the <em>signal</em> in <span class="math inline">\(X^\top y\)</span> (which depends on how strongly features and labels actually correlate) has to compete with noise that was calibrated to the worst-case single-label range rather than to the statistic’s true sensitivity. On a design where the true slope is small to begin with, the noisy slope is barely distinguishable from zero. Input perturbation is always <strong>available</strong> — it needs no assumptions about the learner beyond the public bounds — but it is never the mechanism of choice once a repair that targets the sufficient statistic directly is on the table. That repair is the second half of this lecture. First, one more foil: what if we skip the noisy-input step and add noise to <span class="math inline">\(\hat w\)</span> at the very end instead?</p>
 </section>
-<section id="output-perturbation-diagnostic" class="level2">
-<h2 class="anchored" data-anchor-id="output-perturbation-diagnostic">Output perturbation (diagnostic)</h2>
-<p>Global sensitivity of <span class="math inline">\(\hat w\)</span> scales with conditioning of <span class="math inline">\(X^\top X\)</span> — <strong>diagnostic, not a row-DP claim</strong> without a formal bound.</p>
-<div id="11" class="cell" data-execution_count="7">
+<section id="proposal-2-output-perturbation-diagnostic-foil-fails" class="level2">
+<h2 class="anchored" data-anchor-id="proposal-2-output-perturbation-diagnostic-foil-fails">Proposal 2: output perturbation (diagnostic foil — fails)</h2>
+<p><strong>Proposal.</strong> Run OLS exactly as usual on the real data, then add noise to the fitted weight vector <span class="math inline">\(\hat w\)</span> before releasing it. This is the output-perturbation template that works cleanly for many scalar statistics (mean, count) — calibrate the noise to the statistic’s global sensitivity and add it once at the end.</p>
+<p><strong>Question to answer before the figure:</strong> does <span class="math inline">\(\hat w=(X^\top X)^{-1}X^\top y\)</span> have a <em>global</em> sensitivity at all — a single number, independent of the dataset, that bounds how much one row replacement can move <span class="math inline">\(\hat w\)</span>?</p>
+<p><strong>Why it fails.</strong> It does not, in general. <span class="math inline">\(\hat w\)</span> passes through <span class="math inline">\((X^\top X)^{-1}\)</span>, and a single high-leverage row is exactly a row that can push <span class="math inline">\(X^\top X\)</span> toward a nearly singular matrix along the weakly supported direction identified above. As the smallest eigenvalue of <span class="math inline">\(X^\top X\)</span> approaches zero, <span class="math inline">\((X^\top X)^{-1}\)</span> blows up, and with it the amount that one replacement can move <span class="math inline">\(\hat w\)</span> — <strong>unboundedly</strong>, in the worst case, for ordinary (unregularized) linear regression. A mechanism cannot calibrate finite noise to an unbounded sensitivity. The figure below is therefore a <strong>diagnostic, not a row-DP claim</strong>: it shows how the <em>effective</em> sensitivity of <span class="math inline">\(\hat w\)</span> scales with the conditioning of <span class="math inline">\(X^\top X\)</span> on an engineered near-singular witness, without asserting any formal <span class="math inline">\((\epsilon,\delta)\)</span> bound for the underlying (non-private) <span class="math inline">\(\hat w\)</span> release.</p>
+<div id="13" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>make_output_perturbation_conditioning_figure(geometry, witness<span class="op">=</span><span class="st">"nearly_singular"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
@@ -549,12 +577,18 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </div>
+<p><strong>Diagnosis (output perturbation, diagnostic foil — not a private mechanism as shown).</strong> The conditioning witness above is engineered so the feature cloud is nearly degenerate along one direction — the same low-support direction the leverage discussion flagged earlier. As that direction’s eigenvalue shrinks, the diagnostic sensitivity of <span class="math inline">\(\hat w\)</span> grows without a visible ceiling. This is the regression analogue of a denominator that can approach zero: any private statistic that requires dividing by (or inverting) a quantity the data itself controls needs a worst-case floor on that quantity before it can be calibrated, and ordinary OLS provides none. Two routes repair this. One is to bound <span class="math inline">\(\hat w\)</span> itself by regularizing the <em>solve</em> (ridge, coming up). The other — the one this lecture takes first — is to stop perturbing the model at the end and instead perturb the <strong>sufficient statistics</strong> the model is built from, where the sensitivity is easy to state honestly.</p>
 </section>
-<section id="noisy-sufficient-statistics-adassp-and-gram-sketch-repair" class="level2">
-<h2 class="anchored" data-anchor-id="noisy-sufficient-statistics-adassp-and-gram-sketch-repair">Noisy sufficient statistics — AdaSSP and Gram-sketch repair</h2>
-<p>Valid row-DP repairs: perturb <span class="math inline">\((A,b)\)</span> or sketch/mix the Gram side and noise the RHS.</p>
-<p><strong>Provenance caveat:</strong> the Gram-sketch repair used here is a local teaching implementation of a one-step Hessian-mixing idea. Fixed-seed tests guard the current wiring, but this lecture does not claim a fully audited upstream port.</p>
-<div id="13" class="cell" data-execution_count="8">
+<section id="repair-noisy-sufficient-statistics-then-ridge" class="level2">
+<h2 class="anchored" data-anchor-id="repair-noisy-sufficient-statistics-then-ridge">Repair: noisy sufficient statistics, then ridge</h2>
+<p><strong>Proposal.</strong> Squared-loss linear regression has a natural pair of sufficient statistics: <span class="math inline">\(A=X^\top X\in\mathbb R^{d\times d}\)</span> and <span class="math inline">\(b=X^\top y\in\mathbb R^d\)</span>. If <span class="math inline">\((A,b)\)</span> are released privately, then <em>any</em> function of them — including <span class="math inline">\(\hat w=A^{-1}b\)</span> or <span class="math inline">\(\hat
+w_\lambda=(A+\lambda I)^{-1}b\)</span> — is free post-processing. Unlike <span class="math inline">\(\hat w\)</span>, both <span class="math inline">\(A\)</span> and <span class="math inline">\(b\)</span> have clean, dataset-independent sensitivity bounds under the row-DP contract: <span class="math inline">\(b=X^\top y\)</span> is a vector-valued linear query (one row changes it by a bounded amount because <span class="math inline">\(\|x_i\|_2\le1\)</span> and <span class="math inline">\(|y_i|\le1\)</span>), and <span class="math inline">\(A=X^\top X\)</span> is a sum of bounded rank-one outer products <span class="math inline">\(x_ix_i^\top\)</span>, so one row changes <span class="math inline">\(A\)</span> by a bounded amount in spectral norm too. Adding Gaussian noise to both is therefore a valid private release — this is the <strong>Analyze Gauss</strong> template: privatize <span class="math inline">\((A,b)\)</span>, solve afterward.</p>
+<p>So sufficient-statistics perturbation (SSP) is <em>privacy-valid</em> the moment output perturbation was not. But privacy validity was never the hard part of output perturbation — utility was, and noising <span class="math inline">\(A\)</span> directly reopens exactly the same wound from the other side. The figure below perturbs <span class="math inline">\(X^\top X\)</span> on the same near-singular witness used for the output-perturbation diagnostic. Watch what happens to the weakly supported direction: additive noise on a matrix that already has a near-zero eigenvalue does not just blur that direction, it can flip its sign, making the noisy matrix indefinite and <span class="math inline">\(\hat w = \tilde A^{-1}\tilde b\)</span> either wildly inaccurate or literally uninvertible.</p>
+<p><strong>Ridge is the natural repair, not a generic regularizer.</strong> Ridge solves <span class="math inline">\((A+\lambda I)w=b\)</span> instead of <span class="math inline">\(Aw=b\)</span>. Adding <span class="math inline">\(\lambda I\)</span> lifts <em>every</em> eigenvalue of <span class="math inline">\(A\)</span> by <span class="math inline">\(\lambda\)</span> before inversion — it is exactly the stabilization the noisy near-zero eigenvalue needs, applied for the same structural reason a denominator floor was needed above. Reaching for ridge here is not a stylistic preference; it is the direct fix for the failure mode the previous two figures diagnosed.</p>
+<p><strong>AdaSSP</strong> turns this into a full algorithm: perturb <span class="math inline">\(A\)</span> and <span class="math inline">\(b\)</span> with Gaussian noise calibrated to their sensitivities, <em>privately</em> estimate how small the true minimum eigenvalue of <span class="math inline">\(A\)</span> is likely to be (using a further slice of the privacy budget), and set the ridge weight <span class="math inline">\(\lambda\)</span> large enough to dominate the estimated noise-to-signal ratio in the weakest direction — then solve <span class="math inline">\(\hat w=(\tilde A+\lambda I)^{-1}\tilde b\)</span>. The three steps (noise <span class="math inline">\(A\)</span>, noise <span class="math inline">\(b\)</span>, estimate <span class="math inline">\(\lambda_{\min}\)</span> privately) compose under the usual Gaussian-mechanism accounting; the final solve is post-processing.</p>
+<p><strong>Gaussian sketching</strong> is a second way to privatize the Gram side. Instead of adding coordinate-wise noise directly to <span class="math inline">\(A\)</span>, it draws a random Gaussian sketch of the rows and forms a noisy Gram matrix from the sketch, mixing in a residual noise floor calibrated the same way AdaSSP calibrates its ridge weight. Geometrically this is still “randomize the covariance-like object,” just through projection instead of additive coordinate noise, and it inherits the same leverage-driven difficulty: high-leverage rows still dominate the sketch, so a ridge-style stabilization step is still needed afterward. The right-hand side <span class="math inline">\(b\)</span> is privatized the same way as in AdaSSP.</p>
+<p><strong>Provenance caveat.</strong> The Gram-sketch repair used here is a local teaching implementation of a one-step Hessian-mixing idea. Fixed-seed tests guard the current wiring, but this lecture does not claim a fully audited upstream port.</p>
+<div id="16" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>make_sufficient_statistics_geometry_figure(geometry, witness<span class="op">=</span><span class="st">"nearly_singular"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
@@ -571,7 +605,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </div>
-<div id="14" class="cell" data-execution_count="9">
+<p><strong>Diagnosis.</strong> Compare this panel to the output-perturbation conditioning figure above: same witness, same weak direction, but now the noise lands on <span class="math inline">\(A=X^\top X\)</span> instead of on <span class="math inline">\(\hat w\)</span>. The noisy ellipse visibly loses its shape precisely along the low-eigenvalue axis — the direction with the fewest rows backing it is the direction where additive noise is proportionally largest relative to the true signal. This is the utility question SSP raises that output perturbation never even got to ask, because output perturbation had already failed on privacy validity. AdaSSP’s answer is to <em>measure</em> how bad this direction is (privately) and size the ridge term to it; a fixed, untuned <span class="math inline">\(\lambda\)</span> would either under-stabilize on badly conditioned data or over-shrink on well-conditioned data. The next figure compares the diagnostic foils against the two valid row-DP repairs (AdaSSP and Gram-sketch) directly on the fitted model.</p>
+<div id="18" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>make_private_method_comparison_figure(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    artifact,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    epsilon<span class="op">=</span><span class="fl">1.0</span>,</span>
@@ -592,11 +627,13 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </div>
+<p><strong>Diagnosis.</strong> Element input perturbation and output perturbation are shown here <strong>only as diagnostics</strong> — they are not being claimed as valid row-DP releases at this <span class="math inline">\(\epsilon\)</span>, for the reasons diagnosed above (wasteful per-row noise; unbounded worst-case sensitivity). AdaSSP and the Gram-sketch repair are the two mechanisms in this comparison that <em>are</em> valid row-DP releases under the stated contract, and they consistently place noise at the sufficient-statistics stage rather than the row stage or the final-weight stage. Neither is free: both still pay for the geometry of the problem, in particular for how small the minimum eigenvalue of <span class="math inline">\(X^\top X\)</span> is and how much of the feature space is only weakly supported by data. What algorithm design buys is <em>where</em> that price is paid — at the statistic, where sensitivity is small and well understood, rather than at every row or at an unbounded final quantity.</p>
 </section>
 <section id="leaderboard-on-sml" class="level2">
 <h2 class="anchored" data-anchor-id="leaderboard-on-sml">Leaderboard on <code>sml</code></h2>
-<p>Valid row-DP repairs (AdaSSP, Gram-sketch repair) vs diagnostics — grouped by <strong>privacy status</strong> in separate panels; diagnostic curves are <strong>not DP claims</strong>.</p>
-<div id="16" class="cell" data-execution_count="10">
+<p><strong>Question to answer before the figure:</strong> across a sweep of privacy budgets, does the ranking of methods stay fixed, or does the best mechanism change depending on how much privacy you are willing to spend?</p>
+<p>The leaderboard below groups methods by <strong>privacy status</strong> in separate panels rather than pooling everything onto one axis: valid row-DP repairs (AdaSSP, Gram-sketch repair) in one panel, diagnostic foils (input perturbation, output perturbation) in another. Pooling them would let a diagnostic that is not actually private at this <span class="math inline">\(\epsilon\)</span> look “competitive” against a mechanism that is — exactly the comparison-axis trap the lecture format is built to avoid. Within the valid-repair panel, watch whether AdaSSP’s private eigenvalue estimate or the Gram-sketch’s projection noise wins at small <span class="math inline">\(\epsilon\)</span>, and whether that ordering flips as <span class="math inline">\(\epsilon\)</span> grows and both scales are more forgiving of the same weak-direction geometry.</p>
+<div id="21" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>make_regression_privacy_utility_leaderboard(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    artifact,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    repetitions<span class="op">=</span>smoke_count(<span class="dv">20</span>, smoke<span class="op">=</span><span class="dv">5</span>),</span>
@@ -616,6 +653,13 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </div>
+</section>
+<section id="closing-privacy-is-a-worst-case-statement-about-influence" class="level2">
+<h2 class="anchored" data-anchor-id="closing-privacy-is-a-worst-case-statement-about-influence">Closing: privacy is a worst-case statement about influence</h2>
+<p>Every method in this lecture answers the same question — how much can one row change the release — but at a different stage of the pipeline: at the row (input perturbation), at the final model (output perturbation, which fails), or at the sufficient statistics (SSP, AdaSSP, Gram-sketch). The quantity that decided the outcome at every stage was the same one the drag interactive introduced at the start: <strong>leverage</strong>, the geometric fact that some feature directions are backed by almost no data and therefore let one row move the fit a great deal.</p>
+<p>That quantity is not unique to privacy. <strong>Robust statistics</strong> asks the identical question — how much can one outlier move an estimator — and answers it with the same leverage/residual decomposition used here. <strong>Generalization</strong> asks a cousin question — how much can one training point move a model’s predictions on new data — and stability-based generalization bounds are built from the same influence quantities. What makes the <em>private</em> version distinct is the <strong>quantifier</strong>: privacy insists on a bound that holds for the single worst possible row, chosen adversarially, while ordinary statistical reasoning is usually content with a bound that holds for a typical row, or on average across rows. A method can be statistically robust in the typical case (the low-slope witness looked fine on ordinary data) and still fail a worst-case privacy audit (the near-singular witness broke output perturbation completely) — the recurring worst-case-versus- typical-case contrast from Lectures 5–6, now stated in feature-space geometry instead of value space.</p>
+<p>The private algorithm designer’s job, across every mechanism surveyed here, was to choose <em>where</em> in the computation to spend the noise so that it damages the least amount of useful signal while still bounding every individual row’s worst-case influence — and, when the raw sufficient statistics turn out to be too fragile after noise (a near-singular <span class="math inline">\(\tilde A\)</span>), to repair the <em>solve</em> itself with ridge rather than pretend the fragility away.</p>
+<p><strong>Bridge to Lecture 8.</strong> Squared loss let this lecture collapse an entire model down to two noisy sufficient statistics, <span class="math inline">\(\tilde A\)</span> and <span class="math inline">\(\tilde b\)</span>, with the model itself recovered as post-processing. The next lecture asks what happens when the loss is no longer squared: a linear-query classifier whose weights are literally <span class="math inline">\(w=\frac{1}{n}\sum_i y_i x_i\)</span> — a single vector-valued linear query with a much simpler sufficient statistic, but a discontinuous 0/1 loss that reintroduces the leverage problem in a new form.</p>
 
 
 </section>
@@ -641,6 +685,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1042,13 +1230,40 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-      &nbsp;
-    </div>   
+<p>© Applied Differential Privacy. Built with Quarto.</p>
+</div>   
     <div class="nav-footer-center">
-<p>Applied Differential Privacy · Built with Quarto.</p>
-</div>
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/course.html">
+<p>Course</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/syllabus.html">
+<p>Syllabus</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/schedule.html">
+<p>Schedule</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/about.html">
+<p>About</p>
+</a>
+  </li>  
+</ul>
+    </div>
     <div class="nav-footer-right">
-      &nbsp;
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://github.com/applied-dp-course/website">
+<p>Source</p>
+</a>
+  </li>  
+</ul>
     </div>
   </div>
 </footer>

@@ -30,15 +30,18 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../theme/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-726f06993713be57330905d9e13eafeb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-760ea4b67ad7cb19168038ebc39d72c7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-0369c80c4127770e0cda08b006c0f997.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -231,6 +234,9 @@ document.addEventListener("DOMContentLoaded", function () {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../theme/favicon.svg" alt="Applied Differential Privacy" class="navbar-logo">
+    </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Applied Differential Privacy</span>
     </a>
@@ -288,6 +294,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -342,13 +349,13 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- BEGIN AUTO-GENERATED LECTURES -->
 <section id="k-anonymity" class="level2">
 <h2 class="anchored" data-anchor-id="k-anonymity">K-anonymity</h2>
-<p><em>Week 1</em></p>
+<p><span class="week-badge">Week 1</span></p>
 <p><strong>Status:</strong> Forthcoming</p>
 <p>Begin with modern and historical privacy failures, then examine k-anonymity as a plausible first defense. Composition, homogeneous groups, and auxiliary information show why hiding identity is not the same as hiding sensitive facts—and why the course needs a stronger adversarial definition.</p>
 </section>
 <section id="reconstruction-attacks" class="level2">
 <h2 class="anchored" data-anchor-id="reconstruction-attacks">Reconstruction Attacks</h2>
-<p><em>Week 2</em></p>
+<p><span class="week-badge">Week 2</span></p>
 <p><strong>Status:</strong> Available</p>
 <p>See how accurate answers to many aggregate questions become constraints on a hidden database. Brute force, least squares, and linear programming reveal both why reconstruction is possible and why enough defensive noise is unavoidable.</p>
 <ul>
@@ -358,7 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </section>
 <section id="dp-as-hypothesis-testing" class="level2">
 <h2 class="anchored" data-anchor-id="dp-as-hypothesis-testing">DP as Hypothesis Testing</h2>
-<p><em>Week 3</em></p>
+<p><span class="week-badge">Week 3</span></p>
 <p><strong>Status:</strong> Available</p>
 <p>Model privacy leakage as the strongest adversary’s attempt to distinguish two neighboring datasets. Likelihood ratios, ROC curves, and decision rules lead to an operational interpretation of epsilon and delta rather than a definition presented without motivation.</p>
 <ul>
@@ -369,7 +376,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </section>
 <section id="privacy-auditing" class="level2">
 <h2 class="anchored" data-anchor-id="privacy-auditing">Privacy Auditing</h2>
-<p><em>Week 4</em></p>
+<p><span class="week-badge">Week 4</span></p>
 <p><strong>Status:</strong> Available</p>
 <p>Reverse the hypothesis-testing view of differential privacy: use sampled outputs and a fixed distinguishing event to obtain an empirical lower bound on privacy loss. Confidence intervals show why an apparent attack must be corrected for finite-sample uncertainty.</p>
 <ul>
@@ -379,7 +386,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </section>
 <section id="private-estimation" class="level2">
 <h2 class="anchored" data-anchor-id="private-estimation">Private Estimation</h2>
-<p><em>Week 5</em></p>
+<p><span class="week-badge">Week 5</span></p>
 <p><strong>Status:</strong> Available</p>
 <p>Estimate means, medians, quantiles, and histograms while auditing tempting but invalid shortcuts. The central lesson is that useful privacy often comes from changing the utility measure or privatizing data-dependent choices—not simply adding noise to an ordinary estimator.</p>
 <ul>
@@ -389,7 +396,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </section>
 <section id="private-subgroup-comparisons-after-clipping" class="level2">
 <h2 class="anchored" data-anchor-id="private-subgroup-comparisons-after-clipping">Private Subgroup Comparisons After Clipping</h2>
-<p><em>Week 6</em></p>
+<p><span class="week-badge">Week 6</span></p>
 <p><strong>Status:</strong> Available</p>
 <p>Once the value range is controlled, subgroup analysis becomes a problem of denominators and data-dependent stability. Compare global sensitivity, invalid oracle local sensitivity, noisy counts and sums, propose-test-release, and smooth sensitivity, then introduce private selection and thresholding.</p>
 <ul>
@@ -399,7 +406,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </section>
 <section id="private-linear-regression" class="level2">
 <h2 class="anchored" data-anchor-id="private-linear-regression">Private linear regression</h2>
-<p><em>Week 7</em></p>
+<p><span class="week-badge">Week 7</span></p>
 <p><strong>Status:</strong> Available</p>
 <p>Move from private scalar statistics to a private model. Regression geometry, leverage, and conditioning explain why input and output perturbation can fail, while noisy sufficient statistics and regularization show where privacy noise can be injected more effectively.</p>
 <ul>
@@ -409,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </section>
 <section id="mnist-linear-query-classifier" class="level2">
 <h2 class="anchored" data-anchor-id="mnist-linear-query-classifier">MNIST linear-query classifier</h2>
-<p><em>Week 8</em></p>
+<p><span class="week-badge">Week 8</span></p>
 <p><strong>Status:</strong> Available</p>
 <p>Build a visual classifier whose weights are themselves a bounded vector-valued query. A model can look overwhelmed by privacy noise while still predicting accurately, motivating effective dimension and the distinction between population-level signal, generalization, and privacy leakage.</p>
 <ul>
@@ -419,25 +426,25 @@ document.addEventListener("DOMContentLoaded", function () {
 </section>
 <section id="machine-learning-privacy-attacks-and-auditing" class="level2">
 <h2 class="anchored" data-anchor-id="machine-learning-privacy-attacks-and-auditing">Machine-learning privacy attacks and auditing</h2>
-<p><em>Week 9</em></p>
+<p><span class="week-badge">Week 9</span></p>
 <p><strong>Status:</strong> Planned</p>
 <p>Use logistic-regression losses and margins to ask whether a trained model behaves differently because a particular record was included. Typical and worst-case membership audits reconnect machine learning to the ROC and confidence-bound tools developed earlier in the course.</p>
 </section>
 <section id="dp-sgd-stability-and-generalization" class="level2">
 <h2 class="anchored" data-anchor-id="dp-sgd-stability-and-generalization">DP-SGD, stability, and generalization</h2>
-<p><em>Week 10</em></p>
+<p><span class="week-badge">Week 10</span></p>
 <p><strong>Status:</strong> Planned</p>
 <p>Open the iterative training loop and identify each example’s gradient contribution. Per-example clipping, calibrated Gaussian noise, subsampling, and composition produce DP-SGD; re-auditing the trained model tests whether the repair controls the worst-case influence exposed previously.</p>
 </section>
 <section id="private-parametric-synthesis" class="level2">
 <h2 class="anchored" data-anchor-id="private-parametric-synthesis">Private parametric synthesis</h2>
-<p><em>Week 11</em></p>
+<p><span class="week-badge">Week 11</span></p>
 <p><strong>Status:</strong> Planned</p>
 <p>Study synthetic data as post-processing of private measurements, not as privacy by imitation. Begin with a transparent parametric example and expose the difference between mechanism error and model misspecification.</p>
 </section>
 <section id="marginals-are-not-a-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="marginals-are-not-a-dataset">Marginals are not a dataset</h2>
-<p><em>Week 12</em></p>
+<p><span class="week-badge">Week 12</span></p>
 <p><strong>Status:</strong> Planned</p>
 <p>See why accurate one-way marginals can still erase the relationships an analysis needs. The lecture introduces workload-aware utility through correlations and selected two-way measurements. <!-- END AUTO-GENERATED LECTURES --></p>
 
@@ -465,6 +472,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -866,13 +1017,40 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-      &nbsp;
-    </div>   
+<p>© Applied Differential Privacy. Built with Quarto.</p>
+</div>   
     <div class="nav-footer-center">
-<p>Applied Differential Privacy · Built with Quarto.</p>
-</div>
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../pages/course.html">
+<p>Course</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../pages/syllabus.html">
+<p>Syllabus</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../pages/schedule.html">
+<p>Schedule</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../pages/about.html">
+<p>About</p>
+</a>
+  </li>  
+</ul>
+    </div>
     <div class="nav-footer-right">
-      &nbsp;
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://github.com/applied-dp-course/website">
+<p>Source</p>
+</a>
+  </li>  
+</ul>
     </div>
   </div>
 </footer>

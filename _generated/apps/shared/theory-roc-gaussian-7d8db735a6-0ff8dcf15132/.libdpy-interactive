@@ -1,0 +1,8 @@
+name=theory_roc_visualizer
+artifact=theory-roc-gaussian-7d8db735a6
+export_backend=wasm-marimo
+signature=0ff8dcf151323eee4d194b0200e2b72bb36f5d185d49ed13eb639942b837ecad
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/theory-roc-gaussian-7d8db735a6-0ff8dcf15132
+canonical_source=content/blog-posts/private-estimation/post.ipynb
