@@ -169,7 +169,7 @@
 <h2>Hypothesis testing and binary classification</h2>
 <h3 id="two-distributions">Two distributions</h3>
 <p>Example: <span class="math inline">\(\mathbf{H_0}\)</span>: <span class="math inline">\(x \sim \mathcal{N}(\mu_0, \sigma^2)\)</span> (negative) and <span class="math inline">\(\mathbf{H_1}\)</span>: <span class="math inline">\(x \sim \mathcal{N}(\mu_1, \sigma^2)\)</span> (positive).</p>
-<div id="5d7f4a6f" class="cell" data-execution_count="3">
+<div id="a365c160" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 <figure>
@@ -243,7 +243,7 @@ Columns correspond to the <strong>actual</strong> class; rows correspond to the 
 <section id="decision-rule" class="slide level2">
 <h2>Decision rule</h2>
 <p>A function from the domain to <span class="math inline">\(\{0, 1\}\)</span>, which given a sampled value guesses whether it was sampled from <span class="math inline">\(H_0\)</span> or <span class="math inline">\(H_1\)</span>.</p>
-<div id="aa8f3ac4" class="cell" data-execution_count="4">
+<div id="5f9b2e83" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 <figure>
@@ -368,7 +368,7 @@ Columns correspond to the <strong>actual</strong> class; rows correspond to the 
 </section>
 <section id="fp-and-tp" class="slide level2">
 <h2>FP and TP</h2>
-<div id="8e2f030e" class="cell" data-execution_count="5">
+<div id="d0cdf1dd" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 <figure>
@@ -396,7 +396,7 @@ Columns correspond to the <strong>actual</strong> class; rows correspond to the 
 <section id="the-roc-plane" class="slide level2">
 <h2>The ROC plane</h2>
 <p>Naturally, there is a tradeoff between TPR and FPR. This tradeoff is represented by the <strong>ROC plane</strong>. Any decision rule is a point with coordinates <span class="math inline">\((FPR, TPR)\)</span>.</p>
-<div id="cbbf880e" class="cell" data-execution_count="6">
+<div id="230dc7d1" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 <figure>
@@ -416,7 +416,7 @@ Columns correspond to the <strong>actual</strong> class; rows correspond to the 
 <section id="the-roc-curve" class="slide level2">
 <h2>The ROC curve</h2>
 <p>For any FPR there is a maximal achievable TPR; the collection of these points is the <strong>ROC curve</strong>.</p>
-<div id="3ed6d81c" class="cell" data-execution_count="7">
+<div id="a6f42868" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 <figure>
@@ -436,7 +436,7 @@ Columns correspond to the <strong>actual</strong> class; rows correspond to the 
 <section id="the-roc-curve-1" class="slide level2">
 <h2>The ROC curve</h2>
 <p>Of course, this curve depends on <span class="math inline">\(\mu_1 - \mu_0\)</span> and <span class="math inline">\(\sigma\)</span>.</p>
-<div id="bd2fe39b" class="cell" data-execution_count="8">
+<div id="e55c1469" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 <figure>
@@ -466,7 +466,7 @@ Columns correspond to the <strong>actual</strong> class; rows correspond to the 
 <section id="case-study-two-binomials-1" class="slide level2">
 <h2>Case study: two Binomials</h2>
 <p>Consider two Binomial random variables: <span class="math inline">\(H_0 = \mathrm{Bin}(0.5, 5)\)</span> and <span class="math inline">\(H_1 = \mathrm{Bin}(0.25, 5)\)</span>.</p>
-<div id="d323c53a" class="cell" data-execution_count="9">
+<div id="7ac4de28" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 <figure>
@@ -487,27 +487,27 @@ Columns correspond to the <strong>actual</strong> class; rows correspond to the 
 <h2>Connecting the threshold to the ROC</h2>
 <h3 id="gaussian-distributions">Gaussian distributions</h3>
 <p>Sweeping the threshold traces a curve in the ROC plane.</p>
-<div id="8ad25d7b" class="cell" data-execution_count="10">
+<div id="4445082b" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display" data-execution_count="10">
-<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-4bac7ab47e-4ecd4b5b597e/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-4bac7ab47e-7a351a2e793c/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
 <section id="connecting-the-threshold-to-the-roc-1" class="slide level2">
 <h2>Connecting the threshold to the ROC</h2>
 <h3 id="uniform-distributions">Uniform distributions</h3>
-<div id="e1463e76" class="cell" data-execution_count="11">
+<div id="a9b329da" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display" data-execution_count="11">
-<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-f4fad854c4-9331eccbe1cc/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-f4fad854c4-dc32f33188d2/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
 <section id="neymanpearson-lemma" class="slide level2">
 <h2>Neyman–Pearson lemma</h2>
 <p>Every optimal decision rule is a threshold on the log probability ratio. If the log probability ratio is monotonic in <span class="math inline">\(x\)</span>, a threshold on the value itself is optimal.</p>
-<div id="620f6109" class="cell" data-execution_count="12">
+<div id="cc26f2a2" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display" data-execution_count="12">
-<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-1474ef07aa-d75e4e9cebc4/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-1474ef07aa-cb54221388e4/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
@@ -518,9 +518,9 @@ Columns correspond to the <strong>actual</strong> class; rows correspond to the 
 </section>
 <section id="privacy-as-a-bound-on-the-roc-curve-1" class="slide level2">
 <h2>Privacy as a bound on the ROC curve</h2>
-<div id="89c92bfa" class="cell" data-execution_count="13">
+<div id="bbdeebee" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display" data-execution_count="13">
-<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:620px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-6197737a49-3606152d5ba4/index.html" width="100%" height="620" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:620px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-6197737a49-caa96b3e6b9f/index.html" width="100%" height="620" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
@@ -532,9 +532,9 @@ Columns correspond to the <strong>actual</strong> class; rows correspond to the 
 <section id="is-this-a-new-privacy-definition-1" class="slide level2">
 <h2>Is this a new privacy definition?</h2>
 <p>Let’s use this insight to reason about the privacy of several other noise-addition mechanisms:</p>
-<div id="0429a0ec" class="cell" data-execution_count="14">
+<div id="29d92573" class="cell" data-execution_count="14">
 <div class="cell-output cell-output-display" data-execution_count="14">
-<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:620px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-laplace-uniform-06b3767cd2-760520ce24e1/index.html" width="100%" height="620" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:620px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-laplace-uniform-06b3767cd2-6419f9ec0c58/index.html" width="100%" height="620" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
