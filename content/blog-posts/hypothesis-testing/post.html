@@ -74,8 +74,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-1514f5da12f723dc48804aac60978103.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../site_libs/bootstrap/bootstrap-dark-855f9d31b0e9cf900a1d88f7ad89bceb.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-520c36e687f14f57082fa33f95c1cf4f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-2d877df4138b1337d6dc48be9f9f2cce.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,7 +107,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <style>
-/* keep wide notebook figures inside the column instead of clipping on the right */
 .cell-output-display img, .cell-output-display .plotly-graph-div { max-width: 100%; height: auto; }
 </style>
 
@@ -373,9 +372,34 @@ document.addEventListener("DOMContentLoaded", function () {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-contract-one-hidden-bit-two-neighboring-worlds" id="toc-the-contract-one-hidden-bit-two-neighboring-worlds" class="nav-link active" data-scroll-target="#the-contract-one-hidden-bit-two-neighboring-worlds">The contract: one hidden bit, two neighboring worlds</a></li>
+  <li><a href="#why-choose-such-a-strong-attacker" id="toc-why-choose-such-a-strong-attacker" class="nav-link" data-scroll-target="#why-choose-such-a-strong-attacker">Why choose such a strong attacker?</a></li>
+  <li><a href="#question-what-does-the-attacker-actually-observe" id="toc-question-what-does-the-attacker-actually-observe" class="nav-link" data-scroll-target="#question-what-does-the-attacker-actually-observe">Question: what does the attacker actually observe?</a></li>
+  <li><a href="#question-how-should-one-output-become-a-guess" id="toc-question-how-should-one-output-become-a-guess" class="nav-link" data-scroll-target="#question-how-should-one-output-become-a-guess">Question: how should one output become a guess?</a></li>
+  <li><a href="#question-which-mistakes-matter" id="toc-question-which-mistakes-matter" class="nav-link" data-scroll-target="#question-which-mistakes-matter">Question: which mistakes matter?</a></li>
+  <li><a href="#from-regions-to-rates" id="toc-from-regions-to-rates" class="nav-link" data-scroll-target="#from-regions-to-rates">From regions to rates</a></li>
+  <li><a href="#question-what-happens-when-the-threshold-moves" id="toc-question-what-happens-when-the-threshold-moves" class="nav-link" data-scroll-target="#question-what-happens-when-the-threshold-moves">Question: what happens when the threshold moves?</a></li>
+  <li><a href="#question-what-makes-the-attack-easier" id="toc-question-what-makes-the-attack-easier" class="nav-link" data-scroll-target="#question-what-makes-the-attack-easier">Question: what makes the attack easier?</a></li>
+  <li><a href="#exercise-two-binomial-laws" id="toc-exercise-two-binomial-laws" class="nav-link" data-scroll-target="#exercise-two-binomial-laws">Exercise: two binomial laws</a></li>
+  <li><a href="#question-how-does-one-threshold-trace-the-roc" id="toc-question-how-does-one-threshold-trace-the-roc" class="nav-link" data-scroll-target="#question-how-does-one-threshold-trace-the-roc">Question: how does one threshold trace the ROC?</a></li>
+  <li><a href="#question-is-a-threshold-always-smooth-and-forgiving" id="toc-question-is-a-threshold-always-smooth-and-forgiving" class="nav-link" data-scroll-target="#question-is-a-threshold-always-smooth-and-forgiving">Question: is a threshold always smooth and forgiving?</a></li>
+  <li><a href="#the-neymanpearson-rule" id="toc-the-neymanpearson-rule" class="nav-link" data-scroll-target="#the-neymanpearson-rule">The Neyman–Pearson rule</a></li>
+  <li><a href="#question-what-if-we-choose-the-false-positive-budget-first" id="toc-question-what-if-we-choose-the-false-positive-budget-first" class="nav-link" data-scroll-target="#question-what-if-we-choose-the-false-positive-budget-first">Question: what if we choose the false-positive budget first?</a></li>
+  <li><a href="#back-to-privacy-translate-every-object" id="toc-back-to-privacy-translate-every-object" class="nav-link" data-scroll-target="#back-to-privacy-translate-every-object">Back to privacy: translate every object</a></li>
+  <li><a href="#question-what-shape-does-differential-privacy-impose" id="toc-question-what-shape-does-differential-privacy-impose" class="nav-link" data-scroll-target="#question-what-shape-does-differential-privacy-impose">Question: what shape does differential privacy impose?</a></li>
+  <li><a href="#the-slope-and-shift-are-varepsilon-and-delta" id="toc-the-slope-and-shift-are-varepsilon-and-delta" class="nav-link" data-scroll-target="#the-slope-and-shift-are-varepsilon-and-delta">The slope and shift are <span class="math inline">\(\varepsilon\)</span> and <span class="math inline">\(\delta\)</span></a></li>
+  <li><a href="#question-what-do-noise-tails-and-supports-imply" id="toc-question-what-do-noise-tails-and-supports-imply" class="nav-link" data-scroll-target="#question-what-do-noise-tails-and-supports-imply">Question: what do noise tails and supports imply?</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -385,7 +409,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -397,253 +421,336 @@ document.addEventListener("DOMContentLoaded", function () {
 </header>
 
 
-<p>This is the <strong>self-study</strong> companion to the lecture deck: full narrative + all code, meant to be read and run. For the slide version (code hidden), open the <a href="../../lecture-presentations/hypothesis-testing/presentation.html">presentation deck</a>.</p>
-<section id="hypothesis-testing-and-binary-classification" class="level2">
-<h2 class="anchored" data-anchor-id="hypothesis-testing-and-binary-classification">Hypothesis Testing and Binary Classification</h2>
-<p>In the statistical literature, hypothesis testing typically refers to the comparison of two hypotheses: The null hypothesis, <span class="math inline">\(H_0\)</span>, and the alternative hypothesis, <span class="math inline">\(H_1\)</span>. In the CS community, the more common terminology is binarry classification, where the negative hypothesis is compared to the positive one. We will use these two descriptions interchangably.</p>
-<p>In this lecture we will focus on the simple setting, where the hypotheses are both distributions of the same family with the same scale and different means. For example, <span class="math inline">\(\mathbf{H_0}\)</span>: <span class="math inline">\(x \sim \mathcal{N}(\mu_0, \sigma^2)\)</span> (negative) and <span class="math inline">\(\mathbf{H_1}\)</span>: <span class="math inline">\(x \sim \mathcal{N}(\mu_1, \sigma ^ 2)\)</span> (positive). Throughout this exercise, we assume w.l.o.g. that <span class="math inline">\(\mu_1 &gt; \mu_0 .\)</span></p>
-<div id="4" class="cell" data-execution_count="3">
+<p>This self-study notebook derives differential privacy from an attacker’s decision problem. It is meant to be read and run: code is folded, every visual answers a question posed immediately before it, and the closing comparison separates what Laplace, Gaussian, and uniform noise can guarantee. For the code-hidden lecture version, open the <a href="../../lecture-presentations/hypothesis-testing/presentation.html">presentation deck</a>.</p>
+<section id="the-contract-one-hidden-bit-two-neighboring-worlds" class="level2">
+<h2 class="anchored" data-anchor-id="the-contract-one-hidden-bit-two-neighboring-worlds">The contract: one hidden bit, two neighboring worlds</h2>
+<p>We use <strong>add/remove adjacency</strong>. Fix a target record and two neighboring datasets:</p>
+<p><span class="math display">\[
+D_0 = D \quad\text{(target absent)}, \qquad
+D_1 = D \cup \{z\} \quad\text{(target present)}.
+\]</span></p>
+<p>The mechanism <span class="math inline">\(M\)</span>, its parameters, the data domain, and everything common to <span class="math inline">\(D_0,D_1\)</span> are public. The private fact is the one-bit world label <span class="math inline">\(b\in\{0,1\}\)</span>. The attacker sees one released output <span class="math inline">\(O\sim M(D_b)\)</span>, knows the mechanism and the neighboring pair, and tries to infer <span class="math inline">\(b\)</span>.</p>
+<p>The labels <span class="math inline">\(H_0\)</span> for absent/negative and <span class="math inline">\(H_1\)</span> for present/positive are conventions. Privacy cannot depend on which world we happen to call positive, so a differential-privacy guarantee must control both directions. This lecture studies one fixed pair to build intuition; the final definition quantifies over every allowed neighboring pair and every decision rule.</p>
+</section>
+<section id="why-choose-such-a-strong-attacker" class="level2">
+<h2 class="anchored" data-anchor-id="why-choose-such-a-strong-attacker">Why choose such a strong attacker?</h2>
+<p>Earlier anonymity proposals failed when their threat models guessed too little about auxiliary information. Here we make the pessimistic choice explicit: the attacker may know every public detail and all common records. Only the target’s membership bit remains hidden. This is not a claim that every real attacker is so informed. It is a way to make the promise survive future side information.</p>
+<p>Cryptography can hide a message while authorized parties retain a secret key. A useful statistical release has no analogous escape hatch: it must depend on the dataset enough to answer a question. A constant mechanism gives perfect privacy and zero utility. We therefore need to bound how much the useful output changes the attacker’s evidence, rather than demand that it reveal nothing.</p>
+<p>Under <span class="math inline">\(D_0\)</span>, outputs follow <span class="math inline">\(P=M(D_0)\)</span>; under <span class="math inline">\(D_1\)</span>, they follow <span class="math inline">\(Q=M(D_1)\)</span>. Membership inference has become a binary hypothesis test based on a single draw.</p>
+</section>
+<section id="question-what-does-the-attacker-actually-observe" class="level2">
+<h2 class="anchored" data-anchor-id="question-what-does-the-attacker-actually-observe">Question: what does the attacker actually observe?</h2>
+<p>Start with a visible proxy for the two output laws:</p>
+<p><span class="math display">\[
+H_0: O\sim\mathcal N(0,1), \qquad H_1: O\sim\mathcal N(1,1).
+\]</span></p>
+<p>Before looking at the figure, predict where an output would be strong evidence for <span class="math inline">\(H_1\)</span>, where it would favor <span class="math inline">\(H_0\)</span>, and where the laws overlap too much for a confident guess. The overlap—not the distance between two means by itself—is the attacker’s uncertainty.</p>
+<div id="6" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dist_neg <span class="op">=</span> norm(<span class="dv">0</span>, <span class="dv">1</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dist_pos <span class="op">=</span> norm(<span class="dv">1</span>, <span class="dv">1</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>make_hypothesis_distributions_figure(dist_neg, dist_pos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>make_hypothesis_distributions_figure(dist_neg, dist_pos)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="post_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 </div>
 </section>
-<section id="desicion-rule" class="level2">
-<h2 class="anchored" data-anchor-id="desicion-rule">Desicion rule</h2>
-<p>A desicion rule is a function from the domain of the distributions (the reals, in this case) to <span class="math inline">\(\{0, 1\}\)</span>, which given a sampled value guesses if it was sampeled from <span class="math inline">\(H_0\)</span> or <span class="math inline">\(H_1\)</span>. It might be non-deterministic.</p>
-<p>Throughout this lecture we will consider a natural desicion rule - threshold, that is, given a threshold <span class="math inline">\(\tau\)</span>, if <span class="math inline">\(x &lt; \tau\)</span> we guess it is negative and if <span class="math inline">\(x &gt; \tau\)</span> we guess it is positive (since these are continous distributions, the probability that <span class="math inline">\(x=\tau\)</span> is <span class="math inline">\(0\)</span>).</p>
-<div id="6" class="cell" data-execution_count="4">
+<section id="question-how-should-one-output-become-a-guess" class="level2">
+<h2 class="anchored" data-anchor-id="question-how-should-one-output-become-a-guess">Question: how should one output become a guess?</h2>
+<p>A <strong>decision rule</strong> maps an observed output to <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, possibly using randomness. For these equal-variance Gaussians, a natural rule guesses <span class="math inline">\(H_1\)</span> when <span class="math inline">\(O&gt;\tau\)</span>. Moving <span class="math inline">\(\tau\)</span> left makes the attacker say “present” more often in both worlds; moving it right makes that guess rarer.</p>
+<p>With <span class="math inline">\(\tau=0.35\)</span>, which shaded region is evidence for presence? Which errors grow if the threshold moves left? Answer first, then use the visual to check the geometry.</p>
+<div id="8" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tau <span class="op">=</span> <span class="fl">0.35</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>make_threshold_decision_rule_figure(dist_neg, dist_pos, tau)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>make_threshold_decision_rule_figure(dist_neg, dist_pos, tau)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="post_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 </div>
 </section>
-<section id="fpr-and-tpf" class="level2">
-<h2 class="anchored" data-anchor-id="fpr-and-tpf">FPR and TPF</h2>
-<p>Any two distributions and a desicion rule, define four regions: * True Positives (elements drawn from <span class="math inline">\(H_1\)</span> that the desicion rule marked as positive) * False Negative (elements drawn from <span class="math inline">\(H_1\)</span> that the desicion rule marked as negative) * True Negative (elements drawn from <span class="math inline">\(H_0\)</span> that the desicion rule marked as negative) * False Positives (elements drawn from <span class="math inline">\(H_0\)</span> that the desicion rule marked as positive)</p>
-<div id="8" class="cell" data-execution_count="5">
+<section id="question-which-mistakes-matter" class="level2">
+<h2 class="anchored" data-anchor-id="question-which-mistakes-matter">Question: which mistakes matter?</h2>
+<p>For a fixed rule, there are four outcomes:</p>
+<ul>
+<li>true positive: <span class="math inline">\(H_1\)</span> generated the output and the rule guesses <span class="math inline">\(1\)</span>;</li>
+<li>false negative: <span class="math inline">\(H_1\)</span> generated the output and the rule guesses <span class="math inline">\(0\)</span>;</li>
+<li>true negative: <span class="math inline">\(H_0\)</span> generated the output and the rule guesses <span class="math inline">\(0\)</span>;</li>
+<li>false positive: <span class="math inline">\(H_0\)</span> generated the output and the rule guesses <span class="math inline">\(1\)</span>.</li>
+</ul>
+<p>In privacy language, a false positive accuses an absent person of participation; a true positive correctly identifies a participant. Before viewing the panels, locate the false-positive tail under <span class="math inline">\(H_0\)</span> and the true-positive tail under <span class="math inline">\(H_1\)</span>.</p>
+<div id="10" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>make_fpr_tpr_confusion_panels_figure(dist_neg, dist_pos, tau)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>make_fpr_tpr_confusion_panels_figure(dist_neg, dist_pos, tau)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="post_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></p>
-</figure>
 </div>
-</div>
-</div>
-<p>Using these notions we can define the key quntities we use: * The probability that an element drawn from <span class="math inline">\(H_1\)</span> will be marked as positive is the True Positive Ratio (TPR) * The probability that an element drawn from <span class="math inline">\(H_0\)</span> will be marked as positive is the False Positive Ratio (FPR)</p>
-<p>In the case of a threshold desicion rule we have <span class="math inline">\(~FPR := \underset{X \sim H_0}{\mathbb{P}}(X &gt; \tau)~\)</span> and <span class="math inline">\(~TPR := \underset{X \sim H_1}{\mathbb{P}}(X &gt; \tau)\)</span>.</p>
 </section>
-<section id="roc-plane" class="level2">
-<h2 class="anchored" data-anchor-id="roc-plane">ROC plane</h2>
-<p>Naturally, there is a tradeoff between the TPR and FPR. We can increase the TPR by choosing a desiion rule that tends to guess “positive” more frequently, but this will result in a higher FPR and vice versa.</p>
-<p>This tradeoff is represented by the ROC plane. Any desicion rule is represents by a point with coordinates (FPR, TPR). The diagonal <span class="math inline">\(y=x\)</span> is induced by randomly guessing “positive” w.p. <span class="math inline">\(p\)</span> (which will be equal to FPR and TPR). For any FPR, there is some maximal achievable TPR. The collection of these points is called the ROC curve.</p>
-<div id="11" class="cell" data-execution_count="6">
+<section id="from-regions-to-rates" class="level2">
+<h2 class="anchored" data-anchor-id="from-regions-to-rates">From regions to rates</h2>
+<p>The two rates we track are</p>
+<p><span class="math display">\[
+\operatorname{FPR}(\tau)=\Pr_{O\sim H_0}[O&gt;\tau],\qquad
+\operatorname{TPR}(\tau)=\Pr_{O\sim H_1}[O&gt;\tau].
+\]</span></p>
+<p>They are conditional probabilities, so they do not depend on a population membership prior. That matters: if only one person in a million participated, the strategy “always guess absent” has nearly 100% accuracy without reading the release. Accuracy would call that attack excellent even though it learned nothing. FPR and TPR expose the actual distinguishing behavior.</p>
+<p>A deployment may care about one operating point—for example, very low FPR—but a privacy promise cannot assume every future attacker has the same costs. We need the whole tradeoff across rules.</p>
+</section>
+<section id="question-what-happens-when-the-threshold-moves" class="level2">
+<h2 class="anchored" data-anchor-id="question-what-happens-when-the-threshold-moves">Question: what happens when the threshold moves?</h2>
+<p>Every decision rule produces one point <span class="math inline">\((\mathrm{FPR},\mathrm{TPR})\)</span> in the ROC plane. Randomly guessing “present” with probability <span class="math inline">\(p\)</span> produces <span class="math inline">\((p,p)\)</span>, the diagonal. Sweeping a threshold produces a curve. A curve that bows far toward the upper-left gives the attacker high detection at low false-alarm cost; a curve near the diagonal offers little advantage.</p>
+<p>Predict whether the shifted Gaussians lie above or below the random-guess diagonal, then inspect the analytic curve.</p>
+<div id="13" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>make_analytic_roc_curve_figure(dist_neg, dist_pos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fpr, tpr <span class="op">=</span> threshold_roc_curve(dist_neg, dist_pos)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>make_analytic_roc_curve_figure(fpr, tpr)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="post_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></p>
-</figure>
 </div>
-</div>
-</div>
-<p>Of course, this curve depends on <span class="math inline">\(\mu_{1}-\mu_{0}\)</span> and <span class="math inline">\(\sigma\)</span>.</p>
-<div id="13" class="cell" data-execution_count="7">
+</section>
+<section id="question-what-makes-the-attack-easier" class="level2">
+<h2 class="anchored" data-anchor-id="question-what-makes-the-attack-easier">Question: what makes the attack easier?</h2>
+<p>Keep the means at 0 and 1 and vary the shared standard deviation. Smaller noise separates the laws relative to their spread; larger noise makes them harder to distinguish. Which curve should be closest to the upper-left corner? Which should approach random guessing?</p>
+<div id="15" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>make_analytic_roc_curves_by_std_figure([<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> roc_curves_by_std(norm, <span class="dv">0</span>, <span class="dv">1</span>, [<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>])</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>make_analytic_roc_curves_by_std_figure(results)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="post_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
-</figure>
 </div>
-</div>
-</div>
+<p>The family of curves makes a crucial distinction. Noise changes an operational attack tradeoff, not merely the appearance of two density plots. At <span class="math inline">\(\sigma=0.2\)</span>, many outputs nearly identify the world. At <span class="math inline">\(\sigma=5\)</span>, the same mean shift is small relative to the noise, so the curve approaches the diagonal.</p>
+<p>This still examines threshold rules on the observed value. Such a threshold is optimal for equal-variance Gaussians because their likelihood ratio is monotone. It need not be optimal for arbitrary distributions.</p>
 </section>
-<section id="case-study-two-binomials" class="level2">
-<h2 class="anchored" data-anchor-id="case-study-two-binomials">Case study, two Binomials</h2>
-<p>Consider two Binomial random variables: <span class="math inline">\(H_0 = \text{Bin}(0.5, 5)\)</span> and <span class="math inline">\(H_1 = \text{Bin}(0.25, 5)\)</span>. * What are all the possible decision rules? * Compute the FPR and TPR for all possible decisions * Draw the ROC curve</p>
-<div id="15" class="cell" data-execution_count="8">
+<section id="exercise-two-binomial-laws" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-two-binomial-laws">Exercise: two binomial laws</h2>
+<p>Let <span class="math inline">\(H_0=\operatorname{Bin}(5,0.5)\)</span> and <span class="math inline">\(H_1=\operatorname{Bin}(5,0.25)\)</span>. The output is one of <span class="math inline">\(0,1,\ldots,5\)</span>.</p>
+<ol type="1">
+<li>Compute <span class="math inline">\(Q(i)/P(i)\)</span> for every output <span class="math inline">\(i\)</span>.</li>
+<li>Order outcomes from strongest evidence for <span class="math inline">\(H_1\)</span> to strongest evidence for <span class="math inline">\(H_0\)</span>.</li>
+<li>Add outcomes to the positive region in that order and compute the cumulative FPR and TPR.</li>
+<li>Plot those operating points. Because the output is discrete, randomization at a boundary fills the line segments between them.</li>
+</ol>
+<p>Notice that an upper threshold on the numeric output is not automatically correct: here smaller counts favor <span class="math inline">\(H_1\)</span>. The likelihood ratio, rather than the raw value, determines the ordering.</p>
+<div id="18" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>make_empty_roc_plane_figure()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>make_empty_roc_plane_figure()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="8">
+<div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="post_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-9-output-2.png" class="img-fluid figure-img"></p>
-</figure>
 </div>
+</section>
+<section id="question-how-does-one-threshold-trace-the-roc" class="level2">
+<h2 class="anchored" data-anchor-id="question-how-does-one-threshold-trace-the-roc">Question: how does one threshold trace the ROC?</h2>
+<p>For the Gaussian pair, move the threshold from far left to far right. The distribution panel shows the decision region; the ROC panel shows the corresponding operating point. Check the endpoints: always guessing present gives <span class="math inline">\((1,1)\)</span>, while never guessing present gives <span class="math inline">\((0,0)\)</span>.</p>
+<div id="20" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ROCDecisionVisualizer(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    dist0_family<span class="op">=</span><span class="st">"norm"</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    dist0_args<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">1.0</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    dist1_family<span class="op">=</span><span class="st">"norm"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    dist1_args<span class="op">=</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    by_threshold<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-4bac7ab47e-6429ad61dfa5/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
-<section id="connecting-the-threshold-to-the-roc" class="level2">
-<h2 class="anchored" data-anchor-id="connecting-the-threshold-to-the-roc">Connecting the threshold to the ROC</h2>
-<div id="17" class="cell" data-execution_count="9">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># You will implement similar functions in the class exercise.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div id="18" class="cell" data-execution_count="10">
+<section id="question-is-a-threshold-always-smooth-and-forgiving" class="level2">
+<h2 class="anchored" data-anchor-id="question-is-a-threshold-always-smooth-and-forgiving">Question: is a threshold always smooth and forgiving?</h2>
+<p>Now compare shifted uniform laws. Their supports only partly overlap, so some outputs occur in one world and are impossible in the other. Predict what happens to the ROC when the threshold crosses a non-overlap region. A support mismatch can provide decisive evidence even when most outputs look similar.</p>
+<div id="22" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ROCDecisionVisualizer(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    dist0_family<span class="op">=</span><span class="st">"norm"</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    dist0_args<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">1.0</span>),</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    dist1_family<span class="op">=</span><span class="st">"norm"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    dist1_args<span class="op">=</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>),</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    dist0_family<span class="op">=</span><span class="st">"uniform"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    dist0_args<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">3.0</span>),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    dist1_family<span class="op">=</span><span class="st">"uniform"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    dist1_args<span class="op">=</span>(<span class="fl">1.0</span>, <span class="fl">3.0</span>),</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    by_threshold<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="10">
-<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-4bac7ab47e-7a351a2e793c/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-f4fad854c4-ad10dfe9b2d4/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
-<p>This is not limited to Gaussian distributions.</p>
-<div id="20" class="cell" data-execution_count="11">
+</section>
+<section id="the-neymanpearson-rule" class="level2">
+<h2 class="anchored" data-anchor-id="the-neymanpearson-rule">The Neyman–Pearson rule</h2>
+<p>For densities or probability masses <span class="math inline">\(p(o)\)</span> under <span class="math inline">\(H_0\)</span> and <span class="math inline">\(q(o)\)</span> under <span class="math inline">\(H_1\)</span>, the most powerful rule at a fixed false-positive budget selects outcomes with the largest likelihood ratio</p>
+<p><span class="math display">\[
+\Lambda(o)=\frac{q(o)}{p(o)}
+\]</span></p>
+<p>first. Equivalently, threshold the log-likelihood ratio <span class="math inline">\(L(o)=\log q(o)-\log p(o)\)</span>, randomizing at the boundary when necessary. This is the Neyman–Pearson lemma.</p>
+<p>A raw-value threshold is only a convenient special case when <span class="math inline">\(L(o)\)</span> is monotone in <span class="math inline">\(o\)</span>. Likelihood-ratio ordering handles multimodal, discrete, and support-mismatched laws without that assumption.</p>
+</section>
+<section id="question-what-if-we-choose-the-false-positive-budget-first" class="level2">
+<h2 class="anchored" data-anchor-id="question-what-if-we-choose-the-false-positive-budget-first">Question: what if we choose the false-positive budget first?</h2>
+<p>Operationally, an auditor may say “allow FPR <span class="math inline">\(=0.05\)</span>; maximize TPR” rather than choose a numeric threshold. The next view controls FPR directly and lets the likelihood-ratio rule recover the corresponding threshold and operating point. Confirm that increasing the allowed FPR cannot make the optimal TPR decrease.</p>
+<div id="25" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ROCDecisionVisualizer(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    dist0_family<span class="op">=</span><span class="st">"uniform"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    dist0_args<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">3.0</span>),</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    dist1_family<span class="op">=</span><span class="st">"uniform"</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    dist1_args<span class="op">=</span>(<span class="fl">1.0</span>, <span class="fl">3.0</span>),</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    by_threshold<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    dist0_family<span class="op">=</span><span class="st">"norm"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    dist0_args<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">1.0</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    dist1_family<span class="op">=</span><span class="st">"norm"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    dist1_args<span class="op">=</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    by_threshold<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="11">
-<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-f4fad854c4-dc32f33188d2/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-1474ef07aa-deff8c377aed/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
-<section id="neyman-pearson-lemma" class="level2">
-<h2 class="anchored" data-anchor-id="neyman-pearson-lemma">Neyman Pearson lemma</h2>
-<p>It seems like the desicion rule we considered so far is optimal, that is, it achieved the highest TPR for a given FPR, thus laying on the ROC curve. But is it a coincidence, and how can we guarantee this property?</p>
-<p>The Neyman Pearson lemma provides a simple and elegant answer - all optimal desicion rules are a threshold on the log probability ratio:</p>
-<p>Any desicion rule of the form <span class="math inline">\(D(x) = \begin{cases} P &amp; \ln \left(\frac{f_{1}(x)}{f_{0}(x)} \right) &gt; \tau \\ N &amp;  \ln \left(\frac{f_{1}(x)}{f_{0}(x)} \right) &lt; \tau \\ \end{cases}\)</span> for some <span class="math inline">\(\tau \in \mathbb{R}\)</span> is an optimal desicion rule, where <span class="math inline">\(f_{i}(x)\)</span> is the pdf of <span class="math inline">\(x\)</span> under hypothesis <span class="math inline">\(i\)</span> (if the distributions are not continous, the desicion rule needs to account for the case that the log probability ratio is equal to <span class="math inline">\(\tau\)</span>).</p>
-<p>If the log probability ratio is monotonic in the value <span class="math inline">\(x\)</span>, as is the case with most probability distributions with the same variance and different mean, a threshold on the value is optimal.</p>
-<p>We can not present the previous plot, this time controling FPR rather than of <span class="math inline">\(\tau\)</span>.</p>
-<div id="23" class="cell" data-execution_count="12">
+<section id="back-to-privacy-translate-every-object" class="level2">
+<h2 class="anchored" data-anchor-id="back-to-privacy-translate-every-object">Back to privacy: translate every object</h2>
+<p>The statistical and privacy languages now line up exactly:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Privacy object</th>
+<th>Hypothesis-testing object</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>neighboring datasets <span class="math inline">\(D_0,D_1\)</span></td>
+<td>hypotheses <span class="math inline">\(H_0,H_1\)</span></td>
+</tr>
+<tr class="even">
+<td>output laws <span class="math inline">\(M(D_0),M(D_1)\)</span></td>
+<td>distributions <span class="math inline">\(P,Q\)</span></td>
+</tr>
+<tr class="odd">
+<td>membership inference attack</td>
+<td>decision rule</td>
+</tr>
+<tr class="even">
+<td>accusation event <span class="math inline">\(S\)</span></td>
+<td>positive decision region</td>
+</tr>
+<tr class="odd">
+<td>absent person accused</td>
+<td>false positive</td>
+</tr>
+<tr class="even">
+<td>present person detected</td>
+<td>true positive</td>
+</tr>
+</tbody>
+</table>
+<p>The guarantee must hold for every neighboring pair and every measurable event <span class="math inline">\(S\)</span>, because the attacker is free to choose any rule after seeing the public mechanism. Bounding a single trained classifier, a single threshold, or an average-case pair is therefore not a differential-privacy guarantee.</p>
+</section>
+<section id="question-what-shape-does-differential-privacy-impose" class="level2">
+<h2 class="anchored" data-anchor-id="question-what-shape-does-differential-privacy-impose">Question: what shape does differential privacy impose?</h2>
+<p>If <span class="math inline">\(M\)</span> is <span class="math inline">\((\varepsilon,\delta)\)</span>-DP, then for every event <span class="math inline">\(S\)</span></p>
+<p><span class="math display">\[
+Q(S)\le e^\varepsilon P(S)+\delta
+\quad\text{and}\quad
+P(S)\le e^\varepsilon Q(S)+\delta.
+\]</span></p>
+<p>For the attack event “guess present,” <span class="math inline">\(P(S)=\mathrm{FPR}\)</span> and <span class="math inline">\(Q(S)=\mathrm{TPR}\)</span>. The first inequality gives</p>
+<p><span class="math display">\[
+\mathrm{TPR}\le e^\varepsilon\mathrm{FPR}+\delta.
+\]</span></p>
+<p>Applying the reverse direction to the complementary decision supplies the reflected constraint. Before opening the explorer, predict how increasing <span class="math inline">\(\varepsilon\)</span> or <span class="math inline">\(\delta\)</span> enlarges the attacker’s allowed region.</p>
+<div id="28" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ROCDecisionVisualizer(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    dist0_family<span class="op">=</span><span class="st">"norm"</span>,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    dist0_args<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">1.0</span>),</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    dist1_family<span class="op">=</span><span class="st">"norm"</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    dist1_args<span class="op">=</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>),</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    by_threshold<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>PrivacyPlot(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    sensitivity<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    std<span class="op">=</span><span class="fl">1.5</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    distribution_types<span class="op">=</span>[norm],</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="12">
-<div class="libdpy-interactive" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/roc-decision-1474ef07aa-cb54221388e4/index.html" width="100%" height="750" title="Roc Decision Explorer" data-libdpy-interactive="roc_decision_explorer" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-6197737a49-8cac3fd4fe7b/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
-<section id="back-to-privacy" class="level2">
-<h2 class="anchored" data-anchor-id="back-to-privacy">Back to privacy</h2>
-<p>We recall that we model the privacy threat as an attempt of the attacker to distinguish between two hypotheses, <span class="math inline">\(H_0\)</span> - the user was not in the dataset, and <span class="math inline">\(H_1\)</span> - the user was in the dataset. In this case, the two distributions represent the probability of the mechanism’s outputs given the dataset.</p>
-<p>In our running example, where <span class="math inline">\(H_0 =\mathcal{N}(\mu_0, \sigma^2)\)</span> and <span class="math inline">\(H_1 = \mathcal{N}(\mu_1, \sigma ^ 2)\)</span>, this corresponds to a setting where the values of the dataset without the user is <span class="math inline">\(0\)</span>, its value with the user is <span class="math inline">\(1\)</span>, and the mechanism releases this value after adding noise sampeled from <span class="math inline">\(x \sim \mathcal{N}(0, \sigma ^ 2)\)</span>.</p>
-<p>The closer the ROC curve is to the diagonal, the harder it is for the attacker to succeed in its guesses, so a natural privacy definition is to upper bound this curve. The bound can be expressed in many ways. One simple option is using a linear function, such that <span class="math inline">\(\text{TPR} \le m \cdot \text{FPR} + n\)</span> where <span class="math inline">\(m\)</span> is the slope and <span class="math inline">\(n\)</span> is the shift (and its reflected part for the top half).</p>
-<div id="25" class="cell" data-execution_count="13">
+<section id="the-slope-and-shift-are-varepsilon-and-delta" class="level2">
+<h2 class="anchored" data-anchor-id="the-slope-and-shift-are-varepsilon-and-delta">The slope and shift are <span class="math inline">\(\varepsilon\)</span> and <span class="math inline">\(\delta\)</span></h2>
+<p>Writing the upper line as <span class="math inline">\(\mathrm{TPR}\le m\,\mathrm{FPR}+n\)</span>, differential privacy sets <span class="math inline">\(m=e^\varepsilon\)</span> and <span class="math inline">\(n=\delta\)</span>. Thus <span class="math inline">\(\varepsilon=\log m\)</span> controls multiplicative distinguishability, while <span class="math inline">\(\delta\)</span> permits a small additive exception. When <span class="math inline">\(\delta=0\)</span>, the likelihood ratio must remain bounded in both directions: this is pure DP.</p>
+<p>The ROC statement is not a different privacy definition pasted onto DP. It is an operational restatement of the event inequalities, including both neighboring directions. A mechanism is private only if every attack ROC stays inside the bound for every allowed neighbor pair.</p>
+</section>
+<section id="question-what-do-noise-tails-and-supports-imply" class="level2">
+<h2 class="anchored" data-anchor-id="question-what-do-noise-tails-and-supports-imply">Question: what do noise tails and supports imply?</h2>
+<p>Hold sensitivity and displayed scale fixed, then compare Gaussian, Laplace, and uniform output laws. Ask three questions before using the explorer:</p>
+<ol type="1">
+<li>Is the likelihood ratio bounded everywhere?</li>
+<li>Do the shifted laws share support?</li>
+<li>If rare outcomes have very large or infinite likelihood ratio, can a nonzero <span class="math inline">\(\delta\)</span> cover their probability mass?</li>
+</ol>
+<p>The plot answers an ROC question; it does not rank mechanisms by utility, because their loss functions and scale calibrations may differ.</p>
+<div id="31" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>PrivacyPlot(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    sensitivity<span class="op">=</span><span class="dv">1</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    std<span class="op">=</span><span class="fl">1.5</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    distribution_types<span class="op">=</span>[norm],</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    distribution_types<span class="op">=</span>[norm, laplace, uniform],</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="13">
-<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-6197737a49-caa96b3e6b9f/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-laplace-uniform-06b3767cd2-aaf4fff3997b/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
-<p>Did we just develope a new (and more natural)privacy definition than Differential privacy?</p>
-<p>Apperently no. The tradeoff function is bounded by the lines <span class="math inline">\(\text{TPR} \le m \cdot \text{FPR} + n\)</span> iff it is <span class="math inline">\(\ln(m), n)\)</span>-DP. Isn’t that a miracle?</p>
-<p>Let’s use this insight to reason about the privacy of several other noise addition mechanisms:</p>
-<div id="27" class="cell" data-execution_count="14">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>PrivacyPlot(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    sensitivity<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    std<span class="op">=</span><span class="fl">1.5</span>,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    distribution_types<span class="op">=</span>[norm, laplace, uniform],</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-display" data-execution_count="14">
-<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-laplace-uniform-06b3767cd2-6419f9ec0c58/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
-</div>
-</div>
+<p>Laplace noise has exponential tails whose shifted likelihood ratio is bounded when sensitivity is bounded, making it the familiar pure-DP mechanism. Gaussian likelihood ratios grow without bound in the tails, so Gaussian noise cannot provide finite pure DP; it can provide approximate DP when <span class="math inline">\(\delta&gt;0\)</span> absorbs sufficiently rare tail events.</p>
+<p>Uniform noise has bounded support. A shift creates outcomes possible in one neighboring world and impossible in the other, giving perfect evidence on a positive-probability region. Any approximate guarantee must pay at least for that unmatched mass. “Bounded noise” is therefore not the same as “bounded privacy loss.”</p>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>Start with a public mechanism and an add/remove neighboring pair; the private fact is one membership bit.</li>
+<li>The mechanism induces two output laws, and an attacker is a binary decision rule on one output.</li>
+<li>FPR and TPR describe distinguishing power without being distorted by the membership prior.</li>
+<li>Sweeping rules yields an ROC curve; nearer the diagonal means less operational evidence.</li>
+<li>Neyman–Pearson orders outputs by likelihood ratio, not necessarily by their numeric value.</li>
+<li><span class="math inline">\((\varepsilon,\delta)\)</span>-DP bounds every attack ROC in both neighboring directions: <span class="math inline">\(\varepsilon\)</span> is the log-slope and <span class="math inline">\(\delta\)</span> the additive shift.</li>
+<li>Laplace, Gaussian, and uniform noise differ because their likelihood ratios and supports differ, not simply because one density looks wider.</li>
+</ul>
+<p>The next lecture reverses this perspective: instead of starting from a theorem and drawing its ROC bound, privacy auditing samples mechanism outputs, fixes an attack, and derives a statistically valid empirical lower bound on leakage.</p>
 
 
 </section>
@@ -1265,7 +1372,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© Applied Differential Privacy. Built with Quarto.</p>
+<p>© 2026 The Hebrew University of Jerusalem. Code: MIT. Content: CC BY-NC-SA 4.0.</p>
 </div>   
     <div class="nav-footer-center">
       <ul class="footer-items list-unstyled">
@@ -1280,13 +1387,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </a>
   </li>  
     <li class="nav-item">
-    <a class="nav-link" href="../../../pages/schedule.html">
-<p>Schedule</p>
+    <a class="nav-link" href="../../../pages/about.html">
+<p>About</p>
 </a>
   </li>  
     <li class="nav-item">
-    <a class="nav-link" href="../../../pages/about.html">
-<p>About</p>
+    <a class="nav-link" href="../../../pages/license.html">
+<p>License &amp; attribution</p>
 </a>
   </li>  
 </ul>

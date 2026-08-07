@@ -74,8 +74,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-1514f5da12f723dc48804aac60978103.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../site_libs/bootstrap/bootstrap-dark-855f9d31b0e9cf900a1d88f7ad89bceb.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-520c36e687f14f57082fa33f95c1cf4f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-2d877df4138b1337d6dc48be9f9f2cce.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -410,6 +410,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <blockquote class="blockquote">
 <p>The plots below are live, self-contained explorers (they run Python in your browser — the first one may take a moment to boot). Drag the sliders, press <strong>Generate Samples</strong> / <strong>Resample</strong>, and toggle <strong>Compute ε</strong>.</p>
 </blockquote>
+<p><strong>Audit contract.</strong> Before reading any result, name the claimed <span class="math inline">\((\varepsilon,\delta)\)</span>, adjacency relation, neighboring pair, released output, adversary score or event, sample sizes, and confidence failure probability. The examples hold those choices visible. Changing the pair or test after seeing the audit data changes the statistical problem and may invalidate the simple confidence statement.</p>
 <section id="recap-dp-as-a-bound-on-the-roc" class="level2">
 <h2 class="anchored" data-anchor-id="recap-dp-as-a-bound-on-the-roc">Recap: DP as a bound on the ROC</h2>
 <p>Let <span class="math inline">\(P = M(D)\)</span> and <span class="math inline">\(Q = M(D')\)</span> be output distributions on neighboring datasets, and let <span class="math inline">\(S\)</span> be the event “the adversary guesses <span class="math inline">\(D\)</span>” (positive).</p>
@@ -417,6 +418,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>For this lecture we keep one ROC direction fixed:</p>
 <p><span class="math display">\[\mathrm{TPR} \le e^{\varepsilon}\,\mathrm{FPR}+\delta.\]</span></p>
 <p>Drag <span class="math inline">\(\varepsilon\)</span> and <span class="math inline">\(\delta\)</span> to see the forbidden region the DP guarantee carves out of the ROC plane.</p>
+<p><strong>How to read the explorer:</strong> the horizontal coordinate is false-positive probability under <span class="math inline">\(D'\)</span>, the vertical coordinate is true-positive probability under <span class="math inline">\(D\)</span>, and points above the DP line are incompatible with the displayed one-sided guarantee. Increasing <span class="math inline">\(\varepsilon\)</span> relaxes the slope; increasing <span class="math inline">\(\delta\)</span> raises the intercept. This is definition geometry, not sampled evidence.</p>
 <div id="5" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
@@ -429,7 +431,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="3">
-<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-laplace-ce9c999a7a-38ef9f4fc6b4/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/privacy-plot-norm-laplace-ce9c999a7a-a23fb15e7ff2/index.html" width="100%" height="750" title="Privacy bound explorer with ε and δ controls." data-libdpy-interactive="privacy_plot" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
@@ -439,9 +441,11 @@ document.addEventListener("DOMContentLoaded", function () {
 <p><span class="math display">\[\varepsilon \ge \log\left(\frac{y-\delta}{x}\right)\]</span></p>
 <p>when <span class="math inline">\(x&gt;0\)</span> and <span class="math inline">\(y&gt;\delta\)</span>. Known ROC + fixed <span class="math inline">\(\delta\)</span> <span class="math inline">\(\rightarrow\)</span> tightest DP line <span class="math inline">\(\rightarrow\)</span> exact <span class="math inline">\(\varepsilon\)</span>.</p>
 <p>This is still exact privacy-profile geometry, not empirical auditing.</p>
+<p>The inversion is one-sided because the lecture fixes an orientation for the event and neighboring pair. A complete DP statement also applies after swapping the databases. Here the purpose is narrower: establish the map from one ROC point to a required privacy budget before sampling error is introduced.</p>
 <section id="laplace-exact-roc" class="level3">
 <h3 class="anchored" data-anchor-id="laplace-exact-roc">Laplace: exact ROC</h3>
 <p>For Laplace noise, the output distributions are shifts of the same known density. We can compute the ROC exactly and find the smallest <span class="math inline">\(\varepsilon\)</span> line for a chosen <span class="math inline">\(\delta\)</span>.</p>
+<p>Move the controls and look for the line that just supports the ROC: that contact point is the governing event. Because the density and shift are known, there are no finite-sample confidence intervals here. This exact case is the reference against which the later empirical estimate will be judged.</p>
 <div id="8" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
@@ -453,13 +457,14 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="4">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-laplace-f6bad2e12f-cde924fd26bb/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-laplace-f6bad2e12f-31eea334cf40/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
 <section id="gaussian-approximate-dp" class="level3">
 <h3 class="anchored" data-anchor-id="gaussian-approximate-dp">Gaussian: approximate DP</h3>
 <p>Gaussian noise illustrates how changing <span class="math inline">\(\delta\)</span> changes the tight line. Drag the <span class="math inline">\(\delta\)</span> slider to compare.</p>
+<p>Unlike pure-DP Laplace, the Gaussian tradeoff uses a nonzero failure probability. Watch the supporting line move as <span class="math inline">\(\delta\)</span> changes while the underlying ROC stays fixed. The visualization still assumes the distribution is analytically known; it does not estimate a guarantee from mechanism runs.</p>
 <div id="10" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
@@ -471,7 +476,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="5">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-549429866e-2f8a9d69e283/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-549429866e-bdc94536de9d/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
@@ -479,6 +484,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <h3 class="anchored" data-anchor-id="logistic-adding-another-analytic-distribution">Logistic: adding another analytic distribution</h3>
 <p>The same ROC machinery is not tied to Laplace or Gaussian noise. If we can compute the PDF/CDF, we can add another distribution and repeat the exact construction.</p>
 <p><span class="math display">\[f(x)=\frac{e^{-(x-\mu)/s}}{s(1+e^{-(x-\mu)/s})^2},\qquad F(x)=\frac{1}{1+e^{-(x-\mu)/s}}.\]</span></p>
+<p>The question is not whether logistic noise is preferable, but which information makes exact inversion possible. Here the closed-form CDF supplies threshold probabilities for every event. In the next mechanism we keep easy sampling but deliberately remove that analytic access, forcing the auditor to reconstruct the ROC from observations.</p>
 <div id="12" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
@@ -490,7 +496,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-logistic-f5dff6a9e8-f4f57ba0f144/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-logistic-f5dff6a9e8-f1d62d339509/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
@@ -503,6 +509,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <p><span class="math display">\[H_0: X=0+Z,\qquad H_1: X=1+Z.\]</span></p>
 <p>Sampling is trivial. But we will not use a closed-form PDF, CDF, or ROC. From here on, the auditor treats the mechanism as a <strong>black-box sampler</strong>.</p>
 <p>The explorer below uses the same empirical ROC widget as before, now on the sum-of-two-logistics mechanism. Press <strong>Generate Samples</strong> to redraw. Check <strong>Compute ε</strong> to highlight the governing point and the tight <span class="math inline">\((\varepsilon,\delta)\)</span> line.</p>
+<p><strong>Question for the explorer:</strong> which threshold best separates the two sampled output clouds? The staircase is an empirical object: regenerate the samples and both its corners and maximizing threshold can move. The displayed plug-in <span class="math inline">\(\varepsilon\)</span> treats those empirical coordinates as truth, so it is useful for proposing an event but is not yet a confidence-valid lower bound.</p>
 <div id="14" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
@@ -516,12 +523,13 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="7">
-<div class="libdpy-interactive" data-libdpy-interactive="empirical_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-e3110276f3d6/index.html" width="100%" height="750" title="Theoretical and empirical ROC explorer for common distributions." data-libdpy-interactive="empirical_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="empirical_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-239bb98edd0d/index.html" width="100%" height="750" title="Theoretical and empirical ROC explorer for common distributions." data-libdpy-interactive="empirical_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 <section id="threshold-handoff-for-the-rest-of-the-lecture" class="level3">
 <h3 class="anchored" data-anchor-id="threshold-handoff-for-the-rest-of-the-lecture">Threshold handoff for the rest of the lecture</h3>
 <p>The audit figures below need a <strong>fixed</strong> threshold <span class="math inline">\(\tau_\star\)</span> selected from the seeded empirical ROC above. We read it off programmatically so every later cell uses exactly the same value.</p>
+<p>The printed threshold, ROC coordinate, and plug-in value form the handoff contract. Reusing the seed makes the narrative reproducible. For valid inference on new runs, selection data and audit data must be separated—or the adaptivity of threshold selection must be included in the correction.</p>
 <div id="16" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
@@ -541,15 +549,18 @@ plug-in epsilon from empirical ROC = 1.0169</code></pre>
 <h2 class="anchored" data-anchor-id="from-empirical-roc-to-one-audit-event">From empirical ROC to one audit event</h2>
 <p>The empirical ROC step selected a threshold <span class="math inline">\(\tau_\star\)</span>. We now freeze that threshold and audit the single event it defines.</p>
 <p><span class="math display">\[S_{\tau_\star}=\{x:x&gt;\tau_\star\},\qquad \mathrm{TPR}=P(X&gt;\tau_\star\mid H_1),\qquad \mathrm{FPR}=P(X&gt;\tau_\star\mid H_0).\]</span></p>
+<p>Freezing the event turns ROC estimation into two binomial problems. Under <span class="math inline">\(H_0\)</span>, crossing the threshold is a false positive; under <span class="math inline">\(H_1\)</span>, it is a true positive. This reduction is what lets us replace a visually chosen curve point with explicit counts and one-sided confidence bounds.</p>
 <section id="fixed-threshold-audit-unfolding-same-sample-as-empirical-roc" class="level3">
 <h3 class="anchored" data-anchor-id="fixed-threshold-audit-unfolding-same-sample-as-empirical-roc">Fixed-threshold audit unfolding (same sample as empirical ROC)</h3>
 <p>The threshold <span class="math inline">\(\tau_\star\)</span> is frozen from the empirical ROC above. The animation replays the <strong>same</strong> finite sample, with experiments arriving in a balanced random order shuffled by the same seed. The final audit point matches the governing point from the empirical ROC step. The animation plays once and stops on that point.</p>
+<p>Read the running point as cumulative FP and TP rates, not as a sequence of new mechanisms. Its exact final agreement with the empirical ROC is a bookkeeping check: both views use identical observations. Because the same observations selected and evaluated the threshold, this replay is pedagogical and does not solve selection bias.</p>
 <iframe src="../../../_generated/animations/blog-posts/privacy-auditing/fixed-threshold-audit-same-sample.html" width="100%" height="430" style="border:0" onload="this.style.height=this.contentWindow.document.documentElement.scrollHeight+'px'">
 </iframe>
 </section>
 <section id="same-threshold-fresh-audit-sample-audit-seed-42" class="level3">
 <h3 class="anchored" data-anchor-id="same-threshold-fresh-audit-sample-audit-seed-42">Same threshold, fresh audit sample (audit seed 42)</h3>
 <p>The threshold is unchanged, but we redraw a new finite sample. Therefore the final counts and plug-in <span class="math inline">\(\varepsilon\)</span> can change.</p>
+<p>Compare the path and endpoint with the previous animation. A different endpoint is expected sampling variation, not a change in the underlying privacy of the mechanism. This fresh sample is the right data source for evaluating the already-fixed event; the next step translates its endpoint into a confusion matrix.</p>
 <iframe src="../../../_generated/animations/blog-posts/privacy-auditing/fixed-threshold-audit-seed-42.html" width="100%" height="430" style="border:0" onload="this.style.height=this.contentWindow.document.documentElement.scrollHeight+'px'">
 </iframe>
 </section>
@@ -557,6 +568,7 @@ plug-in epsilon from empirical ROC = 1.0169</code></pre>
 <section id="confusion-matrix-audit" class="level2">
 <h2 class="anchored" data-anchor-id="confusion-matrix-audit">Confusion matrix audit</h2>
 <p>Run <span class="math inline">\(n_0\)</span> samples from <span class="math inline">\(H_0\)</span> and <span class="math inline">\(n_1\)</span> samples from <span class="math inline">\(H_1\)</span> using the fixed threshold <span class="math inline">\(\tau_\star\)</span> selected above.</p>
+<p>The printed counts obey <span class="math inline">\(\widehat{\mathrm{FPR}}=\mathrm{FP}/n_0\)</span> and <span class="math inline">\(\widehat{\mathrm{TPR}}=\mathrm{TP}/n_1\)</span>. Substituting those coordinates into the ROC inversion produces the plug-in estimate. Check the counts first: a dramatic estimate driven by one or zero tail observations should immediately trigger concern about finite-sample uncertainty.</p>
 <div id="23" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
@@ -576,6 +588,7 @@ plug-in FPR=0.0340, TPR=0.1040, eps_plug=1.0169</code></pre>
 <section id="a-single-run-is-random" class="level2">
 <h2 class="anchored" data-anchor-id="a-single-run-is-random">A single run is random</h2>
 <p>The mechanism did not change. The threshold did not change. Only the finite audit sample changed — so the plug-in <span class="math inline">\(\varepsilon\)</span> is a random variable.</p>
+<p>The five values below are a variability demonstration, not a confidence procedure. Their spread shows why reporting the largest observed plug-in value would be anti-conservative. A defensible lower bound must control how far estimated TPR can exceed truth and how far estimated FPR can fall below truth.</p>
 <div id="25" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
@@ -602,6 +615,7 @@ plug-in FPR=0.0340, TPR=0.1040, eps_plug=1.0169</code></pre>
 <p>For fixed <span class="math inline">\(\tau_\star\)</span>, the counts are binomial. To lower-bound <span class="math inline">\(\varepsilon\)</span> we use a lower confidence bound on TPR and an upper confidence bound on FPR, splitting the total failure probability <span class="math inline">\(\alpha\)</span> across both coordinates.</p>
 <p><span class="math display">\[\varepsilon_{\mathrm{audit}} = \log\left(\frac{\max\{\mathrm{TPR}_L-\delta,0\}}{\mathrm{FPR}_U}\right).\]</span></p>
 <p>The code uses exact one-sided Clopper–Pearson intervals on each coordinate.</p>
+<p>The confidence rectangle moves in the conservative direction for the privacy-loss inversion: TPR moves down and FPR moves up. Splitting <span class="math inline">\(\alpha\)</span> across the two coordinates gives simultaneous coverage by a union bound, including boundary cases with zero counts. The price is deliberate conservatism; the payoff is a stated failure probability.</p>
 <div id="27" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
@@ -624,19 +638,13 @@ plug-in FPR=0.0340, TPR=0.1040, eps_plug=1.0169</code></pre>
 <div id="28" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>make_confidence_rectangle_figure(audit_safe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>figure <span class="op">=</span> make_confidence_rectangle_figure(audit_safe)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="14">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-15-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -646,6 +654,7 @@ plug-in FPR=0.0340, TPR=0.1040, eps_plug=1.0169</code></pre>
 <h2 class="anchored" data-anchor-id="naive-versus-safe-varepsilon">Naive versus safe <span class="math inline">\(\varepsilon\)</span></h2>
 <p>The plug-in estimate is random and overshoots often. The safe estimate is intentionally conservative.</p>
 <p>The explorer uses <strong>Gaussian</strong> outputs with a known analytic true <span class="math inline">\(\varepsilon\)</span>. The title reports <strong>overshoots</strong> (runs where the estimate exceeds truth). Plug-in overshoots should be near 50%; safe overshoots should stay at or below the allowed failure rate <span class="math inline">\(\alpha\)</span> (often much lower because the bound is conservative).</p>
+<p>Read the vertical truth marker before comparing the two histograms. The experiment validates calibration in a controlled case where truth is available; it does not prove the correction for every implementation. Finite repetitions can also place the observed safe overshoot rate above or below <span class="math inline">\(\alpha\)</span>, so interpret the rate together with the number of repeats.</p>
 <div id="30" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
@@ -658,7 +667,7 @@ plug-in FPR=0.0340, TPR=0.1040, eps_plug=1.0169</code></pre>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="15">
-<div class="libdpy-interactive" data-libdpy-interactive="naive_safe_epsilon_histogram" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/naive-safe-epsilon-histogram-864ab2be48f1/index.html" width="100%" height="750" title="Repeated Gaussian audits at a fixed threshold, comparing plug-in and safe estimates against the analytic true epsilon." data-libdpy-interactive="naive_safe_epsilon_histogram" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="naive_safe_epsilon_histogram" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/naive-safe-epsilon-histogram-89cac6dd52e9/index.html" width="100%" height="750" title="Repeated Gaussian audits at a fixed threshold, comparing plug-in and safe estimates against the analytic true epsilon." data-libdpy-interactive="naive_safe_epsilon_histogram" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
@@ -669,7 +678,10 @@ plug-in FPR=0.0340, TPR=0.1040, eps_plug=1.0169</code></pre>
 <li><strong>Multiple neighboring pairs</strong> and <strong>multiple events/tests</strong> all need statistical correction.</li>
 <li><strong>Audits are lower bounds:</strong> failing to find leakage does not prove privacy.</li>
 <li><strong>Implementation bugs:</strong> audits are useful because real implementations can violate their claimed theoretical guarantee.</li>
+<li><strong>Score design:</strong> a weak statistic can miss leakage even with unlimited repetitions; the lower bound is only as strong as the tested adversary.</li>
+<li><strong>Compute and stopping:</strong> repeatedly extending an audit until it crosses a desired line is optional stopping and needs a sequentially valid procedure.</li>
 </ol>
+<p>These complications all move in the same direction: an audit result is evidence attached to an explicit experimental protocol, not an intrinsic privacy parameter recovered from a plot.</p>
 </section>
 <section id="summary" class="level2">
 <h2 class="anchored" data-anchor-id="summary">Summary</h2>
@@ -683,6 +695,7 @@ plug-in FPR=0.0340, TPR=0.1040, eps_plug=1.0169</code></pre>
 <li>A valid audit uses confidence bounds: lower TPR, upper FPR, with the total failure probability allocated across both bounds.</li>
 <li>The result is a high-confidence lower bound on privacy loss, not a proof of privacy.</li>
 </ul>
+<p>A reusable workflow is: freeze the claim and adjacency; choose neighboring witnesses and a score; use separate data to select an event; collect fresh audit samples; convert counts to conservative ROC coordinates; correct across every pair, event, and stopping rule; then report the strongest lower bound together with its full protocol. A non-separation leaves the claim unresolved.</p>
 
 
 </section>
@@ -1305,7 +1318,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© Applied Differential Privacy. Built with Quarto.</p>
+<p>© 2026 The Hebrew University of Jerusalem. Code: MIT. Content: CC BY-NC-SA 4.0.</p>
 </div>   
     <div class="nav-footer-center">
       <ul class="footer-items list-unstyled">
@@ -1320,13 +1333,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </a>
   </li>  
     <li class="nav-item">
-    <a class="nav-link" href="../../../pages/schedule.html">
-<p>Schedule</p>
+    <a class="nav-link" href="../../../pages/about.html">
+<p>About</p>
 </a>
   </li>  
     <li class="nav-item">
-    <a class="nav-link" href="../../../pages/about.html">
-<p>About</p>
+    <a class="nav-link" href="../../../pages/license.html">
+<p>License &amp; attribution</p>
 </a>
   </li>  
 </ul>

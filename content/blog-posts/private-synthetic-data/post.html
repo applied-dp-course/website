@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.43">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Synthetic data from private measurements — Self-study notebook – Applied Differential Privacy</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../theme/favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-520c36e687f14f57082fa33f95c1cf4f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-2d877df4138b1337d6dc48be9f9f2cce.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<style>
+/* course-nav-split */
+#quarto-header,
+#quarto-header .navbar,
+#quarto-header .navbar-collapse {
+  overflow: visible;
+}
+
+.navbar .nav-item.course-nav-split-item {
+  position: static;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-main,
+.navbar .nav-item.course-nav-split-item > .course-nav-caret {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-main {
+  padding-right: 0.1rem;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret {
+  padding-left: 0.1rem;
+  padding-right: 0.55rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  line-height: inherit;
+  box-shadow: none;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret::after {
+  margin-left: 0;
+  vertical-align: 0.1em;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret:focus,
+.navbar .nav-item.course-nav-split-item > .course-nav-caret:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar .nav-item.course-nav-split-item:hover > .course-nav-main,
+.navbar .nav-item.course-nav-split-item:hover > .course-nav-caret,
+.navbar .nav-item.course-nav-split-item:focus-within > .course-nav-main,
+.navbar .nav-item.course-nav-split-item:focus-within > .course-nav-caret {
+  color: var(--bs-navbar-hover-color);
+}
+
+.navbar .nav-item.course-nav-split-item > .dropdown-menu {
+  position: absolute;
+  z-index: 1200;
+  margin-top: 0;
+  border-color: rgba(0, 0, 0, 0.12);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.navbar .nav-item.course-nav-split-item > .dropdown-menu.show {
+  z-index: 1200;
+}
+
+.hero,
+.offering-banner,
+.quick-links {
+  position: relative;
+  z-index: 1;
+}
+
+</style>
+<script>
+// course-nav-split-v1
+document.addEventListener("DOMContentLoaded", function () {
+  var menuItems = [
+    ["Syllabus", "syllabus.html"],
+    ["Lectures", "lectures.html"],
+    ["Class assignments", "class-assignments.html"],
+    ["Home assignments", "home-assignments.html"],
+    ["Past years", "archive.html"],
+  ];
+
+  document.querySelectorAll(".navbar-nav > .nav-item").forEach(function (item) {
+    if (item.classList.contains("course-nav-split-item")) {
+      return;
+    }
+    var toggle = item.querySelector(":scope > a.dropdown-toggle");
+    var menu = item.querySelector(":scope > ul.dropdown-menu");
+    if (!toggle || !menu) {
+      var simple = item.querySelector(":scope > a.nav-link .menu-text");
+      if (!simple || simple.textContent.trim() !== "Course") {
+        return;
+      }
+      var courseLink = item.querySelector(":scope > a.nav-link");
+      var courseHref = courseLink.getAttribute("href") || "pages/course.html";
+      var prefix = courseHref.replace(/course\.html$/, "");
+      item.classList.add("dropdown");
+      item.innerHTML = "";
+      toggle = document.createElement("a");
+      toggle.className = "nav-link dropdown-toggle";
+      toggle.href = "#";
+      toggle.setAttribute("role", "link");
+      toggle.setAttribute("data-bs-toggle", "dropdown");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = '<span class="menu-text">Course</span>';
+      menu = document.createElement("ul");
+      menu.className = "dropdown-menu";
+      menuItems.forEach(function (entry) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.className = "dropdown-item";
+        a.href = prefix + entry[1];
+        a.innerHTML = '<span class="dropdown-text">' + entry[0] + "</span>";
+        li.appendChild(a);
+        menu.appendChild(li);
+      });
+      item.appendChild(toggle);
+      item.appendChild(menu);
+    }
+    var label = toggle.querySelector(".menu-text");
+    if (!label || label.textContent.trim() !== "Course") {
+      return;
+    }
+    var syllabusLink = menu.querySelector('a[href*="syllabus"]');
+    var courseHref = syllabusLink
+      ? syllabusLink.getAttribute("href").replace("syllabus.html", "course.html")
+      : "pages/course.html";
+    var link = document.createElement("a");
+    link.className = "nav-link course-nav-main";
+    link.href = courseHref;
+    link.innerHTML = toggle.innerHTML;
+    if (window.location.pathname.endsWith("/course.html")) {
+      link.classList.add("active");
+      link.setAttribute("aria-current", "page");
+    }
+    var caret = document.createElement("button");
+    caret.type = "button";
+    caret.className = "nav-link course-nav-caret dropdown-toggle";
+    caret.setAttribute("data-bs-toggle", "dropdown");
+    caret.setAttribute("aria-expanded", "false");
+    caret.setAttribute("aria-label", "Course sections");
+    if (toggle.id) {
+      caret.id = toggle.id;
+      menu.setAttribute("aria-labelledby", toggle.id);
+    }
+    toggle.replaceWith(link, caret);
+    item.classList.add("course-nav-split-item");
+    if (window.bootstrap && window.bootstrap.Dropdown) {
+      window.bootstrap.Dropdown.getOrCreateInstance(caret);
+    }
+  });
+});
+
+</script>
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../theme/favicon.svg" alt="Applied Differential Privacy" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Applied Differential Privacy</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-course" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Course</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-course">    
+        <li>
+    <a class="dropdown-item" href="../../../pages/course.html">
+ <span class="dropdown-text">Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/syllabus.html">
+ <span class="dropdown-text">Syllabus</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/archive.html">
+ <span class="dropdown-text">Past offerings and recordings</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-materials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Materials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-materials">    
+        <li>
+    <a class="dropdown-item" href="../../../pages/lectures.html">
+ <span class="dropdown-text">Lectures and self-study notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/assignments.html">
+ <span class="dropdown-text">Exercises and assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/tools.html">
+ <span class="dropdown-text">Interactive tools</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../../pages/about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#synthetic-data-from-private-measurements" id="toc-synthetic-data-from-private-measurements" class="nav-link active" data-scroll-target="#synthetic-data-from-private-measurements">Synthetic data from private measurements</a>
+  <ul class="collapse">
+  <li><a href="#original-rows-decoded-values" id="toc-original-rows-decoded-values" class="nav-link" data-scroll-target="#original-rows-decoded-values">Original rows — decoded values</a></li>
+  <li><a href="#the-same-original-rows-quantized-values" id="toc-the-same-original-rows-quantized-values" class="nav-link" data-scroll-target="#the-same-original-rows-quantized-values">The same original rows — quantized values</a></li>
+  <li><a href="#our-true-data-in-this-lecture" id="toc-our-true-data-in-this-lecture" class="nav-link" data-scroll-target="#our-true-data-in-this-lecture">Our “true data” in this lecture</a></li>
+  <li><a href="#public-contract" id="toc-public-contract" class="nav-link" data-scroll-target="#public-contract">Public contract</a></li>
+  <li><a href="#a-real-world-example-iom-ctdc" id="toc-a-real-world-example-iom-ctdc" class="nav-link" data-scroll-target="#a-real-world-example-iom-ctdc">A real-world example: IOM / CTDC</a></li>
+  <li><a href="#start-with-a-gaussian-whose-mean-is-unknown" id="toc-start-with-a-gaussian-whose-mean-is-unknown" class="nav-link" data-scroll-target="#start-with-a-gaussian-whose-mean-is-unknown">Start with a Gaussian whose mean is unknown</a></li>
+  <li><a href="#second-step-the-binomial-model" id="toc-second-step-the-binomial-model" class="nav-link" data-scroll-target="#second-step-the-binomial-model">Second step: the Binomial model</a></li>
+  <li><a href="#privacy-from-resampling-alone" id="toc-privacy-from-resampling-alone" class="nav-link" data-scroll-target="#privacy-from-resampling-alone">Privacy from resampling alone</a></li>
+  <li><a href="#extend-beyond-parametric-families" id="toc-extend-beyond-parametric-families" class="nav-link" data-scroll-target="#extend-beyond-parametric-families">Extend beyond parametric families</a></li>
+  <li><a href="#temptation-make-every-column-look-right" id="toc-temptation-make-every-column-look-right" class="nav-link" data-scroll-target="#temptation-make-every-column-look-right">Temptation: make every column look right</a></li>
+  <li><a href="#measure-complete-two-way-tables" id="toc-measure-complete-two-way-tables" class="nav-link" data-scroll-target="#measure-complete-two-way-tables">Measure complete two-way tables</a></li>
+  <li><a href="#three-way-relationships-remain-unidentified" id="toc-three-way-relationships-remain-unidentified" class="nav-link" data-scroll-target="#three-way-relationships-remain-unidentified">Three-way relationships remain unidentified</a></li>
+  <li><a href="#temptation-add-every-three-way-marginal" id="toc-temptation-add-every-three-way-marginal" class="nav-link" data-scroll-target="#temptation-add-every-three-way-marginal">Temptation: add every three-way marginal</a></li>
+  <li><a href="#regression-as-a-downstream-accuracy-measure" id="toc-regression-as-a-downstream-accuracy-measure" class="nav-link" data-scroll-target="#regression-as-a-downstream-accuracy-measure">Regression as a downstream accuracy measure</a></li>
+  <li><a href="#a-real-exponential-mechanism-algorithm-mwem" id="toc-a-real-exponential-mechanism-algorithm-mwem" class="nav-link" data-scroll-target="#a-real-exponential-mechanism-algorithm-mwem">A real exponential-mechanism algorithm: MWEM</a></li>
+  <li><a href="#no-universal-best-synthetic-table" id="toc-no-universal-best-synthetic-table" class="nav-link" data-scroll-target="#no-universal-best-synthetic-table">No universal best synthetic table</a></li>
+  <li><a href="#closing-the-workload-remains-part-of-the-release" id="toc-closing-the-workload-remains-part-of-the-release" class="nav-link" data-scroll-target="#closing-the-workload-remains-part-of-the-release">Closing: the workload remains part of the release</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Synthetic data from private measurements — Self-study notebook</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+<p class="subtitle lead">Applied Data Privacy</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>For the slide version, open the <a href="../../lecture-presentations/private-synthetic-data/presentation.html">presentation deck</a>.</p>
+<section id="synthetic-data-from-private-measurements" class="level1">
+<h1>Synthetic data from private measurements</h1>
+<p>Week 1 left us with an attackable lookalike table. “Synthetic” described how rows were manufactured; it never supplied a privacy guarantee.</p>
+<section id="original-rows-decoded-values" class="level2">
+<h2 class="anchored" data-anchor-id="original-rows-decoded-values">Original rows — decoded values</h2>
+<p>The next table shows five fixed original rows and only the eight fields used in this lecture. Categorical values are translated to their public labels; age and person income retain their exact original values.</p>
+<div id="4" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>show_table(table_preview.original)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+<style>
+.lecture-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 0.75em 0 1.25em;
+}
+table.lecture-table {
+    width: max-content;
+    min-width: 100%;
+    font-size: 1.05em;
+    line-height: 1.35;
+    margin: 0;
+}
+table.lecture-table th,
+table.lecture-table td {
+    padding: 0.45em 0.65em;
+    white-space: nowrap;
+}
+</style>
+<div class="lecture-table-wrap">
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Sex</th>
+<th data-quarto-table-cell-role="th">Age</th>
+<th data-quarto-table-cell-role="th">Education</th>
+<th data-quarto-table-cell-role="th">Employed?</th>
+<th data-quarto-table-cell-role="th">Married?</th>
+<th data-quarto-table-cell-role="th">Minor children at home?</th>
+<th data-quarto-table-cell-role="th">PUMA area</th>
+<th data-quarto-table-cell-role="th">Person income</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">source row</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">24</td>
+<td>Female</td>
+<td>34</td>
+<td>high school graduate</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>north Fulton (Alpharetta)</td>
+<td>$25,000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3216</td>
+<td>Male</td>
+<td>24</td>
+<td>high school graduate</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>Roswell–Sandy Springs</td>
+<td>$7,800</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8951</td>
+<td>Male</td>
+<td>48</td>
+<td>bachelor's degree</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>north Atlanta</td>
+<td>$315,000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">12681</td>
+<td>Male</td>
+<td>22</td>
+<td>college, no degree</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>central Atlanta</td>
+<td>$0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">22784</td>
+<td>Female</td>
+<td>49</td>
+<td>high school graduate</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>southern Fulton</td>
+<td>$40,500</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="the-same-original-rows-quantized-values" class="level2">
+<h2 class="anchored" data-anchor-id="the-same-original-rows-quantized-values">The same original rows — quantized values</h2>
+<p>These are the same five people, now quantized into the public categorical domains declared before any private computation.</p>
+<div id="6" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>show_table(table_preview.discretized)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+<style>
+.lecture-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 0.75em 0 1.25em;
+}
+table.lecture-table {
+    width: max-content;
+    min-width: 100%;
+    font-size: 1.05em;
+    line-height: 1.35;
+    margin: 0;
+}
+table.lecture-table th,
+table.lecture-table td {
+    padding: 0.45em 0.65em;
+    white-space: nowrap;
+}
+</style>
+<div class="lecture-table-wrap">
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Sex</th>
+<th data-quarto-table-cell-role="th">Age range</th>
+<th data-quarto-table-cell-role="th">Education group</th>
+<th data-quarto-table-cell-role="th">Employed?</th>
+<th data-quarto-table-cell-role="th">Married?</th>
+<th data-quarto-table-cell-role="th">Minor children at home?</th>
+<th data-quarto-table-cell-role="th">PUMA area</th>
+<th data-quarto-table-cell-role="th">Person-income range</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">source row</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">24</td>
+<td>Female</td>
+<td>30–39</td>
+<td>high school / some college</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>north Fulton (Alpharetta)</td>
+<td>$25,000–34,999</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3216</td>
+<td>Male</td>
+<td>18–29</td>
+<td>high school / some college</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>Roswell–Sandy Springs</td>
+<td>$1–9,999</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8951</td>
+<td>Male</td>
+<td>40–49</td>
+<td>associate / bachelor's</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>north Atlanta</td>
+<td>$200,000+</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">12681</td>
+<td>Male</td>
+<td>18–29</td>
+<td>high school / some college</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>central Atlanta</td>
+<td>Nonpositive income</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">22784</td>
+<td>Female</td>
+<td>40–49</td>
+<td>high school / some college</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>southern Fulton</td>
+<td>$35,000–49,999</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="our-true-data-in-this-lecture" class="level2">
+<h2 class="anchored" data-anchor-id="our-true-data-in-this-lecture">Our “true data” in this lecture</h2>
+<p>Fulton is public, so we can inspect these examples. From now on, however, treat the fixed discretized construction partition as the confidential ground-truth table <span class="math inline">\(D_{\mathrm{true}}\)</span>. Every synthetic release may depend on <span class="math inline">\(D_{\mathrm{true}}\)</span> only through its explicitly accounted private measurements.</p>
+</section>
+<section id="public-contract" class="level2">
+<h2 class="anchored" data-anchor-id="public-contract">Public contract</h2>
+<ul>
+<li>Private: the fixed Fulton construction partition.</li>
+<li>Public: eight categorical domains with <span class="math inline">\(D=29{,}568\)</span>, including seven named 2000 Fulton PUMA areas and <a href="https://data.census.gov/table/ACSST1Y2024.S1901">eleven ordered person-income brackets</a>.</li>
+<li>Adjacency: substitute one row; every release uses <span class="math inline">\((\varepsilon,\delta)=(1,10^{-5})\)</span>.</li>
+<li>Accounting: compose Gaussian measurements in <span class="math inline">\(\rho\)</span>-zCDP.</li>
+<li>Through-statistic: education <span class="math inline">\(\rightarrow\)</span> the ordered income distribution.</li>
+</ul>
+<p><strong>Adjacency is part of the guarantee, not a footnote.</strong> This lecture substitutes one row: a neighbouring table has the same <span class="math inline">\(n\)</span> with one person replaced. Lecture 12 adds or removes one row instead, so its <span class="math inline">\(n\)</span> changes by one. The two conventions are not interchangeable, and an <span class="math inline">\(\varepsilon=1\)</span> substitution guarantee is in general the stronger claim, because one substitution is one removal followed by one addition. When we compare a Lecture 11 number with a Lecture 12 number, we are comparing mechanisms under two different neighbour relations, not two points on one scale.</p>
+<p>The last variable is <strong>total person income (PUMS <code>PINCP</code>), not salary</strong>: it can be zero or negative. We use one <code>Nonpositive income</code> category rather than spend a separate cell on losses and another on zero, followed by <span class="math inline">\(\$1\)</span>–<span class="math inline">\(9{,}999\)</span> and the public dollar cut points above <span class="math inline">\(\$10{,}000\)</span>. This gives eleven useful, ordered categories while retaining the <span class="math inline">\(\$50{,}000\)</span> boundary used later.</p>
+<p>If analysts only need a fixed query workload, releasing those answers directly is usually simpler and more accurate than manufacturing general-purpose rows.</p>
+<p>The seven 2000 Fulton PUMA codes use short display labels:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>PUMA</th>
+<th>short course label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>01101</td>
+<td>north Fulton (Alpharetta)</td>
+</tr>
+<tr class="even">
+<td>01102</td>
+<td>Roswell–Sandy Springs</td>
+</tr>
+<tr class="odd">
+<td>01103</td>
+<td>north Atlanta</td>
+</tr>
+<tr class="even">
+<td>01104</td>
+<td>central Atlanta</td>
+</tr>
+<tr class="odd">
+<td>01105</td>
+<td>south Atlanta / airport</td>
+</tr>
+<tr class="even">
+<td>01106</td>
+<td>southeast Atlanta</td>
+</tr>
+<tr class="odd">
+<td>01107</td>
+<td>southern Fulton</td>
+</tr>
+</tbody>
+</table>
+<p>These are readable summaries of the documented multi-place/tract compositions, not municipality names. Internal marginal code still uses categories 0–6.</p>
+</section>
+<section id="a-real-world-example-iom-ctdc" class="level2">
+<h2 class="anchored" data-anchor-id="a-real-world-example-iom-ctdc">A real-world example: IOM / CTDC</h2>
+<p>This is the one case for which the primary sources support the complete story needed here: an actual downloadable release, a formal differential-privacy claim, a documented construction mechanism, and a source-produced visual.</p>
+<section id="what-was-released" class="level3">
+<h3 class="anchored" data-anchor-id="what-was-released">What was released</h3>
+<p>The <a href="https://www.ctdatacollaborative.org/global-victim-perpetrator-synthetic-dataset">official CTDC release page</a> provides a downloadable synthetic CSV, codebook, and data dictionary. CTDC says the release represents case data from more than 17,000 victims and survivors identified in 123 countries and territories, together with their accounts of more than 37,000 perpetrators, covering 2005–2022. The codebook describes 16 released variables: seven about victims, citizenship, and exploitation and nine about victims’ accounts of perpetrators.</p>
+<p>The same CTDC page and the <a href="https://www.microsoft.com/en-us/research/blog/iom-and-microsoft-release-first-ever-differentially-private-synthetic-dataset-to-counter-human-trafficking/">Microsoft Research release note</a> state that this release provides differential privacy. Neither linked source states a numerical <span class="math inline">\((\varepsilon,\delta)\)</span> value, so none is asserted here.</p>
+</section>
+<section id="the-released-synthetic-product-shown-by-ctdc" class="level3">
+<h3 class="anchored" data-anchor-id="the-released-synthetic-product-shown-by-ctdc">The released synthetic product, shown by CTDC</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="ctdc-codebook-figure.png" class="img-fluid figure-img" style="width:100.0%" alt="CTDC synthetic-data dashboard showing summary tables for victim characteristics and perpetrator characteristics."></p>
+<figcaption>CTDC Global Victim–Perpetrator Synthetic Data dashboard, with victim and perpetrator characteristic summaries.</figcaption>
+</figure>
+</div>
+<p><em>Source-produced dashboard screenshot, not a course reconstruction and not confidential microdata.</em> The dashboard accompanies the <a href="https://www.ctdatacollaborative.org/global-victim-perpetrator-synthetic-dataset">official CTDC synthetic-data release</a>. Credit: “Source: Counter-Trafficking Data Collaborative (CTDC), July 2026.”</p>
+</section>
+<section id="how-the-sources-describe-the-mechanism" class="level3">
+<h3 class="anchored" data-anchor-id="how-the-sources-describe-the-mechanism">How the sources describe the mechanism</h3>
+<p>Microsoft’s <a href="https://github.com/microsoft/synthetic-data-showcase/blob/main/docs/dp/README.md">official algorithm documentation</a> and the codebook describe the same two stages:</p>
+<ol type="1">
+<li>query counts of short combinations of case attributes and release those counts with differential privacy; then</li>
+<li>sample synthetic records from the private aggregate counts.</li>
+</ol>
+<p>The second stage is post-processing, so the synthetic records retain the privacy guarantee of the aggregate counts. The codebook also warns that these are reported cases, not a random sample of trafficking victims worldwide, and therefore should not be used to estimate prevalence.</p>
+</section>
+</section>
+<section id="start-with-a-gaussian-whose-mean-is-unknown" class="level2">
+<h2 class="anchored" data-anchor-id="start-with-a-gaussian-whose-mean-is-unknown">Start with a Gaussian whose mean is unknown</h2>
+<p>Suppose the private observations follow a Gaussian model with unknown mean <span class="math inline">\(\mu\)</span> and known standard deviation <span class="math inline">\(\sigma\)</span>:</p>
+<p><span class="math display">\[
+X_i\overset{\mathrm{iid}}{\sim}\mathcal N(\mu,\sigma^2).
+\]</span></p>
+<p>The experiment fixes <span class="math inline">\(n=2{,}000\)</span>, <span class="math inline">\(\mu=0\)</span>, known <span class="math inline">\(\sigma=1\)</span>, public clipping bounds <span class="math inline">\([L,U]=[-6,6]\)</span>, and <span class="math inline">\((\varepsilon,\delta)=(1,10^{-6})\)</span>, which converts to <span class="math inline">\(\rho\approx0.01747\)</span>. It releases <span class="math inline">\(m=n=2{,}000\)</span> synthetic rows and uses 12,000 repeated experiments (3,000 in notebook smoke tests). For a standard Gaussian, <span class="math inline">\(\Pr(|X-\mu|&gt;6\sigma)\approx2\times10^{-9}\)</span>; by a union bound, the probability that any of the 2,000 observations is clipped is below <span class="math inline">\(4\times10^{-6}\)</span>. Thus the no-clipping approximation used below holds with high probability under the stated model.</p>
+<p>An unbounded Gaussian sample mean has infinite global sensitivity. We therefore declare public bounds <span class="math inline">\([L,U]\)</span> and clip each observation before computing <span class="math inline">\(\overline X\)</span>. Under substitution adjacency,</p>
+<p><span class="math display">\[
+\Delta_2\overline X=\frac{U-L}{n}.
+\]</span></p>
+<p>The Gaussian mechanism releases the fitted mean</p>
+<p><span class="math display">\[
+\widetilde\mu=\Pi_{[L,U]}(\overline X+Z),\qquad
+Z\sim\mathcal N(0,s_{\mathrm{DP}}^2),\qquad
+s_{\mathrm{DP}}=\frac{U-L}{n\sqrt{2\rho}}.
+\]</span></p>
+<p>When clipping and projection are rare,</p>
+<p><span class="math display">\[
+\widetilde\mu\approx
+\mathcal N\!\left(\mu,\frac{\sigma^2}{n}+s_{\mathrm{DP}}^2\right).
+\]</span></p>
+<p>Thus the private estimate looks like an ordinary Gaussian sample mean with slightly more variance—or an effective sample size <span class="math inline">\(n_{\mathrm{eff}}=\sigma^2/(\sigma^2/n+s_{\mathrm{DP}}^2)\)</span> smaller than <span class="math inline">\(n\)</span>.</p>
+<p>Now draw <span class="math inline">\(Y_j^*\sim\mathcal N(\widetilde\mu,\sigma^2)\)</span> and release <span class="math inline">\(Y_j=\Pi_{[L,U]}(Y_j^*)\)</span> for <span class="math inline">\(j=1,\ldots,n\)</span>. When clipping is rare, their mean adds one more sampling term:</p>
+<p><span class="math display">\[
+\overline Y\approx
+\mathcal N\!\left(
+\mu,\frac{\sigma^2}{n}+s_{\mathrm{DP}}^2+\frac{\sigma^2}{n}
+\right).
+\]</span></p>
+<p>Sampling the synthetic rows is randomized postprocessing, so it cannot weaken the Gaussian mechanism’s guarantee. We postpone the separate question—whether sampling alone can provide privacy—until after seeing the Binomial analogue.</p>
+<p>The next experiment runs the actual clipped mechanism repeatedly rather than drawing the displayed curves from the no-clipping approximation. Its legend reports the original construction size as exact <span class="math inline">\(n=2{,}000\)</span>; its derived <span class="math inline">\(n_{\mathrm{eff}}\)</span> labels use the analytic no-clipping variances.</p>
+<div id="10" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gaussian_example <span class="op">=</span> build_gaussian_parametric_example(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    epsilon<span class="op">=</span>PARAMETRIC_EPSILON,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    delta<span class="op">=</span>PARAMETRIC_DELTA,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    smoke<span class="op">=</span>SMOKE,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>show_figure(parametric_pdf_cdf_figure(gaussian_example))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Both panels show the same three Gaussian estimators. The left panel is a smoothed empirical density; the right is the empirical CDF. The DP fitted mean is slightly wider than the ordinary sample mean, and the mean of the released rows is wider again. The synthetic rows are useful output, but they are not <span class="math inline">\(n\)</span> new observations from the original population. Standard errors computed as if they were fresh evidence therefore answer the wrong question.</p>
+<p>Why might a Monte-Carlo estimate previously have shown the original <span class="math inline">\(n_{\mathrm{eff}}\)</span> as close to, but not exactly, 2,000? It estimated variance from finitely many repeated, clipped samples. Finite simulation error and the very rare clipping events perturb that estimate. Analytically, <span class="math inline">\(\operatorname{Var}(\overline X)=\sigma^2/n\)</span>, hence <span class="math inline">\(n_{\mathrm{eff}}=\sigma^2/(\sigma^2/n)=n\)</span> under the displayed no-clipping Gaussian model. The figure now reports that analytic value.</p>
+</section>
+<section id="second-step-the-binomial-model" class="level2">
+<h2 class="anchored" data-anchor-id="second-step-the-binomial-model">Second step: the Binomial model</h2>
+<p>Now let <span class="math inline">\(S\sim\operatorname{Binomial}(n,p)\)</span> be the number of successes and <span class="math inline">\(\widehat p=S/n\)</span> the sample mean. Its substitution sensitivity is <span class="math inline">\(1/n\)</span>. Apply the same two-step construction:</p>
+<p>Here the chosen values are <span class="math inline">\(n=2{,}000\)</span>, <span class="math inline">\(p=0.35\)</span>, <span class="math inline">\((\varepsilon,\delta)=(1,10^{-6})\)</span>, hence <span class="math inline">\(\rho\approx0.01747\)</span>, and <span class="math inline">\(m=n=2{,}000\)</span> released Bernoulli rows. The experiment uses 60,000 repetitions (20,000 in notebook smoke tests).</p>
+<p><span class="math display">\[
+\widetilde p=\Pi_{[0,1]}(\widehat p+Z),\qquad
+Z\sim\mathcal N\!\left(0,\frac{1}{2\rho n^2}\right),
+\]</span></p>
+<p><span class="math display">\[
+T\mid\widetilde p\sim\operatorname{Binomial}(n,\widetilde p),
+\qquad \overline Y=T/n.
+\]</span></p>
+<p>Ignoring the rare projection at 0 or 1, match the variance of <span class="math inline">\(\overline Y\)</span> to <span class="math inline">\(p(1-p)/n_{\mathrm{eff}}\)</span>. This predicts an ordinary Binomial experiment with a smaller effective sample size. We use the same plot as for the Gaussian: a density/mass view on the left and an empirical CDF on the right. The ordinary effective-size Binomial reference appears in both panels.</p>
+<div id="13" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>binomial_example <span class="op">=</span> build_binomial_parametric_example(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    epsilon<span class="op">=</span>PARAMETRIC_EPSILON,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    delta<span class="op">=</span>PARAMETRIC_DELTA,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    smoke<span class="op">=</span>SMOKE,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>show_figure(parametric_pdf_cdf_figure(binomial_example))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The density/mass and CDF views tell the same story: the released-row curve nearly coincides with the ordinary Binomial reference at the displayed <span class="math inline">\(n_{\mathrm{eff}}\)</span>. Again, generating <span class="math inline">\(n\)</span> rows did not create <span class="math inline">\(n\)</span> fresh observations; it produced a noisier estimate whose uncertainty is well described by a smaller effective sample.</p>
+</section>
+<section id="privacy-from-resampling-alone" class="level2">
+<h2 class="anchored" data-anchor-id="privacy-from-resampling-alone">Privacy from resampling alone</h2>
+<p>Now remove the separately added Gaussian noise and ask how many synthetic rows sampling itself can release. The answer is model-dependent.</p>
+<p><strong>Gaussian rows.</strong> Release <span class="math inline">\(m\)</span> independent rows from <span class="math inline">\(\mathcal N(\overline X,\sigma^2)\)</span> after clipping the original observations to the same public <span class="math inline">\([L,U]=[-6,6]\)</span>. With <span class="math inline">\(\Delta=(U-L)/n\)</span>, the complete output is</p>
+<p><span class="math display">\[
+\rho_G(m)=\frac{m\Delta^2}{2\sigma^2}\text{-zCDP},\qquad
+\varepsilon_G(m,\delta)=\rho_G(m)+2\sqrt{\rho_G(m)\log(1/\delta)}.
+\]</span></p>
+<p><strong>Bernoulli rows.</strong> Truncate the empirical probability to the public interval <span class="math inline">\([a,1-a]=[0.1,0.9]\)</span>. For neighboring datasets, call the two truncated values <span class="math inline">\(p\)</span> and <span class="math inline">\(q\)</span>. Projection is nonexpansive, so <span class="math inline">\(|p-q|\leq1/n\)</span> everywhere on that interval. If the released sample contains <span class="math inline">\(K\)</span> ones, then under <span class="math inline">\(K\sim\operatorname{Binomial}(m,p)\)</span> its privacy loss against <span class="math inline">\(q\)</span> is</p>
+<p><span class="math display">\[
+L_{p,q}(K)
+=m\,\operatorname{KL}(\operatorname{Ber}(p)\|\operatorname{Ber}(q))
++(K-mp)\bigl(\operatorname{logit}(p)-\operatorname{logit}(q)\bigr).
+\]</span></p>
+<p>Over the entire truncated range,</p>
+<p><span class="math display">\[
+\operatorname{KL}(\operatorname{Ber}(p)\|\operatorname{Ber}(q))
+\leq\frac{1}{n^2a(1-a)},\qquad
+|\operatorname{logit}(p)-\operatorname{logit}(q)|
+\leq\frac{1}{na(1-a)}.
+\]</span></p>
+<p>Hoeffding’s inequality therefore gives, in both neighboring directions,</p>
+<p><span class="math display">\[
+\Pr\!\left[L_{p,q}&gt;
+\frac{m}{n^2a(1-a)}
++\frac{1}{na(1-a)}\sqrt{\frac{m}{2}\log\frac1\delta}
+\right]\leq\delta.
+\]</span></p>
+<p>Thus the <strong>entire <span class="math inline">\(m\)</span>-row Bernoulli release</strong>, not a per-bit composition, is <span class="math inline">\((\varepsilon_B(m,\delta),\delta)\)</span>-DP with</p>
+<p><span class="math display">\[
+\varepsilon_B(m,\delta)=
+\frac{m}{n^2a(1-a)}
++\frac{1}{na(1-a)}\sqrt{\frac{m}{2}\log\frac1\delta}.
+\]</span></p>
+<p>The plot uses <span class="math inline">\(m/n\)</span> on the horizontal axis, so the vertical line at <span class="math inline">\(m/n=1\)</span> always means “release as many rows as were in the original sample.” The title now holds the original sample size fixed at <span class="math inline">\(n=2{,}000\)</span> for both mechanisms. The vertical axis is simply <span class="math inline">\(\varepsilon\)</span>; both curves use <span class="math inline">\(\delta=10^{-6}\)</span>. Both guarantees grow at the same leading <span class="math inline">\(\sqrt m/n\)</span> rate. Their remaining quantitative difference comes from the public model constants shown in the title: Gaussian width <span class="math inline">\(12\sigma\)</span> versus the Bernoulli interval <span class="math inline">\([0.1,0.9]\)</span>.</p>
+<p>The Bernoulli truncation is essential: if probabilities may reach 0 or 1, a neighboring input can give an output positive probability versus zero probability, so no finite likelihood-ratio bound follows.</p>
+<div id="16" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>resampling_tradeoff <span class="op">=</span> build_resampling_privacy_tradeoff(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    epsilon<span class="op">=</span>PARAMETRIC_EPSILON,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    delta<span class="op">=</span>PARAMETRIC_DELTA,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>show_figure(resampling_privacy_tradeoff_figure(resampling_tradeoff))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="extend-beyond-parametric-families" class="level2">
+<h2 class="anchored" data-anchor-id="extend-beyond-parametric-families">Extend beyond parametric families</h2>
+<p>The Gaussian and Binomial examples each estimated one unknown parameter. Our Fulton table has eight categorical columns, and a complete row can occupy</p>
+<p><span class="math display">\[
+D=2\times6\times4\times2\times2\times2\times7\times11
+=29{,}568
+\]</span></p>
+<p>joint cells. An unrestricted joint distribution therefore has 29,567 free probabilities. Estimating that complete object is possible, but it spends noise on many combinations that may be rare or irrelevant.</p>
+<p>We instead begin with smaller tables. A one-way table asks only how often each category appears in one column. A two-way table asks how often two categories appear together. After privately measuring selected tables, we fit one valid 29,568-cell distribution consistent with them as closely as possible and sample complete rows from that fit.</p>
+</section>
+<section id="temptation-make-every-column-look-right" class="level2">
+<h2 class="anchored" data-anchor-id="temptation-make-every-column-look-right">Temptation: make every column look right</h2>
+<p>For column <span class="math inline">\(j\)</span> with <span class="math inline">\(d_j\)</span> categories, release the complete normalized histogram</p>
+<p><span class="math display">\[
+q_j(D)=\left(\frac1n\sum_i\mathbf1\{x_{ij}=a\}\right)_{a=1}^{d_j}.
+\]</span></p>
+<p>Replacing one row can remove mass <span class="math inline">\(1/n\)</span> from one category and add it to another, so the <strong>whole vector</strong> has <span class="math inline">\(L_2\)</span> sensitivity <span class="math inline">\(\sqrt2/n\)</span>. The eight column histograms contain</p>
+<p><span class="math display">\[
+2+6+4+2+2+2+7+11=36
+\]</span></p>
+<p>cells in total, but they are eight vector queries—not 36 separately composed scalar queries.</p>
+<p>Where does the 8 come from? There are exactly eight released column vectors: sex, age, education, employment, marriage, minor children, PUMA, and income. Convert the common <span class="math inline">\((\varepsilon,\delta)\)</span> target to total <span class="math inline">\(\rho\)</span> and assign <span class="math inline">\(\rho_j=\rho/8\)</span> to each of those eight vectors. For every coordinate of vector <span class="math inline">\(j\)</span>, add independent noise</p>
+<p><span class="math display">\[
+\mathcal N(0,\sigma_j^2),\qquad
+\sigma_j=\frac{\sqrt2/n}{\sqrt{2\rho_j}}
+=\frac1{n\sqrt{\rho_j}}.
+\]</span></p>
+<p>zCDP composition adds the eight vector costs:</p>
+<p><span class="math display">\[
+\sum_{j=1}^8\rho_j=8\left(\frac\rho8\right)=\rho.
+\]</span></p>
+<p>For the full notebook run, <span class="math inline">\(n=20{,}613\)</span> and <span class="math inline">\(\rho=0.02081994\)</span>, so each vector gets <span class="math inline">\(\rho_j=0.00260249\)</span>, <span class="math inline">\(\Delta_2=\sqrt2/n=0.00006861\)</span>, and every coordinate receives Gaussian noise with standard deviation <span class="math inline">\(0.00095096\)</span>. Within a vector, the <span class="math inline">\(d_j\)</span> noisy coordinates are already covered by that vector’s sensitivity calculation; we do <strong>not</strong> compose again over categories.</p>
+<p>Project each noisy vector to its probability simplex and sample the columns independently:</p>
+<p><span class="math display">\[
+\widehat p_{\mathrm{1way}}(x)
+=\prod_{j=1}^8\widehat q_j(x_j).
+\]</span></p>
+<p>This construction is designed to make every column look right. Education uses four of the 36 released cells and person income uses eleven. After introducing two-way measurement, we will compare these direct noisy one-ways with the one-way marginals induced by one noisy education × income table.</p>
+<div id="19" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>show_figure(one_way_marginals_figure(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    artifact.diagnostics[<span class="st">"one_way_marginal_comparison"</span>],</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    income_labels<span class="op">=</span>artifact.contract.income_bin_labels,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    theory_sd<span class="op">=</span>artifact.diagnostics[<span class="st">"one_way_marginal_theory_sd"</span>],</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    methods<span class="op">=</span>(<span class="st">"truth"</span>, <span class="st">"one-way noisy"</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="downside-one-way-marginals-do-not-determine-relationships" class="level3">
+<h3 class="anchored" data-anchor-id="downside-one-way-marginals-do-not-determine-relationships">Downside: one-way marginals do not determine relationships</h3>
+<p>The left panel is the actual Fulton education × income joint used as the truth reference in this notebook. Its true income marginal sits immediately above it, and its true education marginal sits immediately to its right.</p>
+<p>The right panel is a public mathematical illustration of independence: <span class="math inline">\(A_{ei}=p_E(e)p_I(i)\)</span>. It is <strong>not</strong> the private one-way release, not sampled synthetic data, and not a fit to Fulton. Its fixed illustrative education and income marginals are shown around the table so the independence construction is fully specified. Its role is only to show how multiplying one-way probabilities fills a <span class="math inline">\(4\times11\)</span> joint table. The next figure performs the actual comparison against the exact and private one-way products used by the lecture artifact.</p>
+<div id="21" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>show_figure(one_way_correlation_heatmap_figure(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    artifact.diagnostics[<span class="st">"reference_education_income_joint"</span>],</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    correlation_diagnostic.product_joint,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    correlation_diagnostic.education_marginal,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    correlation_diagnostic.income_marginal,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    education_labels<span class="op">=</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"below HS"</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HS / some college"</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"associate / BA"</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"graduate / professional"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    income_labels<span class="op">=</span>artifact.contract.income_bin_labels,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The one-way fit does what it promised: each education and income marginal is close. But those 4 and 11 cells do not determine the <span class="math inline">\(4\times11=44\)</span> cells in the education × income table.</p>
+<p>The next figure follows six fixed, interpretable cells through four stages:</p>
+<ol type="1">
+<li>their frequency in the real joint table;</li>
+<li>the product of the exact, nonprivate one-way marginals;</li>
+<li>the product of the private one-way marginals; and</li>
+<li>their frequency after sampling the released synthetic rows.</li>
+</ol>
+<p>The first gap is independence misspecification, the second is DP measurement error, and the third is finite synthetic-sample variation.</p>
+<div id="23" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>show_figure(one_way_pair_cells_figure(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    artifact.reference,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    artifact.distributions[<span class="st">"exact product"</span>],</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    artifact.distributions[<span class="st">"one-way"</span>],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    artifact.releases[<span class="st">"one-way"</span>],</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    income_labels<span class="op">=</span>artifact.contract.income_bin_labels,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="measure-complete-two-way-tables" class="level2">
+<h2 class="anchored" data-anchor-id="measure-complete-two-way-tables">Measure complete two-way tables</h2>
+<p>To preserve relationships, measure joint categories rather than multiplying separate one-way probabilities. For columns <span class="math inline">\(j\)</span> and <span class="math inline">\(k\)</span> with <span class="math inline">\(d_jd_k\)</span> joint cells, define the complete normalized contingency-table vector</p>
+<p><span class="math display">\[
+q_{jk}(D)=\left(
+\frac1n\sum_i\mathbf1\{x_{ij}=a,x_{ik}=b\}
+\right)_{(a,b)}\in\mathbb R^{d_jd_k}.
+\]</span></p>
+<p>A substituted row again moves mass <span class="math inline">\(1/n\)</span> from at most one joint cell to another, so the <strong>whole pair vector</strong> has <span class="math inline">\(L_2\)</span> sensitivity <span class="math inline">\(\sqrt2/n\)</span>, regardless of whether it contains 4 cells, 44 cells, or another pair-specific count.</p>
+<p>For one pair allocated <span class="math inline">\(\rho_{jk}\)</span>, the private mechanism is</p>
+<p><span class="math display">\[
+\widetilde q_{jk}=q_{jk}(D)
++\mathcal N(0,\sigma_{jk}^2I_{d_jd_k}),\qquad
+\sigma_{jk}=\frac{\sqrt2/n}{\sqrt{2\rho_{jk}}}
+=\frac1{n\sqrt{\rho_{jk}}}.
+\]</span></p>
+<p>There are <span class="math inline">\(\binom82=28\)</span> column pairs containing <span class="math inline">\(\sum_{j&lt;k}d_jd_k=529\)</span> pair cells. The all-pairs alternative is one fresh release: allocate <span class="math inline">\(\rho_{jk}=\rho/28\)</span> to each of the 28 complete vectors, add independent Gaussian noise to all 529 coordinates, and compose <span class="math inline">\(\sum_{j&lt;k}\rho_{jk}=\rho\)</span>. Privacy composition is over 28 vector mechanisms, not over 529 scalar cells.</p>
+<p>The 28 noisy tables overlap and generally disagree. Rather than project each one independently, retain every raw vector <span class="math inline">\(y_r\)</span>, its marginalization operator <span class="math inline">\(A_r\)</span>, and its Gaussian scale <span class="math inline">\(\sigma_r\)</span>, then fit one joint distribution:</p>
+<p><span class="math display">\[
+\widehat p=\arg\min_{p\in\Delta_D}
+\sum_r\frac{\|A_rp-y_r\|_2^2}{2\sigma_r^2}-\tau H(p).
+\]</span></p>
+<p>The next figure isolates <strong>one of those 28 already-accounted-for tables</strong>. It shows the education × income slice: the real <span class="math inline">\(4\times11\)</span> table, its raw private measurement from the all-pairs release, and the same measurement after replacing negative cells by zero and renormalizing. The plot does not represent a single-pair mechanism; all 28 tables were measured at <span class="math inline">\(\rho/28\)</span> before this one was selected for display. It uses the same blue heatmap-plus-marginals grammar as the earlier fixed-marginal diagnostic.</p>
+<div id="25" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>show_figure(two_way_measurement_figure(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    artifact.diagnostics[<span class="st">"two_way_table_comparison"</span>],</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    education_labels<span class="op">=</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"below HS"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HS / some college"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"associate / BA"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"graduate / professional"</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    income_labels<span class="op">=</span>artifact.contract.income_bin_labels,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="downside-two-way-tables-give-noisier-one-way-answers" class="level3">
+<h3 class="anchored" data-anchor-id="downside-two-way-tables-give-noisier-one-way-answers">Downside: two-way tables give noisier one-way answers</h3>
+<p>All pairs preserve much more dependence, but divide the fixed privacy budget across 28 tables whether or not the analyst needs them. A pair vector does <strong>not</strong> have greater <span class="math inline">\(L_2\)</span> sensitivity than a one-way vector: both have <span class="math inline">\(\sqrt2/n\)</span>. The loss begins with budget fragmentation: <span class="math inline">\(\rho/28\)</span> per pair rather than <span class="math inline">\(\rho/8\)</span> per one-way vector makes each pair-cell noise standard deviation <span class="math inline">\(\sqrt{28/8}\approx1.87\)</span> times larger.</p>
+<p>Marginalizing then sums independent noisy cells. The education marginal sums eleven income cells, so its expected noise standard deviation is <span class="math inline">\(\sqrt{11}\sqrt{28/8}\approx6.20\)</span> times the direct one-way value. The income marginal sums four education cells, giving a factor <span class="math inline">\(\sqrt4\sqrt{28/8}\approx3.74\)</span>. The next figure compares those induced marginals with the dedicated one-way measurements. The raw result is shown before validity postprocessing so truncation cannot hide the accumulated measurement noise.</p>
+<div id="27" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>show_figure(one_way_marginals_figure(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    artifact.diagnostics[<span class="st">"one_way_marginal_comparison"</span>],</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    income_labels<span class="op">=</span>artifact.contract.income_bin_labels,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    theory_sd<span class="op">=</span>artifact.diagnostics[<span class="st">"one_way_marginal_theory_sd"</span>],</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The black bars are the real-data truth. The direct one-way release is usually closest because each vector receives <span class="math inline">\(\rho/8\)</span>. The raw two-way table receives only <span class="math inline">\(\rho/28\)</span> and can induce negative marginal cells. Truncation restores a valid table, but it is postprocessing rather than recovered information: it can move every marginal when it removes negative joint cells and renormalizes.</p>
+<p>That bar plot follows the education × income table alone, but the all-pairs release contains seven independently noised pair tables involving education and seven involving income. Marginalizing each overlapping table therefore gives seven different answers to the same one-way question. The next heatmaps show those raw pair-induced answers minus truth. A noise-aware joint fit restores formal consistency by finding one compromise distribution; it cannot make the inconsistent measurements simultaneously exact or recover the noise-free answer.</p>
+<div id="29" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>show_figure(two_way_inconsistency_figure(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    artifact.diagnostics[<span class="st">"pairwise_one_way_inconsistency"</span>],</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    education_labels<span class="op">=</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"below HS"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HS / some college"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"associate / BA"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"graduate / professional"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    income_labels<span class="op">=</span>artifact.contract.income_bin_labels,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="three-way-relationships-remain-unidentified" class="level2">
+<h2 class="anchored" data-anchor-id="three-way-relationships-remain-unidentified">Three-way relationships remain unidentified</h2>
+<p>Now use three binary variables because they have exactly eight inspectable states. The top row of the next figure first shows everything a one- and two-way release can learn: every binary one-way is 50/50 and every pair is uniform over <code>00</code>, <code>01</code>, <code>10</code>, and <code>11</code>. The bottom row then reveals two possible three-way truths. Even parity and odd parity put mass on opposite sets of four states while matching every displayed one- and two-way marginal perfectly. Thus all 28 Fulton pairs can improve pairwise accuracy without identifying a three-way relationship.</p>
+<div id="31" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>parity_state <span class="op">=</span> artifact.diagnostics[<span class="st">"parity"</span>]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>show_figure(parity_witness_figure(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    parity_state[<span class="st">"even"</span>],</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    parity_state[<span class="st">"odd"</span>],</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="temptation-add-every-three-way-marginal" class="level2">
+<h2 class="anchored" data-anchor-id="temptation-add-every-three-way-marginal">Temptation: add every three-way marginal</h2>
+<p>The parity witness suggests measuring triples next. With eight columns, however, Fulton has <span class="math inline">\(\binom83=56\)</span> three-way vectors containing 4,154 cells. Under the same total budget, each vector would receive only <span class="math inline">\(\rho/56\)</span>—and four-way relationships would still remain unidentified. Repeating “measure every order” eventually becomes the 29,568-cell full joint.</p>
+<p>Repeating this strategy measures a growing collection of statistics without ever making the resulting table universally accurate. We now test that limitation with fixed downstream regressions before introducing an adaptive alternative.</p>
+</section>
+<section id="regression-as-a-downstream-accuracy-measure" class="level2">
+<h2 class="anchored" data-anchor-id="regression-as-a-downstream-accuracy-measure">Regression as a downstream accuracy measure</h2>
+<p>Regression is not another release mechanism in this comparison. It is a fixed evaluation protocol. For every synthesis method, train the same model on that method’s released rows and test it on the same untouched real evaluation partition. Training the model on the original construction rows gives a nonprivate oracle benchmark; it is not a release and it does not have zero error.</p>
+<p>Every task uses the same seven public predictors: sex, age range, education group, employment, marital status, minor-children-at-home status, and PUMA area. The linear target replaces the eleven income bands by the public representatives</p>
+<p><span class="math display">\[
+(0,5,12.5,20,30,42.5,62.5,87.5,125,175,225)
+\]</span></p>
+<p>in thousands of dollars. The binary target is <span class="math inline">\(H=\mathbf1\{\text{income}\geq\$50{,}000\}\)</span>. We report held-out MAE for the linear tasks and held-out log loss for the logistic tasks; lower is better.</p>
+<p>For each target we freeze two model specifications. The main-effects linear model uses ordinary least squares; the interaction-rich linear model uses ridge 1. The logistic models use <span class="math inline">\(C=1\)</span>. The main-effects design has 25 one-hot predictor columns. The interaction-rich design adds all 254 crosses between distinct predictor pairs, for 279 columns in total. A crossed feature such as education × sex must be related to income through a three-way distribution; the linear-model Gram matrix can combine two crossed features and involve as many as four predictors. Therefore even exact one- and two-way marginals do not determine these fitted regressions.</p>
+<p>The standing-column comparison below includes only sources already introduced: the original-data oracle, the exact one-way product, the private one-way release, and the all-pairs release. MWEM is not included until it has been defined.</p>
+<div id="34" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>show_figure(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    regression_utility_figure(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        artifact.metrics,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        methods<span class="op">=</span>(<span class="st">"oracle"</span>, <span class="st">"exact product"</span>, <span class="st">"one-way"</span>, <span class="st">"all pairs"</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Each standing column is the held-out performance of a model trained on the named table; lower is better. The main-effects and interaction-rich rankings need not agree. Matching pairwise tables directly supports many main effects, but it does not fix the three- and four-variable relationships used by the crossed regressions.</p>
+<p>Publishing these benchmark scores is free only because Fulton is public. Evaluating or tuning on a private holdout would require another accounted private access.</p>
+</section>
+<section id="a-real-exponential-mechanism-algorithm-mwem" class="level2">
+<h2 class="anchored" data-anchor-id="a-real-exponential-mechanism-algorithm-mwem">A real exponential-mechanism algorithm: MWEM</h2>
+<p>Measuring all 28 pairs spreads the budget uniformly, while adding every triple would fragment it further. MWEM (Hardt, Ligett and McSherry, 2012) instead spends the budget adaptively on the marginal cells where its current distribution is most wrong.</p>
+<p>Let <span class="math inline">\(x_{ij}\)</span> be row <span class="math inline">\(i\)</span>’s category in column <span class="math inline">\(j\)</span>. The public query family is</p>
+<p><span class="math display">\[
+\mathcal Q=\left\{q_{j,a},q_{jk,ab}:j&lt;k\right\},
+\quad q_{j,a}(D)=\frac1n\sum_i\mathbf1\{x_{ij}=a\},
+\quad q_{jk,ab}(D)=\frac1n\sum_i\mathbf1\{x_{ij}=a,x_{ik}=b\}.
+\]</span></p>
+<p>The family contains one query for every cell of every one-column table and every two-column table: <span class="math inline">\(\sum_j d_j=36\)</span> one-column cells and <span class="math inline">\(\sum_{j&lt;k}d_jd_k=529\)</span> two-column cells, for 565 scalar fraction queries in total. It contains no three-way cells and no regression-specific interactions. Instead of refitting a joint from measured tables, MWEM maintains an explicit distribution <span class="math inline">\(x\)</span> over all <span class="math inline">\(D=29{,}568\)</span> domain cells and updates it multiplicatively.</p>
+<p>Each round <span class="math inline">\(t\)</span> does three things:</p>
+<ol type="1">
+<li><strong>Select.</strong> Score every remaining <span class="math inline">\(q_r\in\mathcal Q\)</span> by how far the current synthetic distribution is from the private table, <span class="math inline">\(s_r=|q_r(D_{\mathrm{true}})-q_r(x_{t-1})|\)</span>, and draw one with the exponential mechanism. Each <span class="math inline">\(q_r\)</span> is a <em>fraction of rows</em>, so substituting one row moves it by at most <span class="math inline">\(1/n\)</span>: that is the score sensitivity.</li>
+<li><strong>Measure.</strong> Release that single cell with Gaussian noise at the same <span class="math inline">\(1/n\)</span> sensitivity.</li>
+<li><strong>Update.</strong> For every domain cell <span class="math inline">\(j\)</span>, <span class="math display">\[x_t(j)\;\propto\;x_{t-1}(j)\,\exp\!\Big(A_r(j)\,\frac{y_r-q_r(x_{t-1})}{2}\Big),\]</span> where <span class="math inline">\(A_r\in\{0,1\}^D\)</span> is one exactly on the domain cells inside the selected marginal cell.</li>
+</ol>
+<p>Only steps 1 and 2 touch the private table. With <span class="math inline">\(T=100\)</span> rounds and <span class="math inline">\(\rho/(2T)\)</span> for each, the ledger composes to the same total <span class="math inline">\(\rho\)</span> as every other release here.</p>
+<p>Two implementation details matter. First, a single pass of step 3 moves the weights far too little: selecting all 565 queries <em>with no noise at all</em> only takes the mean workload error from <span class="math inline">\(0.111\)</span> to <span class="math inline">\(0.072\)</span>. Hardt, Ligett and McSherry therefore re-apply the update over <strong>all</strong> measurements released so far, several passes per round. That loop re-reads already-released noisy values, so it is postprocessing and costs no budget — but it is what makes the algorithm converge. Second, the reported distribution is the average of the round iterates, as in their Algorithm 1; the final iterate usually scores better, but choosing it on that basis would be tuning the output on the private result.</p>
+<p>The other classical exponential-mechanism answer, <strong>smallDB</strong>, selects an entire small synthetic database from the set of all databases of size <span class="math inline">\(m\)</span> over the domain. That range has <span class="math inline">\(\binom{D+m-1}{m}\)</span> elements, so it is a theoretical construction rather than something we can run here.</p>
+<p>The next figure checks exactly those 565 cells. For each cell, its error is the absolute difference between the cell fraction in the released table and in the original table. The panels report the average and the largest error separately for the 36 one-column cells and the 529 two-column cells, in percentage points. The round-by-round transcript then records what MWEM selected and measured.</p>
+<div id="38" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>show_figure(marginal_order_accuracy_figure(artifact.metrics))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="39" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>show_table(mwem_transcript_table(artifact.diagnostics[<span class="st">"mwem"</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+<style>
+.lecture-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 0.75em 0 1.25em;
+}
+table.lecture-table {
+    width: max-content;
+    min-width: 100%;
+    font-size: 1.05em;
+    line-height: 1.35;
+    margin: 0;
+}
+table.lecture-table th,
+table.lecture-table td {
+    padding: 0.45em 0.65em;
+    white-space: nowrap;
+}
+</style>
+<div class="lecture-table-wrap">
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">round</th>
+<th data-quarto-table-cell-role="th">selected cell</th>
+<th data-quarto-table-cell-role="th">current estimate</th>
+<th data-quarto-table-cell-role="th">noisy measurement</th>
+<th data-quarto-table-cell-role="th">largest menu gap</th>
+<th data-quarto-table-cell-role="th">P(selected)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>1</td>
+<td>children[0]</td>
+<td>0.5000</td>
+<td>0.8429</td>
+<td>0.3432</td>
+<td>0.500</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>2</td>
+<td>educ_bin[1]</td>
+<td>0.2500</td>
+<td>0.4067</td>
+<td>0.1581</td>
+<td>0.943</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>3</td>
+<td>educ_bin × employed[2,1]</td>
+<td>0.0989</td>
+<td>0.2291</td>
+<td>0.1262</td>
+<td>0.233</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>4</td>
+<td>age_bin × married[0,0]</td>
+<td>0.0833</td>
+<td>0.1960</td>
+<td>0.1163</td>
+<td>0.664</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>5</td>
+<td>employed × income_bin[0,1]</td>
+<td>0.0384</td>
+<td>0.1329</td>
+<td>0.1076</td>
+<td>0.084</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>6</td>
+<td>employed[0]</td>
+<td>0.4620</td>
+<td>0.3746</td>
+<td>0.0928</td>
+<td>0.123</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>7</td>
+<td>age_bin × employed[5,1]</td>
+<td>0.0908</td>
+<td>0.0069</td>
+<td>0.0820</td>
+<td>0.134</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>8</td>
+<td>puma[1]</td>
+<td>0.1429</td>
+<td>0.2271</td>
+<td>0.0867</td>
+<td>0.158</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="no-universal-best-synthetic-table" class="level2">
+<h2 class="anchored" data-anchor-id="no-universal-best-synthetic-table">No universal best synthetic table</h2>
+<p>The final comparison asks six different questions of each of the five now-defined table sources. Each panel is its own horizontal leaderboard and uses its own units; lower is better. The real-data oracle is the benchmark row. The panels report:</p>
+<ol type="1">
+<li>error in the full education-conditioned income distribution;</li>
+<li>mean income-bin error from multiclass train-synthetic/test-real prediction;</li>
+<li>main-effects linear-regression income MAE;</li>
+<li>interaction-rich linear-regression income MAE;</li>
+<li>main-effects logistic high-income log loss; and</li>
+<li>interaction-rich logistic high-income log loss.</li>
+</ol>
+<p>These are not six estimates of one quantity. They test whether a release useful for one declared workload remains useful for another downstream task. This is the first regression comparison that includes MWEM: it adds MWEM to the same four frozen regression measures shown before the algorithm was introduced.</p>
+<div id="41" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>show_figure(common_footing_figure(artifact.metrics))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The ordering changes across panels. That is the intended result: utility belongs to a workload, not to the word “synthetic.” Exact one-way products do poorly when dependence matters; all-pairs helps the relationships it measures; and MWEM spends budget adaptively within its declared menu. A deployment should declare its queries or downstream tasks before choosing among these releases.</p>
+</section>
+<section id="closing-the-workload-remains-part-of-the-release" class="level2">
+<h2 class="anchored" data-anchor-id="closing-the-workload-remains-part-of-the-release">Closing: the workload remains part of the release</h2>
+<p>Private measurements can support useful synthetic tables, but only through the statistics, model family, and public workload chosen before private access. One-ways, all pairs, and MWEM’s adaptive selection pay for different promises; no row generator turns one promise into all of them.</p>
+<p>The next lecture changes domains and starts again from a classical low-rank Gaussian construction before asking what a learned generator adds.</p>
+<section id="reading-map" class="level3">
+<h3 class="anchored" data-anchor-id="reading-map">Reading map</h3>
+<p>smallDB privately chooses a small database; MWEM selects a worst query and applies multiplicative weights; PrivBayes assembles low-order conditionals; MST/Private-PGM reconstructs a graphical model; AIM adapts selection and measurement to a workload. These are extensions, not extra headline methods.</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 The Hebrew University of Jerusalem. Code: MIT. Content: CC BY-NC-SA 4.0.</p>
+</div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/course.html">
+<p>Course</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/syllabus.html">
+<p>Syllabus</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/about.html">
+<p>About</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/license.html">
+<p>License &amp; attribution</p>
+</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://github.com/applied-dp-course/website">
+<p>Source</p>
+</a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.43">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learned generators: DP-SGD and private evolution — Self-study notebook – Applied Differential Privacy</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../theme/favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-520c36e687f14f57082fa33f95c1cf4f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-2d877df4138b1337d6dc48be9f9f2cce.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<style>
+/* course-nav-split */
+#quarto-header,
+#quarto-header .navbar,
+#quarto-header .navbar-collapse {
+  overflow: visible;
+}
+
+.navbar .nav-item.course-nav-split-item {
+  position: static;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-main,
+.navbar .nav-item.course-nav-split-item > .course-nav-caret {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-main {
+  padding-right: 0.1rem;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret {
+  padding-left: 0.1rem;
+  padding-right: 0.55rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  line-height: inherit;
+  box-shadow: none;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret::after {
+  margin-left: 0;
+  vertical-align: 0.1em;
+}
+
+.navbar .nav-item.course-nav-split-item > .course-nav-caret:focus,
+.navbar .nav-item.course-nav-split-item > .course-nav-caret:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar .nav-item.course-nav-split-item:hover > .course-nav-main,
+.navbar .nav-item.course-nav-split-item:hover > .course-nav-caret,
+.navbar .nav-item.course-nav-split-item:focus-within > .course-nav-main,
+.navbar .nav-item.course-nav-split-item:focus-within > .course-nav-caret {
+  color: var(--bs-navbar-hover-color);
+}
+
+.navbar .nav-item.course-nav-split-item > .dropdown-menu {
+  position: absolute;
+  z-index: 1200;
+  margin-top: 0;
+  border-color: rgba(0, 0, 0, 0.12);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.navbar .nav-item.course-nav-split-item > .dropdown-menu.show {
+  z-index: 1200;
+}
+
+.hero,
+.offering-banner,
+.quick-links {
+  position: relative;
+  z-index: 1;
+}
+
+</style>
+<script>
+// course-nav-split-v1
+document.addEventListener("DOMContentLoaded", function () {
+  var menuItems = [
+    ["Syllabus", "syllabus.html"],
+    ["Lectures", "lectures.html"],
+    ["Class assignments", "class-assignments.html"],
+    ["Home assignments", "home-assignments.html"],
+    ["Past years", "archive.html"],
+  ];
+
+  document.querySelectorAll(".navbar-nav > .nav-item").forEach(function (item) {
+    if (item.classList.contains("course-nav-split-item")) {
+      return;
+    }
+    var toggle = item.querySelector(":scope > a.dropdown-toggle");
+    var menu = item.querySelector(":scope > ul.dropdown-menu");
+    if (!toggle || !menu) {
+      var simple = item.querySelector(":scope > a.nav-link .menu-text");
+      if (!simple || simple.textContent.trim() !== "Course") {
+        return;
+      }
+      var courseLink = item.querySelector(":scope > a.nav-link");
+      var courseHref = courseLink.getAttribute("href") || "pages/course.html";
+      var prefix = courseHref.replace(/course\.html$/, "");
+      item.classList.add("dropdown");
+      item.innerHTML = "";
+      toggle = document.createElement("a");
+      toggle.className = "nav-link dropdown-toggle";
+      toggle.href = "#";
+      toggle.setAttribute("role", "link");
+      toggle.setAttribute("data-bs-toggle", "dropdown");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = '<span class="menu-text">Course</span>';
+      menu = document.createElement("ul");
+      menu.className = "dropdown-menu";
+      menuItems.forEach(function (entry) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.className = "dropdown-item";
+        a.href = prefix + entry[1];
+        a.innerHTML = '<span class="dropdown-text">' + entry[0] + "</span>";
+        li.appendChild(a);
+        menu.appendChild(li);
+      });
+      item.appendChild(toggle);
+      item.appendChild(menu);
+    }
+    var label = toggle.querySelector(".menu-text");
+    if (!label || label.textContent.trim() !== "Course") {
+      return;
+    }
+    var syllabusLink = menu.querySelector('a[href*="syllabus"]');
+    var courseHref = syllabusLink
+      ? syllabusLink.getAttribute("href").replace("syllabus.html", "course.html")
+      : "pages/course.html";
+    var link = document.createElement("a");
+    link.className = "nav-link course-nav-main";
+    link.href = courseHref;
+    link.innerHTML = toggle.innerHTML;
+    if (window.location.pathname.endsWith("/course.html")) {
+      link.classList.add("active");
+      link.setAttribute("aria-current", "page");
+    }
+    var caret = document.createElement("button");
+    caret.type = "button";
+    caret.className = "nav-link course-nav-caret dropdown-toggle";
+    caret.setAttribute("data-bs-toggle", "dropdown");
+    caret.setAttribute("aria-expanded", "false");
+    caret.setAttribute("aria-label", "Course sections");
+    if (toggle.id) {
+      caret.id = toggle.id;
+      menu.setAttribute("aria-labelledby", toggle.id);
+    }
+    toggle.replaceWith(link, caret);
+    item.classList.add("course-nav-split-item");
+    if (window.bootstrap && window.bootstrap.Dropdown) {
+      window.bootstrap.Dropdown.getOrCreateInstance(caret);
+    }
+  });
+});
+
+</script>
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../theme/favicon.svg" alt="Applied Differential Privacy" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Applied Differential Privacy</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-course" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Course</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-course">    
+        <li>
+    <a class="dropdown-item" href="../../../pages/course.html">
+ <span class="dropdown-text">Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/syllabus.html">
+ <span class="dropdown-text">Syllabus</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/archive.html">
+ <span class="dropdown-text">Past offerings and recordings</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-materials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Materials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-materials">    
+        <li>
+    <a class="dropdown-item" href="../../../pages/lectures.html">
+ <span class="dropdown-text">Lectures and self-study notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/assignments.html">
+ <span class="dropdown-text">Exercises and assignments</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../pages/tools.html">
+ <span class="dropdown-text">Interactive tools</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../../pages/about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#learned-generators-dp-sgd-and-private-evolution" id="toc-learned-generators-dp-sgd-and-private-evolution" class="nav-link active" data-scroll-target="#learned-generators-dp-sgd-and-private-evolution">Learned generators: DP-SGD and private evolution</a>
+  <ul class="collapse">
+  <li><a href="#public-contract" id="toc-public-contract" class="nav-link" data-scroll-target="#public-contract">Public contract</a></li>
+  <li><a href="#step-1-look-at-an-easier-and-a-harder-digit" id="toc-step-1-look-at-an-easier-and-a-harder-digit" class="nav-link" data-scroll-target="#step-1-look-at-an-easier-and-a-harder-digit">Step 1 — Look at an easier and a harder digit</a></li>
+  <li><a href="#step-2-what-pca-is-and-how-it-becomes-a-generator" id="toc-step-2-what-pca-is-and-how-it-becomes-a-generator" class="nav-link" data-scroll-target="#step-2-what-pca-is-and-how-it-becomes-a-generator">Step 2 — What PCA is, and how it becomes a generator</a></li>
+  <li><a href="#step-3-apply-the-construction-to-mnist" id="toc-step-3-apply-the-construction-to-mnist" class="nav-link" data-scroll-target="#step-3-apply-the-construction-to-mnist">Step 3 — Apply the construction to MNIST</a></li>
+  <li><a href="#step-4-empirical-covariance-fitted-separately" id="toc-step-4-empirical-covariance-fitted-separately" class="nav-link" data-scroll-target="#step-4-empirical-covariance-fitted-separately">Step 4 — Empirical covariance, fitted separately</a></li>
+  <li><a href="#step-5-truncate-to-ten-pca-directions-then-privatize" id="toc-step-5-truncate-to-ten-pca-directions-then-privatize" class="nav-link" data-scroll-target="#step-5-truncate-to-ten-pca-directions-then-privatize">Step 5 — Truncate to ten PCA directions, then privatize</a></li>
+  <li><a href="#step-6-private-rank-10-pca" id="toc-step-6-private-rank-10-pca" class="nav-link" data-scroll-target="#step-6-private-rank-10-pca">Step 6 — Private rank-10 PCA</a></li>
+  <li><a href="#step-7-lower-rank-can-help-under-privacy" id="toc-step-7-lower-rank-can-help-under-privacy" class="nav-link" data-scroll-target="#step-7-lower-rank-can-help-under-privacy">Step 7 — Lower rank can help under privacy</a></li>
+  <li><a href="#step-8-remove-the-digit-split-one-joint-gaussian" id="toc-step-8-remove-the-digit-split-one-joint-gaussian" class="nav-link" data-scroll-target="#step-8-remove-the-digit-split-one-joint-gaussian">Step 8 — Remove the digit split: one joint Gaussian</a></li>
+  <li><a href="#step-9-joint-empirical-covariance" id="toc-step-9-joint-empirical-covariance" class="nav-link" data-scroll-target="#step-9-joint-empirical-covariance">Step 9 — Joint empirical covariance</a></li>
+  <li><a href="#step-10-joint-rank-10-pca" id="toc-step-10-joint-rank-10-pca" class="nav-link" data-scroll-target="#step-10-joint-rank-10-pca">Step 10 — Joint rank-10 PCA</a></li>
+  <li><a href="#path-a-train-a-nonlinear-generator-on-private-rows" id="toc-path-a-train-a-nonlinear-generator-on-private-rows" class="nav-link" data-scroll-target="#path-a-train-a-nonlinear-generator-on-private-rows">Path A — train a nonlinear generator on private rows</a></li>
+  <li><a href="#path-b-privately-steer-a-public-population" id="toc-path-b-privately-steer-a-public-population" class="nav-link" data-scroll-target="#path-b-privately-steer-a-public-population">Path B — privately steer a public population</a></li>
+  <li><a href="#common-footing-before-scores" id="toc-common-footing-before-scores" class="nav-link" data-scroll-target="#common-footing-before-scores">Common footing before scores</a></li>
+  <li><a href="#two-evaluation-questions-four-reported-columns" id="toc-two-evaluation-questions-four-reported-columns" class="nav-link" data-scroll-target="#two-evaluation-questions-four-reported-columns">Two evaluation questions, four reported columns</a></li>
+  <li><a href="#the-three-error-sources-return" id="toc-the-three-error-sources-return" class="nav-link" data-scroll-target="#the-three-error-sources-return">The three error sources return</a></li>
+  <li><a href="#honest-close" id="toc-honest-close" class="nav-link" data-scroll-target="#honest-close">Honest close</a></li>
+  <li><a href="#reading-map" id="toc-reading-map" class="nav-link" data-scroll-target="#reading-map">Reading map</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Learned generators: DP-SGD and private evolution — Self-study notebook</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+<p class="subtitle lead">Applied Data Privacy</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>For the slide version, open the <a href="../../lecture-presentations/learned-generators-private-evolution/presentation.html">presentation deck</a>.</p>
+<section id="learned-generators-dp-sgd-and-private-evolution" class="level1">
+<h1>Learned generators: DP-SGD and private evolution</h1>
+<p>Lecture 11 ended with a choice among measured workloads for tabular data. This lecture changes domains: one private row is now a high-dimensional image. Before reaching for a neural network, we will ask how far a classical covariance model can take us and make its privacy ledger explicit.</p>
+<p>This lecture asks a narrower question:</p>
+<blockquote class="blockquote">
+<p>Can we preserve structure without naming every statistic—and exactly where may the private rows influence the result?</p>
+</blockquote>
+<section id="public-contract" class="level2">
+<h2 class="anchored" data-anchor-id="public-contract">Public contract</h2>
+<ul>
+<li><strong>Private unit:</strong> one labeled MNIST image; adjacency adds or removes one row. Lecture 11 substituted a row instead, holding <span class="math inline">\(n\)</span> fixed. The two neighbour relations are not interchangeable, so its <span class="math inline">\(\varepsilon=1\)</span> and the numbers below are not two points on a single scale; compare mechanisms within a lecture, and read across lectures only as an order of magnitude.</li>
+<li><strong>Canonical classes:</strong> the classical opening fits separate models for digits 0 and 3; one conditional VAE trains jointly on digits 0–9; the later Private Evolution support experiment remains a distinct digits-0–3 task.</li>
+<li><strong>Overall scope:</strong> this notebook as a whole is <strong>not DP</strong>. It deliberately displays exact/nonprivate covariance foils and nonprivate VAE weights learned from the private target. The ledger below applies only to mechanisms labeled DP.</li>
+<li><strong>Deployment warning:</strong> private PCA, DP-SGD, and Private Evolution Gaussian-noise seeds are fixed publicly here only to reproduce this public-MNIST lesson. A disclosed seed makes the realized artifact deterministic; the stated epsilon guarantees describe the randomized mechanisms with fresh secret entropy. These frozen seeded artifacts are reproducibility demos, not confidential-data DP releases. Never reuse or publish mechanism-noise seeds on confidential data. Sampling, display, resampling, and variation seeds used only after a DP release may remain public.</li>
+<li><strong>Privacy parameters:</strong> the shared private-PCA covariance release, established DP-VAE seed, and separate 60,000-row DP-VAE each use <span class="math inline">\((\varepsilon,\delta)=(2,10^{-5})\)</span>. One predeclared Private Evolution run, whatever its declared round count, spends another <span class="math inline">\((1,10^{-5})\)</span> on the same private target, so <span class="math inline">\((3,2\times10^{-5})\)</span> is the <strong>counterfactual per-one-run</strong> seed-plus-evolution bound. This notebook actually releases three private support-condition mechanisms and five private sweep alternatives. Their eight evolution ledgers compose to <span class="math inline">\((8,8\times10^{-5})\)</span>; including the established seed gives the <strong>DP-VAE-seed + PE-path aggregate</strong> <span class="math inline">\((10,9\times10^{-5})\)</span>. Adding the one shared private-PCA release and the separate 60,000-row DP-VAE gives a simple-composition bound of <span class="math inline">\((14,11\times10^{-5})\)</span> across every mechanism labeled DP. Rank 10 and rank 3 are postprocessing of the same seeded noisy covariance draw, not two releases.</li>
+<li><strong>Public before private access:</strong> architecture, hyperparameters, role partitions, per-digit PCA center and scale, clipping radius, embeddings, evaluator definitions, stopping rules, and support conditions. The PCA directions are <strong>not</strong> public: they are learned from the noisy private second moment. The DP-VAE samples become public only after their first DP release; calling them public at the evolution stage does not erase that cost.</li>
+<li><strong>Composition:</strong> the two PCA class branches compose in parallel. A staged DP-VAE and Private Evolution mechanism accesses the same target sequentially, so those costs add. All eight released Private Evolution alternatives compose; selecting one after inspection does not erase the other seven costs.</li>
+</ul>
+<p>Private PCA and both private VAE releases use the same privacy parameters, but their displayed comparisons are <strong>not architecture- or population-controlled</strong>. PCA runs separately on each declared private-target digit branch. The established VAE diagnostic and the Private Evolution seed use a width-16/latent-2 model trained on 51,000 private-target rows. The later marginal panel pairs its nonprivate weights with a width-32/latent-8 private model trained on all 60,000 official training rows. Matching <span class="math inline">\((\varepsilon,\delta)\)</span> does not match rows, capacity, or model family.</p>
+<p>All 70,000 MNIST rows enter exactly one of the five disjoint roles. Official test rows are evaluation; fixed public roles and the private target partition the official training rows. Their short hashes are not decoration: they prevent a convenient evaluation row, public candidate, or embedding-training row from silently leaking into the private target.</p>
+<div id="4" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>show_table(artifact.data_role_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">role</th>
+<th data-quarto-table-cell-role="th">rows</th>
+<th data-quarto-table-cell-role="th">visibility</th>
+<th data-quarto-table-cell-role="th">used for</th>
+<th data-quarto-table-cell-role="th">identity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>released DP-VAE dataset</td>
+<td>1000</td>
+<td>public after the epsilon=2 release</td>
+<td>disjoint synthetic candidate and RANDOM-refresh subsets</td>
+<td>fabd5ba613d2</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>private target</td>
+<td>51000</td>
+<td>private values/labels; fixed role membership is public</td>
+<td>DP-VAE training, then digits 0-3 vote once per PE round</td>
+<td>public fixed-partition 69b893330c44</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>real evaluation</td>
+<td>10000</td>
+<td>public benchmark</td>
+<td>TSTR evaluation and exploratory round selection</td>
+<td>8d294bd1e841</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>public embedding</td>
+<td>3000</td>
+<td>public</td>
+<td>nearest-neighbor geometry and fixed classifier</td>
+<td>345e3234bdbe</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>public reserves</td>
+<td>6000</td>
+<td>public</td>
+<td>frozen source partitions; not used by revised PE example</td>
+<td>8a6778 / 591d5a</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The <strong>released DP-VAE dataset</strong> is the starting public population. Its digits 0–3 are split into disjoint synthetic candidate and RANDOM-refresh subsets. The <strong>public embedding</strong> defines distance and trains the fixed label checker. The <strong>real evaluation</strong> partition is public. It reports final utility and also selects the displayed 5-round sweep result; reporting that same score is an exploratory diagnostic, not a held-out utility estimate. The <strong>private target</strong> incurs privacy loss first through DP-SGD and then again through the Private Evolution votes.</p>
+<p>The established DP-VAE seed and matched two-digit diagnostic use all 51,000 private-target training rows. Of the 9,000 public training rows, 3,000 train the embedding and fixed classifier; the older public generator/candidate partitions remain visible as audited reserves. The later marginal comparison reuses the established 51,000-row nonprivate weights but compares them with a separately trained private model that treats all 60,000 official training rows as private. The 10,000 official test rows remain evaluation.</p>
+<p>This separation matters. “Publicly assisted” does not mean that every public object may be reused for every purpose, and a private evaluation holdout would need its own privacy analysis.</p>
+</section>
+<section id="step-1-look-at-an-easier-and-a-harder-digit" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-look-at-an-easier-and-a-harder-digit">Step 1 — Look at an easier and a harder digit</h2>
+<p>We will compare digit 0 with digit 3 under one fixed design. A zero is the easier case: its dominant variation is the position, size, and tilt of one closed loop. A three is harder for a single covariance model: its two lobes, open side, stroke endpoints, width, and slant vary more independently.</p>
+<p>The rows below come from the untouched <strong>public evaluation</strong> partition. They let us inspect the task without displaying a private target row.</p>
+<div id="7" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>separate_full_covariances <span class="op">=</span> build_private_pca_gaussian_comparison(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    PrivatePCAComparisonConfig(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        digits<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">3</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        base<span class="op">=</span>PrivatePCAGaussianConfig(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            components<span class="op">=</span><span class="dv">784</span>, sample_rows<span class="op">=</span><span class="dv">8</span>, include_private_release<span class="op">=</span><span class="va">False</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>separate_rank10_pca <span class="op">=</span> build_private_pca_gaussian_comparison(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    PrivatePCAComparisonConfig(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        digits<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">3</span>),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        base<span class="op">=</span>PrivatePCAGaussianConfig(components<span class="op">=</span><span class="dv">10</span>, sample_rows<span class="op">=</span><span class="dv">8</span>),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>pca_examples <span class="op">=</span> build_private_pca_gaussian_comparison(</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    PrivatePCAComparisonConfig(</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        digits<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">3</span>),</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        base<span class="op">=</span>PrivatePCAGaussianConfig(components<span class="op">=</span><span class="dv">3</span>, sample_rows<span class="op">=</span><span class="dv">8</span>),</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>pca_vae_metrics <span class="op">=</span> build_pca_vae_training_comparison(artifact, pca_examples)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>show_figure(pca_original_examples_figure(pca_examples))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-2-what-pca-is-and-how-it-becomes-a-generator" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-what-pca-is-and-how-it-becomes-a-generator">Step 2 — What PCA is, and how it becomes a generator</h2>
+<p>Represent each row as a vector <span class="math inline">\(x_i\in\mathbb R^d\)</span>. Ordinary PCA centers the rows at <span class="math inline">\(c\)</span>, diagonalizes their covariance, and retains the <span class="math inline">\(k\)</span> orthonormal directions <span class="math inline">\(U_k\)</span> with the largest eigenvalues. The coordinates</p>
+<p><span class="math display">\[
+z_i=U_k^T(x_i-c)\in\mathbb R^k
+\]</span></p>
+<p>are a low-dimensional description. The reconstruction <span class="math inline">\(c+U_kz_i\)</span> is the closest point to <span class="math inline">\(x_i\)</span> inside that affine PCA subspace.</p>
+<p>PCA itself is a representation, not yet a generative model. A classical synthesis proposal adds one assumption: approximate the coordinate distribution by a Gaussian with mean <span class="math inline">\(m\)</span> and covariance <span class="math inline">\(C\)</span>. Then generate a new row by</p>
+<p><span class="math display">\[
+z_{\mathrm{new}}\sim\mathcal N(m,C),\qquad
+\widetilde x=c+U_kz_{\mathrm{new}}.
+\]</span></p>
+<p>Sampling more <span class="math inline">\(z_{\mathrm{new}}\)</span> values is cheap. It does not add directions to the PCA subspace or repair a poor Gaussian approximation.</p>
+</section>
+<section id="step-3-apply-the-construction-to-mnist" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-apply-the-construction-to-mnist">Step 3 — Apply the construction to MNIST</h2>
+<p>Use all eligible private rows for each target digit and keep every image at its native <span class="math inline">\(28\times28\)</span> resolution, so <span class="math inline">\(d=784\)</span>. There is no pooling, display upsampling, or additional quantization beyond MNIST’s source pixels. For each target digit <span class="math inline">\(a\in\{0,3\}\)</span>, disjoint public-embedding rows fix only a center <span class="math inline">\(c_a\)</span> and a common declared scale <span class="math inline">\(s=10\)</span>. They do <strong>not</strong> fix any PCA direction.</p>
+<p>Write <span class="math inline">\(v_i=(x_i-c_a)/s\)</span> and clip it to the unit L2 ball. We first compute the exact private mean and full empirical covariance and sample all 784 covariance directions. We then truncate the same construction to its leading ten eigenvectors. Both rows are deliberately <strong>NONPRIVATE</strong>: they isolate the Gaussian assumption and rank truncation before privacy noise enters.</p>
+</section>
+<section id="step-4-empirical-covariance-fitted-separately" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-empirical-covariance-fitted-separately">Step 4 — Empirical covariance, fitted separately</h2>
+<p>Fit one exact 784-dimensional mean and covariance to digit 0 and another to digit 3, then sample directly from each full Gaussian. Any original-to-synthetic gap here is Gaussian-model error—not truncation or privacy noise. The exact empirical moments access private training rows and therefore make no DP claim.</p>
+<div id="11" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>show_figure(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    per_digit_full_covariance_figure(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        separate_full_covariances, source<span class="op">=</span><span class="st">"exact"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-5-truncate-to-ten-pca-directions-then-privatize" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-truncate-to-ten-pca-directions-then-privatize">Step 5 — Truncate to ten PCA directions, then privatize</h2>
+<p>First retain only the leading ten directions of each exact empirical covariance. This is still nonprivate, but it isolates truncation before noise enters. Next apply the same rank-10 sampling rule to a privately released second moment.</p>
+<p><strong>Which private-PCA method do we use?</strong> The simplest one for this setting: symmetric Gaussian input perturbation, often called <strong>Analyze Gauss</strong>. Add noise to the private second-moment matrix and then eigendecompose the noisy matrix. This is the basic construction studied by <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2014/06/PrivatePCA.pdf">Dwork et al.&nbsp;(2014)</a> and is closely related to the MOD-SULQ input-perturbation method of <a href="https://jmlr.org/papers/volume14/chaudhuri13a/chaudhuri13a.pdf">Chaudhuri, Sarwate, and Sinha (2013)</a>.</p>
+<p>There is no public basis: the basis itself is learned from private rows. In fixed public units, public-partition 99th-percentile norms are about 0.89 for zeros and 0.90 for threes. For branch <span class="math inline">\(a\)</span>, clip the full-resolution normalized centered vector <span class="math inline">\(v_i=(x_i-c_a)/10\)</span> to</p>
+<p><span class="math display">\[
+\bar v_i=v_i\min\left(1,\frac{1}{\lVert v_i\rVert_2}\right).
+\]</span></p>
+<p>With fixed public capacity and denominator <span class="math inline">\(n_{\mathrm{ref}}=6000\)</span>, form</p>
+<p><span class="math display">\[
+S_a=\frac1{n_{\mathrm{ref}}}
+\sum_{i:y_i=a}\bar v_i\bar v_i^T.
+\]</span></p>
+<p>View the upper triangle as one vector. Under add/remove adjacency its <span class="math inline">\(L_2\)</span> sensitivity is at most <span class="math inline">\(\Delta_2=1/n_{\mathrm{ref}}=1/6000\)</span>. Add independent Gaussian noise with</p>
+<p><span class="math display">\[
+\sigma=\frac{\Delta_2\sqrt{2\log(1.25/\delta)}}{\varepsilon}\approx0.000404
+\]</span></p>
+<p>to the upper-triangle entries, mirror them, and call the result <span class="math inline">\(\widetilde S_a\)</span>. With fresh secret Gaussian entropy as required above, releasing <span class="math inline">\(\widetilde S_a\)</span> is <span class="math inline">\((2,10^{-5})\)</span>-DP. Projecting to the positive-semidefinite cone, taking the top ten eigenvectors, sampling a Gaussian in that subspace, restoring the public scale and center, and clipping pixels are all postprocessing. The PCA basis is learned <strong>only from the noisy private matrix</strong>.</p>
+<p>Why is the two-digit release still <span class="math inline">\((2,10^{-5})\)</span>? Under add/remove adjacency, one labeled row enters at most one of the disjoint digit branches. The branches therefore compose <strong>in parallel</strong>, so their privacy costs take a maximum rather than a sum. No class count is released.</p>
+<p>The public center is used directly, so there is no separate private-mean query and no hidden split of the privacy budget.</p>
+<div id="13" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>show_figure(pca_nonprivate_synthesis_figure(separate_rank10_pca))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>show_table(private_pca_contract_table(separate_rank10_pca))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">contract field</th>
+<th data-quarto-table-cell-role="th">two-digit noisy-covariance private PCA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>artifact status</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>private query</td>
+<td>public predicates y in (0, 3); fixed public n_ref=6000 per branch</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>adjacency</td>
+<td>add/remove one labeled image; it affects at most one digit branch</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>fixed preprocessing</td>
+<td>full 28x28 pixels; subtract a per-digit center from disjoint public rows and divide by public scale 10; no pooling and no public PCA directions</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>clipping</td>
+<td>every normalized centered row is clipped to the unit L2 ball; public-partition normalized 99th percentiles digit 0: q99=0.88; digit 3: q99=0.90</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>private matrix</td>
+<td>784x784 second moment n_ref^-1 sum_i v_i v_i^T</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>sensitivity + noise</td>
+<td>upper-triangle L2 sensitivity 0.0002; iid Gaussian scale 0.0004, then mirror</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>randomized-mechanism target</td>
+<td>each branch: (epsilon, delta)=(2, 1e-05); parallel composition</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>postprocessing</td>
+<td>PSD projection -&gt; top 10 eigenvectors -&gt; rescale by public units -&gt; Gaussian sample -&gt; pixel clip</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="step-6-private-rank-10-pca" class="level2">
+<h2 class="anchored" data-anchor-id="step-6-private-rank-10-pca">Step 6 — Private rank-10 PCA</h2>
+<p>Red rows use the exact rank-10 PCA Gaussian and make <strong>no DP claim</strong>. Orange rows use the Gaussian-perturbed second moment and retain its leading ten noisy directions. Read red-to-orange differences as covariance-perturbation error; finite displayed samples add Monte Carlo variation to both rows.</p>
+<div id="15" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>show_figure(pca_private_synthesis_figure(separate_rank10_pca))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-7-lower-rank-can-help-under-privacy" class="level2">
+<h2 class="anchored" data-anchor-id="step-7-lower-rank-can-help-under-privacy">Step 7 — Lower rank can help under privacy</h2>
+<p>Repeat the exact/private comparison with only three retained directions. Rank 3 and rank 10 postprocess the same seeded noisy covariance draw, so they share one privacy cost rather than spending twice. The lower rank removes variation, but it also blocks weaker noise-dominated directions; here the private samples are visibly cleaner.</p>
+<p>Zeros expose the easier geometry; threes expose the harder open strokes and two lobes. Each orange branch still uses every eligible private row for its digit, and fixed seeds are not selected for visual quality. Under the fresh-secret-entropy mechanism contract, arbitrary additional sampling from the shared release is free postprocessing.</p>
+<div id="17" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>show_figure(pca_private_synthesis_figure(pca_examples))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-8-remove-the-digit-split-one-joint-gaussian" class="level2">
+<h2 class="anchored" data-anchor-id="step-8-remove-the-digit-split-one-joint-gaussian">Step 8 — Remove the digit split: one joint Gaussian</h2>
+<p>The separate models know whether to sample a zero or a three. Now remove that information: fit one global 784-dimensional mean and covariance to all 51,000 private-target images across digits 0–9. There are no per-digit distributions and no conditioning after projection. The synthetic draws are unlabeled samples from one Gaussian model of the entire digit mixture.</p>
+<p>This is an intentionally harder modeling problem. A covariance captures global linear variation, but one Gaussian is unimodal while the digit distribution has multiple separated nonlinear modes.</p>
+<div id="19" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>joint_pca <span class="op">=</span> build_joint_full_digit_pca(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    JointFullDigitPCAConfig(components<span class="op">=</span><span class="dv">10</span>, display_rows<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-9-joint-empirical-covariance" class="level2">
+<h2 class="anchored" data-anchor-id="step-9-joint-empirical-covariance">Step 9 — Joint empirical covariance</h2>
+<p>Sample all 784 nonnegative eigen-directions of the exact global covariance. Only ten unconditional draws are shown. Their blended strokes are model error, not privacy noise: this comparison is explicitly nonprivate.</p>
+<div id="21" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>show_figure(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    full_digit_pca_samples_figure(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        joint_pca, source<span class="op">=</span><span class="st">"exact-full"</span>, columns<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-10-joint-rank-10-pca" class="level2">
+<h2 class="anchored" data-anchor-id="step-10-joint-rank-10-pca">Step 10 — Joint rank-10 PCA</h2>
+<p>Retaining only the leading ten directions smooths weak variation, but it cannot turn one Gaussian into a ten-mode digit distribution. Because even this exact nonprivate model looks poor, adding a private joint-covariance variant would confound an already dominant modeling failure with measurement noise and adds little to the lesson.</p>
+<div id="23" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>show_figure(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    full_digit_pca_samples_figure(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        joint_pca, source<span class="op">=</span><span class="st">"exact-rank"</span>, columns<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="path-a-train-a-nonlinear-generator-on-private-rows" class="level2">
+<h2 class="anchored" data-anchor-id="path-a-train-a-nonlinear-generator-on-private-rows">Path A — train a nonlinear generator on private rows</h2>
+<section id="vae-step-1-encode-sample-and-decode" class="level3">
+<h3 class="anchored" data-anchor-id="vae-step-1-encode-sample-and-decode">VAE Step 1 — Encode, sample, and decode</h3>
+<p>We start from the successful <a href="https://keras.io/examples/generative/vae/">Keras convolutional MNIST VAE</a>, also reflected in the <a href="https://www.tensorflow.org/tutorials/generative/cvae">TensorFlow convolutional VAE tutorial</a>, rather than inventing a small dense image model. Two stride-two convolutions encode spatial strokes; a mirrored transposed-convolution decoder reconstructs them. Our only architectural adaptation is to concatenate the public one-hot digit at the encoder bridge and decoder input.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="vae-basic.png" class="img-fluid figure-img" style="width:92.0%" alt="A basic variational autoencoder: input x passes through the encoder, the encoder specifies a distribution in latent space, a latent value is sampled, and the decoder produces output x prime."></p>
+<figcaption>Basic variational-autoencoder flow from input through an encoder, a sampled latent space, and a decoder to the output.</figcaption>
+</figure>
+</div>
+<p><em>Read the diagram from left to right: encode an observed row, sample in latent space, then decode. Diagram by <a href="https://commons.wikimedia.org/wiki/File:VAE_Basic.png">EugenioTL</a>, licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>; downloaded unchanged from Wikimedia Commons.</em></p>
+<p>The conditional variational autoencoder learns an encoder <span class="math inline">\(q_\phi(z\mid x,y)\)</span> and decoder <span class="math inline">\(p_\theta(x\mid z,y)\)</span>. The encoder does <strong>not</strong> output one latent code. It outputs a mean <span class="math inline">\(m_\phi(x,y)\)</span> and log-variance <span class="math inline">\(v_\phi(x,y)\)</span>, which specify <span class="math inline">\(q_\phi(z\mid x,y)=\mathcal N(m_\phi,\operatorname{diag}(e^{v_\phi}))\)</span>. That distribution is the small bell curve in the center of the diagram.</p>
+<p>A literal random draw would interrupt backpropagation. The reparameterization writes the same draw as <span class="math inline">\(z=m_\phi(x,y)+e^{v_\phi(x,y)/2}\odot\eta\)</span>, with <span class="math inline">\(\eta\sim\mathcal N(0,I)\)</span>. Randomness is now isolated in <span class="math inline">\(\eta\)</span>, while the path from the loss to the encoder outputs remains differentiable. The decoder maps that latent draw and the requested digit to 784 Bernoulli pixel probabilities.</p>
+<p>For one labeled image, the minimized negative evidence lower bound is</p>
+<p><span class="math display">\[
+\ell_i(\theta,\phi)=\frac1{784}\left[
+-\mathbb E_{z\sim q_\phi}\log p_\theta(x_i\mid z,y_i)
++D_{\mathrm{KL}}(q_\phi(z\mid x_i,y_i)\|p(z))\right].
+\]</span></p>
+<p>The two terms do different jobs. The reconstruction term rewards a decoded sample that explains the observed pixels. The KL term pulls each encoded distribution toward the simple prior <span class="math inline">\(p(z)=\mathcal N(0,I)\)</span>. Reconstruction alone could memorize useful codes while leaving holes between them; then a fresh standard-normal draw could land in a hole and decode poorly. KL regularization trades some reconstruction freedom for a latent space that can actually be sampled. That reconstruction–regularization tension is what makes this a <em>variational</em> autoencoder rather than an ordinary autoencoder.</p>
+<p>The requested digit <span class="math inline">\(y\)</span> enters the encoder and decoder directly; it is not encoded through invented separated prior centers. During training, the encoder provides approximate posterior samples for observed images. During synthesis, the encoder and the original image disappear. To obtain one marginal image distribution, draw <span class="math inline">\(y\sim\operatorname{Uniform}\{0,\ldots,9\}\)</span>, draw <span class="math inline">\(z\sim\mathcal N(0,I)\)</span>, decode, and discard <span class="math inline">\(y\)</span>. Thus <span class="math inline">\(p_\theta(x)=\frac1{10}\sum_y p_\theta(x\mid y)\)</span>. This is the marginal of a conditional model—not a label-free training procedure—but the displayed output is one joint distribution over images. The nonlinear spatial decoder can represent stroke families that one PCA ellipsoid cannot.</p>
+</section>
+<section id="vae-step-2-nonprivate-marginal-vae-synthesis" class="level3">
+<h3 class="anchored" data-anchor-id="vae-step-2-nonprivate-marginal-vae-synthesis">VAE Step 2 — Nonprivate marginal VAE synthesis</h3>
+<p>First test the model without privacy noise. This VAE section uses <strong>every eligible private-target row across raw, unshifted digits 0–9</strong>: 51,000 images after the disjoint public roles are reserved. The artificial shift family belongs only to the later Private Evolution support experiment. One conditional model is trained jointly: shared convolutional filters can learn reusable strokes and curves, while the one-hot label tells both encoder and decoder which digit is requested. No digit gets a separate VAE run.</p>
+<p>At inference, independently draw a digit uniformly, draw <span class="math inline">\(z\sim\mathcal N(0,I)\)</span>, decode, and hide the digit. The figure therefore shows ten unlabeled draws from one marginal mixture rather than ten label-conditional rows. No evaluation image is encoded to construct the red samples.</p>
+<p>Ordinary training accesses the private target and makes <strong>no DP claim</strong>. Its job is to establish that a conditional convolutional VAE and this marginal sampling rule can produce all digit modes. Because the private model below uses more rows and a larger architecture, this foil is not a matched clipping/noise control.</p>
+<p><strong>Execution note.</strong> Training is maintainer-only and is never run by this notebook. The established nonprivate, clipping-only, and 51,000-row private networks have hash-checked weights. Their legacy bundle also contains historical losses, gradient norms, and clipping statistics; these are internal non-DP maintainer diagnostics, not released evidence and not part of the formal <span class="math inline">\((\varepsilon,\delta)\)</span> release. The new 60,000-row private appendix packages hash-checked inference artifacts but no training trace; its receipt states that the later control run was interrupted. Notebook execution loads inference artifacts only.</p>
+<div id="26" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>vae_mixture <span class="op">=</span> load_uniform_mixture_vae_artifact()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>vae_mixture_evaluation <span class="op">=</span> build_uniform_mixture_vae_evaluation(vae_mixture)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>show_figure(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    uniform_mixture_vae_samples_figure(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        vae_mixture, source<span class="op">=</span><span class="st">"nonprivate"</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="vae-step-3-dp-sgd-reminder" class="level3">
+<h3 class="anchored" data-anchor-id="vae-step-3-dp-sgd-reminder">VAE Step 3 — DP-SGD reminder</h3>
+<p>At step <span class="math inline">\(t\)</span>, include each private row independently with public probability <span class="math inline">\(q\)</span>. For every included row, compute the gradient of the <strong>complete</strong> loss,</p>
+<p><span class="math display">\[g_i=\nabla_{\theta,\phi}\ell_i,\]</span></p>
+<p>clip the full per-example gradient to radius <span class="math inline">\(C\)</span>,</p>
+<p><span class="math display">\[\bar g_i=g_i\min\left(1,\frac{C}{\lVert g_i\rVert_2}\right),\]</span></p>
+<p>and release only a Gaussian-noised sum,</p>
+<p><span class="math display">\[
+\widetilde g_t=
+\frac{1}{qN_{\mathrm{ref}}}
+\left(\sum_{i\in S_t}\bar g_i+
+\mathcal N(0,\sigma_g^2C^2I)\right).
+\]</span></p>
+<p>Under add/remove adjacency, one row changes the clipped sum by at most <span class="math inline">\(C\)</span>. The normalization uses the public expected batch size <span class="math inline">\(qN_{\mathrm{ref}}\)</span>, not the realized private batch size. The accountant composes all sampled Gaussian steps; sampling, clipping, and noise must agree with that accountant.</p>
+<div id="28" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>show_table(uniform_mixture_vae_contract_table(vae_mixture))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">contract field</th>
+<th data-quarto-table-cell-role="th">nonprivate VAE</th>
+<th data-quarto-table-cell-role="th">private VAE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>artifact status</td>
+<td>explicitly NONPRIVATE public-benchmark foil</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>training access</td>
+<td>exact access to 51,000 private-target rows; NONPRIVATE foil</td>
+<td>DP-SGD on all 60,000 MNIST training rows</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>model</td>
+<td>conditional VAE, latent width 2</td>
+<td>conditional VAE, latent width 8</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>inference distribution</td>
+<td>draw y uniformly from 0–9, draw z from N(0,I), hide y</td>
+<td>draw y uniformly from 0–9, draw z from N(0,I), hide y</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>privacy / randomized-mechanism target</td>
+<td>none</td>
+<td>(epsilon, delta)=(2.00, 1e-05)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The table is the actual frozen training and inference contract. The private run uses true Poisson inclusion with <span class="math inline">\(q=0.1\)</span>, 400 private steps (40 expected inclusions per row), clipping radius <span class="math inline">\(C=0.5\)</span>, Gaussian noise multiplier 4.121, learning rate 0.25, and SGD with momentum 0.9. The public capacity <span class="math inline">\(N_{\mathrm{ref}}=60{,}000\)</span> gives denominator <span class="math inline">\(qN_{\mathrm{ref}}=6{,}000\)</span>; realized private batch sizes are not used as denominators. The repository’s PLD accountant reports <span class="math inline">\((\varepsilon,\delta)=(2.000,10^{-5})\)</span>.</p>
+<p>These are the same privacy parameters as the two private-PCA branches above. The input populations still differ: PCA fits separate zero and three mechanisms, whereas this conditional VAE trains on all 60,000 digits jointly and is marginalized over a public uniform digit draw at inference.</p>
+<p>The larger bridge width 32 and latent width 8, together with the 400-step schedule, were fixed before this from-scratch run. The nonprivate foil instead uses bridge width 16 and latent width 2. No public warm start or pretrained weights are used, and no claim here isolates privacy noise from that capacity difference.</p>
+<p>Before trusting the output, the implementation was audited independently. The vectorized complete-ELBO gradients match literal one-example gradients and a finite-difference witness; the global clipping norm and clipped sum match a reference loop; a one-step update matches the declared Gaussian draw exactly; and the accountant recomputes the recorded epsilon. Poisson sampling, latent noise, and Gaussian gradient noise use independent deterministic streams.</p>
+<p>The implementation divides each complete reconstruction-plus-KL loss by 784, then clips its full per-example gradient. The constant normalization does not change the nonprivate optimum, but it makes the clipping scale interpretable. The linked term-wise DP-VAE paper studies a different aggregation choice; it is a comparison, not a description of this artifact.</p>
+</section>
+<section id="vae-step-4-private-marginal-vae-synthesis" class="level3">
+<h3 class="anchored" data-anchor-id="vae-step-4-private-marginal-vae-synthesis">VAE Step 4 — Private marginal VAE synthesis</h3>
+<p>Use the same public marginalization rule as the nonprivate foil: draw a digit uniformly, draw <span class="math inline">\(z\sim\mathcal N(0,I)\)</span>, decode, and hide the digit. The orange panel shows ten unlabeled draws from the DP-SGD-trained model. The requested digits and latent draws are frozen for reproducibility but are not displayed.</p>
+<p>The nonprivate foil accessed 51,000 private-target rows, while this private model trained from random initialization on all 60,000 official MNIST training rows. Their model capacities also differ: bridge/latent widths are 16/2 for the nonprivate foil and 32/8 for the private model. The comparison therefore demonstrates two marginal generators but does not isolate privacy noise under a matched training population or architecture.</p>
+<p>The nonprivate weights are not releasable: ordinary training reads every private image through its gradient. Only the orange weights have the displayed DP-SGD guarantee.</p>
+<div id="31" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>show_figure(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    uniform_mixture_vae_samples_figure(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        vae_mixture, source<span class="op">=</span><span class="st">"private"</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>show_table(vae_mixture_evaluation.<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">method</th>
+<th data-quarto-table-cell-role="th">rows</th>
+<th data-quarto-table-cell-role="th">requested_digit_consistency</th>
+<th data-quarto-table-cell-role="th">predicted_class_coverage</th>
+<th data-quarto-table-cell-role="th">mean_classifier_confidence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>nonprivate VAE</td>
+<td>1000</td>
+<td>0.956</td>
+<td>1.0</td>
+<td>0.925</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>private VAE</td>
+<td>1000</td>
+<td>0.936</td>
+<td>1.0</td>
+<td>0.821</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The requested digit is hidden in the figures but retained for a fixed public classifier audit. The nonprivate marginal has requested-digit consistency 0.956; the private marginal has 0.936. Both cover all ten predicted classes. Mean classifier confidence is 0.925 for the nonprivate samples and 0.821 for the private samples.</p>
+<p>These numbers describe utility, not privacy: the DP ledger is the proof. They do show that the full-data private run has not collapsed to one digit or to a gray average. No clipping-only control is retained in this comparison.</p>
+</section>
+<section id="supplementary-matched-two-digit-diagnostic" class="level3">
+<h3 class="anchored" data-anchor-id="supplementary-matched-two-digit-diagnostic">Supplementary matched two-digit diagnostic</h3>
+<p>The main sequence above compares the requested joint image distributions. Before introducing Private Evolution, retain the original narrower controlled diagnostic using the established 51,000-row frozen VAE release: compare <strong>nonprivate PCA, private PCA, nonprivate VAE, and private VAE</strong>. Every metric has four adjacent bars. To make those bars comparable, all four diagnostic releases are restricted to digits 0 and 3, contribute 100 synthetic rows per class, and use the same untouched raw evaluation rows.</p>
+<p>The <strong>fixed public classifier</strong> is a fast row-level audit: does an image look like its claimed label, and do both declared classes appear? The <strong>TSTR evaluator</strong> asks a dataset-level question. For each release it trains a fresh logistic-regression model on the synthetic rows, then tests that model on untouched real evaluation rows. A tiny set of clean prototypes can score well under the fixed classifier yet train a poor decision boundary; a broader, messier release can do the reverse. That possible disagreement is the whole reason to keep both metrics. Neither evaluator is part of the privacy proof. This binary diagnostic is intentionally narrower than the all-ten-digit VAE scores reported later.</p>
+<div id="34" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>show_figure(dp_training_diagnostic_figure(pca_vae_metrics))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Within each x-axis metric, read the four bars left to right as nonprivate PCA, private PCA, nonprivate VAE, and private VAE. Color identifies the model family; hatching identifies private mechanisms. On this deliberately easy binary task, all four releases support strong downstream classifiers. The comparison is useful because it exposes the incremental private/nonprivate gap inside each model family without mixing the PCA two-digit population with the VAE’s later ten-digit evaluation.</p>
+<p>The fixed-classifier and TSTR bars still answer different questions, and neither proves or disproves privacy. The formal DP ledger is the proof; these are utility diagnostics.</p>
+<p>The private-training path has therefore answered one question and opened another: once its DP output is public, can bounded private selection improve that released synthetic population?</p>
+</section>
+</section>
+<section id="path-b-privately-steer-a-public-population" class="level2">
+<h2 class="anchored" data-anchor-id="path-b-privately-steer-a-public-population">Path B — privately steer a public population</h2>
+<p>This path retains the established 51,000-row frozen <span class="math inline">\((2,10^{-5})\)</span> DP-VAE seed used by the original support experiment, rather than silently replacing its candidate population with the new 60,000-row model. After release its 1,000 samples are ordinary public data. For digits 0–3 we split those samples into disjoint candidate and refresh subsets, fix the embedding and variation operators publicly, and ask the private target only:</p>
+<blockquote class="blockquote">
+<p>Which public candidates look most like the private target?</p>
+</blockquote>
+<p>That smaller interface is the core idea of Private Evolution. It moves the new private signal from millions of model-gradient coordinates into one bounded vote per row per round. The seed is free to reuse <em>after</em> release, but the five new voting rounds are not. If exactly one evolution mechanism were predeclared and released, its hybrid would compose to <span class="math inline">\((3,2\times10^{-5})\)</span>. The notebook releases eight such private alternatives, so its aggregate is stated below.</p>
+<div id="37" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>show_figure(private_evolution_diagram_figure(artifact))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="one-vote-has-sensitivity-one" class="level3">
+<h3 class="anchored" data-anchor-id="one-vote-has-sensitivity-one">One vote has sensitivity one</h3>
+<p>For each private pair <span class="math inline">\((x_i,y_i)\)</span>, find its nearest public candidate among candidates with label <span class="math inline">\(y_i\)</span> and increment exactly one histogram bin. Removing one private row removes one unit from one bin, so both the L1 and L2 sensitivities of the histogram are one.</p>
+<p>Exact duplicate candidates are coalesced for the nearest-neighbor search. A stable hash of the contributing private embedding then assigns its one vote among the duplicate members, so population order cannot privilege the first clone and the one-vote sensitivity remains unchanged.</p>
+<p>The next cell is a deliberately tiny, runnable mechanism path. The fixed noise vector is public teaching arithmetic—not a claimed private draw. Compare neighboring datasets that differ only by the last private point.</p>
+<div id="39" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>toy_private <span class="op">=</span> np.array([[<span class="fl">0.10</span>], [<span class="fl">0.20</span>], [<span class="fl">0.90</span>]])</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>toy_labels <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>toy_candidates <span class="op">=</span> np.array([[<span class="fl">0.0</span>], [<span class="fl">1.0</span>]])</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>candidate_labels <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>toy_histogram <span class="op">=</span> nearest_neighbor_histogram(</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    toy_private, toy_labels, toy_candidates, candidate_labels</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>neighbor_histogram <span class="op">=</span> nearest_neighbor_histogram(</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    toy_private[:<span class="op">-</span><span class="dv">1</span>], toy_labels[:<span class="op">-</span><span class="dv">1</span>], toy_candidates, candidate_labels</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>fixed_noise <span class="op">=</span> np.array([<span class="fl">0.25</span>, <span class="op">-</span><span class="fl">0.25</span>])</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>toy_noisy <span class="op">=</span> toy_histogram <span class="op">+</span> fixed_noise</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>toy_weights <span class="op">=</span> postprocess_histogram(toy_noisy, threshold<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>toy_vote_table <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"candidate"</span>: [<span class="st">"0.0"</span>, <span class="st">"1.0"</span>],</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"h(D)"</span>: toy_histogram,</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"h(D')"</span>: neighbor_histogram,</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"|difference|"</span>: np.<span class="bu">abs</span>(toy_histogram <span class="op">-</span> neighbor_histogram),</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"fixed noisy value"</span>: toy_noisy,</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"postprocessed weight"</span>: toy_weights,</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>show_table(toy_vote_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">candidate</th>
+<th data-quarto-table-cell-role="th">h(D)</th>
+<th data-quarto-table-cell-role="th">h(D')</th>
+<th data-quarto-table-cell-role="th">|difference|</th>
+<th data-quarto-table-cell-role="th">fixed noisy value</th>
+<th data-quarto-table-cell-role="th">postprocessed weight</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0.0</td>
+<td>2.0</td>
+<td>2.0</td>
+<td>0.0</td>
+<td>2.25</td>
+<td>0.875</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.75</td>
+<td>0.125</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The neighboring histograms differ by one in exactly one bin. Noise, thresholding, normalization, resampling, and public variation happen after that bounded interface.</p>
+<p>In the canonical mechanism, every labeled private row—including its label—is part of the accounted vote. A “public label” assumption is not smuggled into the sensitivity claim.</p>
+</section>
+<section id="five-gaussian-rounds-one-ledger" class="level3">
+<h3 class="anchored" data-anchor-id="five-gaussian-rounds-one-ledger">Five Gaussian rounds, one ledger</h3>
+<p>At round <span class="math inline">\(r\)</span>, release</p>
+<p><span class="math display">\[\widetilde h^{(r)}=h^{(r)}+
+\mathcal N(0,\sigma_{\mathrm{PE}}^2I).\]</span></p>
+<p>The PLD accountant calibrates one common <span class="math inline">\(\sigma_{\mathrm{PE}}\)</span> so all five unit-sensitivity Gaussian histograms compose to <span class="math inline">\((1,10^{-5})\)</span>. This is one evolution-stage ledger. Together with the earlier <span class="math inline">\((2,10^{-5})\)</span> DP-VAE release on the same target, <span class="math inline">\((3,2\times10^{-5})\)</span> is the counterfactual bound only if this one mechanism is the sole PE release.</p>
+<p>A bin survives the public within-class family-wise false-support rule only after</p>
+<p><span class="math display">\[
+\tau_{r,c}=\sigma_{\mathrm{PE}}
+\Phi^{-1}(1-0.05/B_{r,c}),\qquad
+w_j=\max\{\widetilde h_j-\tau_{r,c},0\}.
+\]</span></p>
+<p>Normalize the weights and resample within labels. Apply a public one-pixel 2D translation only when it preserves the image’s ink, then refresh 25% of every class from the disjoint half of the released DP-VAE dataset. These operations add no ledger entry. If every weight is zero, the declared fallback is uniform public resampling rather than a private retuning decision.</p>
+<div id="42" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>show_table(private_evolution_feasibility_table(artifact))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">public pool</th>
+<th data-quarto-table-cell-role="th">artifact status</th>
+<th data-quarto-table-cell-role="th">shift modes</th>
+<th data-quarto-table-cell-role="th">public lower bound: private rows / class</th>
+<th data-quarto-table-cell-role="th">candidates / class</th>
+<th data-quarto-table-cell-role="th">expected votes / candidate</th>
+<th data-quarto-table-cell-role="th">Gaussian sigma</th>
+<th data-quarto-table-cell-role="th">threshold</th>
+<th data-quarto-table-cell-role="th">support audit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>matched</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>-6, +0, +6</td>
+<td>5000</td>
+<td>45</td>
+<td>111.111111</td>
+<td>8.341979</td>
+<td>25.516481</td>
+<td>all target modes present</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>recoverable</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>-6, +0, +6</td>
+<td>5000</td>
+<td>45</td>
+<td>111.111111</td>
+<td>8.341979</td>
+<td>25.516481</td>
+<td>all target modes present</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>support-gap</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>-6, +0</td>
+<td>5000</td>
+<td>45</td>
+<td>111.111111</td>
+<td>8.341979</td>
+<td>25.516481</td>
+<td>missing +6; 5 &lt; 6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This feasibility gate was fixed before private access. It neither reads nor releases observed private class counts. The predeclared public feasibility assumption is at least 5,000 private rows per declared class; with 45 public candidates, its uniform-load proxy is at least 111.1 votes per candidate. The public-assumption check requires that proxy to exceed <span class="math inline">\(3\sigma_{\mathrm{PE}}\)</span> in every declared condition. This lower bound is not verified with a private count.</p>
+<p>It does <strong>not</strong> require a particular candidate to survive, a favored metric to improve, or the recoverable condition to win. Realized survivor counts remain diagnostics, never a reason to rerun with friendlier seeds.</p>
+</section>
+<section id="one-fixed-50-round-process" class="level3">
+<h3 class="anchored" data-anchor-id="one-fixed-50-round-process">One fixed 50-round process</h3>
+<p>First inspect one mechanism whose maximum is fixed publicly at <span class="math inline">\(R=50\)</span>. Its 50 Gaussian histograms together spend the <strong>total evolution-stage budget</strong> <span class="math inline">\((\varepsilon,\delta)=(1,10^{-5})\)</span>. Each cell shows eight fixed-seed population members per digit at the seed and after rounds 2, 5, 10, 20, and 50.</p>
+<p>These columns are checkpoints from that <strong>single 50-round run</strong>. They illustrate the process only; each cell is a new population sample, not a tracked individual lineage. In particular, its round-20 checkpoint is not the separately calibrated 20-round release compared next.</p>
+<div id="45" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>pe_round_sweep <span class="op">=</span> build_private_evolution_round_sweep(smoke<span class="op">=</span>SMOKE)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>show_figure(private_evolution_round_process_figure(pe_round_sweep))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="compare-the-final-output-of-each-complete-run" class="level3">
+<h3 class="anchored" data-anchor-id="compare-the-final-output-of-each-complete-run">Compare the final output of each complete run</h3>
+<p>Now compare only the <strong>final result</strong> for each maximum round count. The table includes zero rounds as the released DP-VAE seed before any new private query. The rows at 2, 5, 10, 20, and 50 are final outputs from five separately calibrated mechanisms. Each released <span class="math inline">\(R\)</span> uses independent deterministic streams, fixed from public seeds, for histogram noise, resampling, and variation; no Gaussian draw is reused across alternatives. For each <span class="math inline">\(R&gt;0\)</span>, the PLD accountant recalibrates the Gaussian scale so exactly that run’s <span class="math inline">\(R\)</span> histograms compose to the fixed total budget. In particular, the 20-round point is the final output of the mechanism calibrated for 20 compositions; it is not round 20 of the 50-round mechanism, whose per-round noise is larger. The seed has 50 actual rows per class and each evolved population has 100; the sweep evaluates 50 rows per class without inflating either population through replacement-only duplicates.</p>
+<div id="47" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>show_table(private_evolution_round_comparison_table(pe_round_sweep))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">rounds</th>
+<th data-quarto-table-cell-role="th">artifact status</th>
+<th data-quarto-table-cell-role="th">histograms composed in this run</th>
+<th data-quarto-table-cell-role="th">population / class (unique)</th>
+<th data-quarto-table-cell-role="th">evaluation rows / class</th>
+<th data-quarto-table-cell-role="th">Gaussian sigma / round</th>
+<th data-quarto-table-cell-role="th">randomized PE mechanism target (epsilon, delta)</th>
+<th data-quarto-table-cell-role="th">label consistency</th>
+<th data-quarto-table-cell-role="th">class coverage</th>
+<th data-quarto-table-cell-role="th">TSTR balanced accuracy</th>
+<th data-quarto-table-cell-role="th">TSTR log loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>0</td>
+<td>50 (50 unique)</td>
+<td>50</td>
+<td>0.000</td>
+<td>(0, 0)</td>
+<td>0.910</td>
+<td>1.000</td>
+<td>0.976</td>
+<td>0.076</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>2</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>2</td>
+<td>100 (37 unique)</td>
+<td>50</td>
+<td>5.276</td>
+<td>(1, 1e-05)</td>
+<td>0.950</td>
+<td>1.000</td>
+<td>0.976</td>
+<td>0.072</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>5</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>5</td>
+<td>100 (32 unique)</td>
+<td>50</td>
+<td>8.342</td>
+<td>(1, 1e-05)</td>
+<td>0.980</td>
+<td>1.000</td>
+<td>0.981</td>
+<td>0.066</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>10</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>10</td>
+<td>100 (32 unique)</td>
+<td>50</td>
+<td>11.797</td>
+<td>(1, 1e-05)</td>
+<td>0.920</td>
+<td>1.000</td>
+<td>0.977</td>
+<td>0.071</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>20</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>20</td>
+<td>100 (28 unique)</td>
+<td>50</td>
+<td>16.684</td>
+<td>(1, 1e-05)</td>
+<td>0.960</td>
+<td>1.000</td>
+<td>0.977</td>
+<td>0.070</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>50</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>50</td>
+<td>100 (27 unique)</td>
+<td>50</td>
+<td>26.380</td>
+<td>(1, 1e-05)</td>
+<td>0.970</td>
+<td>1.000</td>
+<td>0.971</td>
+<td>0.080</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Each nonzero sweep row by itself spends <span class="math inline">\((1,10^{-5})\)</span> on evolution, so <span class="math inline">\((3,2\times10^{-5})\)</span> is its counterfactual seed-plus-one-run bound. Zero rounds adds no evolution cost and retains the seed’s <span class="math inline">\((2,10^{-5})\)</span> bound.</p>
+<p>The PE-path ledger is larger. It releases three five-round private support-condition mechanisms plus the five private sweep alternatives: eight PE mechanisms on the same target. Simple composition gives PE <span class="math inline">\((8,8\times10^{-5})\)</span> and, including the established DP-VAE seed, the DP-VAE-seed + PE-path aggregate <span class="math inline">\((10,9\times10^{-5})\)</span>. The one shared private-PCA covariance release and separate 60,000-row DP-VAE bring the simple-composition bound across all mechanisms labeled DP to <span class="math inline">\((14,11\times10^{-5})\)</span>. The notebook as a whole is still not DP because its exact/nonprivate foils access the private target. Selecting a round count after inspecting the sweep does not erase any released mechanism’s cost. Had one round count been fixed publicly and only that one PE mechanism released, the staged bound would instead be <span class="math inline">\((3,2\times10^{-5})\)</span>.</p>
+<p>For the five-bar generator diagnostic below, the declared public selection rule minimizes real-evaluation TSTR log loss, then breaks ties by higher balanced accuracy and fewer rounds. With independent alternative streams, the canonical artifact selects <strong>5 rounds</strong>. The bar is postprocessing of the displayed sweep and is not a ninth PE run. But the same public evaluation set both selects that bar and supplies its reported score, so the result is exploratory and has no held-out utility estimate.</p>
+</section>
+<section id="add-the-defined-private-evolution-release-to-the-diagnostic" class="level3">
+<h3 class="anchored" data-anchor-id="add-the-defined-private-evolution-release-to-the-diagnostic">Add the defined Private Evolution release to the diagnostic</h3>
+<p>Only now, after defining the seed, private vote, fixed-budget sweep, independent composition, and selection rule, add the selected Private Evolution release to the earlier PCA/VAE diagnostic. The fifth bar uses the same digits 0 and 3, synthetic rows per class, public classifier, and TSTR evaluator as the four trained generators. The resulting order is nonprivate PCA, private PCA, nonprivate VAE, private VAE, and the selected Private Evolution release. It reuses the selected sweep output; it is not a sixth private run.</p>
+<div id="50" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pca_vae_pe_metrics <span class="op">=</span> build_pca_vae_training_comparison(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    artifact, pca_examples, evolution<span class="op">=</span>pe_round_sweep</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>show_figure(dp_training_diagnostic_figure(pca_vae_pe_metrics))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="public-support-is-a-separate-assumption" class="level3">
+<h3 class="anchored" data-anchor-id="public-support-is-a-separate-assumption">Public support is a separate assumption</h3>
+<p>The private target contains a public three-mode horizontal-shift family: <span class="math inline">\(-6\)</span>, <span class="math inline">\(0\)</span>, and <span class="math inline">\(+6\)</span> pixels. Starting from the same released DP-VAE samples, we change only which public shifts are applied to the synthetic seed: Each target row’s mode is assigned by a row-local SHA-256 hash of its own fixed public identity before voting. Deleting any other row cannot change a remaining row’s mode, so this preprocessing preserves the add/remove neighboring relation.</p>
+<ul>
+<li><strong>matched:</strong> all modes, with counts <span class="math inline">\((15,15,15)\)</span> per class;</li>
+<li><strong>recoverable mismatch:</strong> all modes, with counts <span class="math inline">\((30,10,5)\)</span>;</li>
+<li><strong>support gap:</strong> the <span class="math inline">\(+6\)</span> mode is absent, with counts <span class="math inline">\((25,20,0)\)</span>.</li>
+</ul>
+<p>The first condition is easy, the second asks whether private votes can reweight available support, and the third is a falsification test. The variation operator moves at most one pixel horizontally per round, so five rounds can move at most five horizontal pixels. The absent <span class="math inline">\(+6\)</span> mode is six pixels from the nearest available mode and remains unreachable with strict slack.</p>
+<div id="52" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>show_figure(population_progression_figure(artifact))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="post_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The first column is the released DP-VAE seed; the next five columns are the private evolution rounds. Read the rows as a support experiment, not a photorealism contest. Matched and recoverable seeds contain all target modes; the support-gap seed does not. Private votes may concentrate probability on an available rare mode, but postprocessing cannot manufacture a mode outside the reachable synthetic family.</p>
+</section>
+<section id="what-actually-happened-in-the-recoverable-rounds" class="level3">
+<h3 class="anchored" data-anchor-id="what-actually-happened-in-the-recoverable-rounds">What actually happened in the recoverable rounds</h3>
+<div id="55" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>show_table(private_evolution_round_table(artifact, condition<span class="op">=</span><span class="st">"recoverable"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">round</th>
+<th data-quarto-table-cell-role="th">artifact status</th>
+<th data-quarto-table-cell-role="th">population size</th>
+<th data-quarto-table-cell-role="th">unique population rows</th>
+<th data-quarto-table-cell-role="th">survivors by class</th>
+<th data-quarto-table-cell-role="th">threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>1</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>400</td>
+<td>174</td>
+<td>25 / 23 / 30 / 29</td>
+<td>25.516481</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>2</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>400</td>
+<td>173</td>
+<td>57 / 80 / 71 / 59</td>
+<td>27.449504</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>3</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>400</td>
+<td>177</td>
+<td>71 / 75 / 75 / 85</td>
+<td>27.449504</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>4</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>400</td>
+<td>175</td>
+<td>73 / 76 / 58 / 74</td>
+<td>27.449504</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>5</td>
+<td>PUBLIC-BENCHMARK REPRODUCIBILITY ARTIFACT; not a confidential-data DP release. Budget labels are randomized-mechanism targets requiring fresh unreleased entropy; never publish private-noise seeds in deployment.</td>
+<td>400</td>
+<td>172</td>
+<td>63 / 69 / 70 / 77</td>
+<td>27.449504</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The table reports post-threshold survivors, population size, and unique rows after each round, all downstream of the noised histogram. These values diagnose concentration and diversity; they are not stopping criteria. The canonical run always consumes the predeclared five-round ledger even if an intermediate picture looks good.</p>
+</section>
+</section>
+<section id="common-footing-before-scores" class="level2">
+<h2 class="anchored" data-anchor-id="common-footing-before-scores">Common footing before scores</h2>
+<p>Before comparing utility, name the released DP object and the private access. The nonprivate VAE accesses the private target without DP. Each public-evolution control starts from the <span class="math inline">\((2,10^{-5})\)</span> DP-VAE release and applies the same five resample/vary rounds without a new private query. Each Private Evolution row additionally releases five noised voting histograms. Its displayed <span class="math inline">\((3,2\times10^{-5})\)</span> label is the counterfactual seed-plus-one-run bound, not the DP-VAE-seed + PE-path aggregate or the all-DP-labeled aggregate.</p>
+<p>There are now two explicit within-panel footings, not one cross-panel target. The two VAE rows in the established diagnostic below share all raw digits 0–9, all 51,000 private-target rows, architecture, and all 10,000 official test rows; this statement does not describe the earlier 51,000-versus-60,000 marginal comparison. The public-steering rows share the same released DP-VAE seed and the separate digits-0–3 shifted target and evaluation rows. Scores are comparable within a panel; a raw-VAE-versus-shifted- evolution ranking would conflate different target distributions.</p>
+<div id="57" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>show_table(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    artifact.public_resource_table[</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>        artifact.public_resource_table[<span class="st">"method"</span>] <span class="op">!=</span> <span class="st">"clipped-only VAE"</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">method</th>
+<th data-quarto-table-cell-role="th">private_access</th>
+<th data-quarto-table-cell-role="th">public_resources</th>
+<th data-quarto-table-cell-role="th">dp_release</th>
+<th data-quarto-table-cell-role="th">principal_limitation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>nonprivate VAE foil</td>
+<td>ordinary training on private target</td>
+<td>architecture and hyperparameters</td>
+<td>none</td>
+<td>not private</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>DP-VAE</td>
+<td>per-example clipped/noised training</td>
+<td>architecture and hyperparameters</td>
+<td>trained weights</td>
+<td>clipping and gradient noise</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>DP-VAE public-evolution control</td>
+<td>none after the earlier DP-VAE release</td>
+<td>released synthetic candidates and bounded variation</td>
+<td>DP-VAE weights/samples at epsilon=2</td>
+<td>seed mismatch; no target steering</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>DP-VAE + Private Evolution</td>
+<td>same target in DP-SGD, then one bounded vote per row/round</td>
+<td>same released seed, refresh pool, rounds, variation, output size</td>
+<td>DP-VAE release + Gaussian vote histograms</td>
+<td>cannot create missing support</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>For each public-steering condition, the DP-VAE public-evolution control and Private Evolution row receive identical released candidates, disjoint released refresh pools, rounds, variation operators, and output size. The only added information in the Private Evolution row is the accounted private voting signal.</p>
+<p>The separate-PCA and DP-VAE privacy budgets are both epsilon 2.000 and delta <span class="math inline">\(10^{-5}\)</span>, although their input classes and model families differ. The evolution stage alone spends epsilon 1, but the released seed already spent epsilon 2; epsilon 3 is only the counterfactual seed-plus-one-run bound. The notebook’s three support mechanisms and five sweep alternatives compose with the seed to epsilon 10 and delta <span class="math inline">\(9\times10^{-5}\)</span> for that path. Adding the shared private-PCA release and the separate 60,000-row DP-VAE yields the all-DP-labeled simple-composition bound <span class="math inline">\((14,11\times10^{-5})\)</span>. Utility values across the two panels must not be advertised as an equal-budget ranking.</p>
+</section>
+<section id="two-evaluation-questions-four-reported-columns" class="level2">
+<h2 class="anchored" data-anchor-id="two-evaluation-questions-four-reported-columns">Two evaluation questions, four reported columns</h2>
+<ul>
+<li><strong>Label consistency:</strong> does the fixed public classifier agree with each released label?</li>
+<li><strong>Class coverage:</strong> what fraction of the method’s declared classes does that classifier predict (ten for VAE, four for Private Evolution)?</li>
+<li><strong>TSTR balanced accuracy:</strong> can a fresh classifier trained on synthetic rows predict the untouched real evaluation rows across all classes?</li>
+<li><strong>TSTR log loss:</strong> are its real-evaluation probabilities well calibrated?</li>
+</ul>
+<p>All metrics below are realized artifact values. There is no test that a preferred method must win. The selected 5-round diagnostic is chosen and reported on this same public evaluation set, so its utility number is exploratory, not held out.</p>
+<div id="60" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> evaluation_table(artifact)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>show_table(evaluation[evaluation[<span class="st">"method"</span>] <span class="op">!=</span> <span class="st">"clipped-only VAE"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+
+
+<table class="dataframe lecture-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">method</th>
+<th data-quarto-table-cell-role="th">privacy / access contract</th>
+<th data-quarto-table-cell-role="th">label consistency</th>
+<th data-quarto-table-cell-role="th">class coverage</th>
+<th data-quarto-table-cell-role="th">TSTR balanced accuracy</th>
+<th data-quarto-table-cell-role="th">TSTR log loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>nonprivate VAE</td>
+<td>private training; no DP claim</td>
+<td>0.961</td>
+<td>1.000</td>
+<td>0.844</td>
+<td>0.512</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>DP-VAE</td>
+<td>randomized-mechanism target: (epsilon, delta)=(2, 1e-05); matches private PCA; frozen seeded output is a public-benchmark demo</td>
+<td>0.900</td>
+<td>1.000</td>
+<td>0.771</td>
+<td>0.839</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>matched DP-VAE public-evolution control</td>
+<td>randomized-mechanism target: (epsilon, delta)=(2, 1e-05); frozen seeded output is a public-benchmark demo</td>
+<td>0.978</td>
+<td>1.000</td>
+<td>0.749</td>
+<td>0.821</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>recoverable DP-VAE public-evolution control</td>
+<td>randomized-mechanism target: (epsilon, delta)=(2, 1e-05); frozen seeded output is a public-benchmark demo</td>
+<td>0.978</td>
+<td>1.000</td>
+<td>0.739</td>
+<td>0.896</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>recoverable DP-VAE + Private Evolution</td>
+<td>randomized-mechanism target under simple composition: (epsilon, delta)=(3, 2e-05); DP-VAE + PE; frozen seeded output is a public-benchmark demo</td>
+<td>0.988</td>
+<td>1.000</td>
+<td>0.820</td>
+<td>0.598</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6</td>
+<td>support-gap DP-VAE public-evolution control</td>
+<td>randomized-mechanism target: (epsilon, delta)=(2, 1e-05); frozen seeded output is a public-benchmark demo</td>
+<td>0.978</td>
+<td>1.000</td>
+<td>0.651</td>
+<td>1.819</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">7</td>
+<td>support-gap DP-VAE + Private Evolution</td>
+<td>randomized-mechanism target under simple composition: (epsilon, delta)=(3, 2e-05); DP-VAE + PE; frozen seeded output is a public-benchmark demo</td>
+<td>0.983</td>
+<td>1.000</td>
+<td>0.667</td>
+<td>1.694</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="read-the-result-not-the-method-names" class="level3">
+<h3 class="anchored" data-anchor-id="read-the-result-not-the-method-names">Read the result, not the method names</h3>
+<ol type="1">
+<li><strong>Private training:</strong> the retained established DP-VAE seed covers all ten classes. The new 60,000-row marginal VAE audit above also has full coverage; neither artifact collapses to one class.</li>
+<li><strong>Recoverable mismatch:</strong> relative to the same five public resample/vary rounds without votes, Private Evolution raises TSTR balanced accuracy from about 0.738 to 0.812 while preserving full class coverage. Read the table above for the other realized metrics. This is a realized improvement from iterative private reweighting, purchased by the additional <span class="math inline">\((1,10^{-5})\)</span> evolution ledger—not a universal dominance claim.</li>
+<li><strong>Support gap:</strong> both rows remain limited by the missing mode. It is mechanically unreachable; aggregate scores cannot refute the mechanical <span class="math inline">\(5&lt;6\)</span> support proof.</li>
+</ol>
+<p>The fixed-classifier columns and TSTR columns need not move together. A sample can look label-consistent yet be a poor training distribution, or support a classifier while missing a declared mode.</p>
+</section>
+</section>
+<section id="the-three-error-sources-return" class="level2">
+<h2 class="anchored" data-anchor-id="the-three-error-sources-return">The three error sources return</h2>
+<p>Lecture 11 separated model misspecification, private-measurement error, and finite synthetic-sample error. Here the same decomposition appears in new clothes:</p>
+<ol type="1">
+<li><strong>representation/support error:</strong> the VAE family or public generator cannot express the target;</li>
+<li><strong>private learning/selection error:</strong> clipping and Gaussian noise distort training gradients or voting histograms;</li>
+<li><strong>sampling error:</strong> a finite released population fluctuates around the learned model or postprocessed weights.</li>
+</ol>
+<p>Generating more rows addresses only the third. It cannot undo a collapsed VAE, recover an unreachable public mode, or improve the privacy accountant.</p>
+</section>
+<section id="honest-close" class="level2">
+<h2 class="anchored" data-anchor-id="honest-close">Honest close</h2>
+<p>Learned generators do not escape the contract-first discipline:</p>
+<ul>
+<li>DP-SGD makes the <strong>training trajectory</strong> private by clipping and noising per-example gradients.</li>
+<li>Private Evolution can start from a released DP generator. Its samples are public at the steering stage, but their earlier privacy cost remains in the ledger; new bounded Gaussian votes compose with it.</li>
+<li>Public data quality, rare classes, provider/API trust, representation limits, and target-side tuning remain real failure modes.</li>
+<li>Evaluation on an additional private holdout would require its own mechanism.</li>
+<li>Reconstruction, membership, and attribute-inference attacks remain valuable diagnostics, but a low attack score is not a privacy proof.</li>
+</ul>
+<p>The formal ledger is primary. The pictures and scores tell us whether the private release is useful and where its public assumptions break.</p>
+</section>
+<section id="reading-map" class="level2">
+<h2 class="anchored" data-anchor-id="reading-map">Reading map</h2>
+<p><a href="https://arxiv.org/abs/1607.00133">Deep Learning with Differential Privacy</a> introduces the sampled, clipped, noised-gradient route used by the DP-VAE mechanism. <a href="https://openreview.net/forum?id=YEhQs8POIo">Private Evolution</a> supplies the select–threshold–resample–vary framework used by the public-steering path. The lecture’s conditional VAE clips each example’s complete ELBO gradient; the <a href="https://arxiv.org/abs/2006.11204">DP-VAE term-wise aggregation paper</a> is a useful comparison because it deliberately studies a different aggregation choice.</p>
+<p>JAM-PGM uses public information to propose tabular marginal structure. PMW^Pub, GEM, Aug-PE, DP-MERF, and Tabular Private Evolution extend public assistance in other directions. DP-MERF is a useful measurement-to-generator bridge but is not a substitute for this lecture’s DP-SGD generative-model beat.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 The Hebrew University of Jerusalem. Code: MIT. Content: CC BY-NC-SA 4.0.</p>
+</div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/course.html">
+<p>Course</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/syllabus.html">
+<p>Syllabus</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/about.html">
+<p>About</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../../../pages/license.html">
+<p>License &amp; attribution</p>
+</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://github.com/applied-dp-course/website">
+<p>Source</p>
+</a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

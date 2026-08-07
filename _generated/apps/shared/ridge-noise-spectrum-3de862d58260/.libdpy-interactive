@@ -1,0 +1,8 @@
+name=ridge_noise_spectrum
+artifact=ridge-noise-spectrum
+export_backend=wasm-marimo
+signature=3de862d58260e188e60f4294b51ee960bc3f0384ab33b4b4a228e0340755d961
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/ridge-noise-spectrum-3de862d58260
+canonical_source=content/lecture-presentations/private-linear-regression/presentation.qmd

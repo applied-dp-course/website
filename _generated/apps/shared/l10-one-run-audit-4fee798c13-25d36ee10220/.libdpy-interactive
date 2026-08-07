@@ -1,0 +1,8 @@
+name=one_run_audit
+artifact=l10-one-run-audit-4fee798c13
+export_backend=plotly-declarative
+signature=25d36ee102207309fcc10caf563d51fd5e9f753d9e3ce5d1ee00a66305164925
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/l10-one-run-audit-4fee798c13-25d36ee10220
+canonical_source=content/blog-posts/ml-privacy-attacks-auditing/post.ipynb

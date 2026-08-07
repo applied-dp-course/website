@@ -1,0 +1,8 @@
+name=poisson_inclusion_gaussian_privacy_profile
+artifact=l9-poisson-inclusion-gaussian-privacy-profile
+export_backend=plotly-declarative
+signature=3e7f4bfeea7222b3b0f99b5c9c16ab6e863a537f706dec0d6b8a99a23e40e3d1
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/l9-poisson-inclusion-gaussian-privacy-profile-3e7f4bfeea72
+canonical_source=content/blog-posts/logistic-regression-dp-sgd/post.ipynb

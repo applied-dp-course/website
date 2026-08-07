@@ -1,0 +1,8 @@
+{
+  "outputs": [
+    "lecture-presentations/privacy-auditing/fixed-threshold-audit-same-sample.html"
+  ],
+  "schema_version": 1,
+  "signature": "03e09b04883e7d6994e1a25e567b12f64bb052564adf1fb7a72cba56714a4088",
+  "source": "content/blog-posts/privacy-auditing/animations/fixed-threshold-audit-same-sample.py"
+}

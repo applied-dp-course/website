@@ -1,0 +1,8 @@
+name=privacy_plot
+artifact=privacy-plot-norm-6197737a49
+export_backend=wasm-marimo
+signature=8cac3fd4fe7b99d455a2c72242a29526a8d76888f86c5890178a9654a5b95c0d
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/privacy-plot-norm-6197737a49-8cac3fd4fe7b
+canonical_source=content/blog-posts/hypothesis-testing/post.ipynb

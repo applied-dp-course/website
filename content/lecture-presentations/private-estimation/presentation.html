@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <link href="../../../theme/favicon.svg" rel="icon" type="image/svg+xml">
-<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../site_libs/quarto-html/tabby.min.js"></script>
 <script src="../../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -123,6 +123,9 @@
       margin-right: 0; 
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+  
+  <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -138,213 +141,324 @@
 </section>
 <section id="from-auditing-to-mechanisms" class="slide level2">
 <h2>From auditing to mechanisms</h2>
-<div class="fragment">
-<p>We audit <strong>our own proposals</strong> to design mechanisms.</p>
-</div>
-<div class="fragment">
-<p>Running problem: estimate typical <strong>income</strong> from Fulton PUMS microdata.</p>
-</div>
-<div class="fragment">
-<p>Loop: propose → audit → diagnose → repair.</p>
-</div>
+<ul>
+<li>Running problem: estimate a typical <strong>income</strong> from a private sample.</li>
+<li>Tempting estimators often work on ordinary data.</li>
+<li>Differential privacy is a worst-case neighboring-dataset claim.</li>
+</ul>
+<blockquote>
+<p><strong>Question:</strong> How do we turn a failed estimator into a valid mechanism without losing the statistical goal?</p>
+</blockquote>
+</section>
+<section id="todays-contract" class="slide level2">
+<h2>Today’s contract</h2>
+<ul>
+<li>Dataset size: <span class="math inline">\(n=1{,}000\)</span>.</li>
+<li>Adjacency: substitute one row.</li>
+<li>Total budget per released estimate: $arepsilon=1$ and the course value of <span class="math inline">\(delta\)</span>.</li>
+<li>Accuracy target: sample or population mean, except when we deliberately switch to a median.</li>
+<li>Data example: Fulton PUMS income.</li>
+</ul>
+<p>Every proposal must state its target, public inputs, private computations, and released output.</p>
+</section>
+<section id="the-loop-we-will-repeat" class="slide level2 scrollable">
+<h2>The loop we will repeat</h2>
+<ol type="1">
+<li><strong>Propose</strong> the estimator we wish were safe.</li>
+<li><strong>Audit</strong> it on a chosen neighboring pair.</li>
+<li><strong>Diagnose</strong> the exact data-dependent step.</li>
+<li><strong>Repair</strong> that step with a mechanism and account for its budget.</li>
+</ol>
+<blockquote>
+<p><strong>Question:</strong> Which step protects us from mistaking “stable on my sample” for privacy?</p>
+</blockquote>
 </section>
 <section id="public-menu-contract" class="slide level2">
 <h2>Public-menu contract</h2>
-<div class="fragment">
-<p>Every grid, bin edge, threshold, and transform is <strong>fixed before</strong> private data is touched.</p>
-</div>
-<div class="fragment">
-<p>Public data can choose the <strong>menu</strong>; private data must <strong>privately choose from the menu</strong>.</p>
-</div>
+<ul>
+<li>Grids, bin edges, candidate thresholds, and transforms are fixed before private data is touched.</li>
+<li>Public data may choose the <strong>menu</strong>.</li>
+<li>Private data must <strong>privately choose from the menu</strong>.</li>
+</ul>
+<p>Post-processing protects later computation only after every private choice has already been made by a DP mechanism.</p>
 </section>
 <section id="oracle-eda-not-a-private-release" class="slide level2">
 <h2>Oracle EDA — not a private release</h2>
-<div id="7ce7490a" class="cell" data-execution_count="3">
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-4-output-1.png"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-4-output-2.png"></p>
-</figure>
-</div>
-</div>
-</div>
-<aside class="notes">
-<p>Exact histograms leak bin and threshold choices. The private repair arrives later.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
+
+<img data-src="presentation_files/figure-revealjs/cell-4-output-1.png" class="r-stretch"><blockquote>
+<p><strong>Question:</strong> Which choices in this exact histogram would change if one row changed?</p>
+</blockquote>
 </section>
-<section id="raw-noisy-mean-fails" class="slide level2">
-<h2>Raw noisy mean fails</h2>
-<div id="3804096e" class="cell" data-execution_count="4">
-<div class="cell-output cell-output-display" data-execution_count="4">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-5-output-1.png"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-5-output-2.png"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="fragment">
-<p>Diagnosis: unbounded contribution — the mean is not a query waiting for noise.</p>
-</div>
+<section id="proposal-1-bounded-range-mean" class="slide level2">
+<h2>Proposal 1 — bounded-range mean</h2>
+<p>Assume every value is publicly known to lie in <span class="math inline">\([L,U]\)</span> and release</p>
+<p><span class="math display">\[\bar x+\mathcal N(0,\sigma_{\mathrm{DP}}^2),
+\qquad \Delta_2(\bar x)=\frac{U-L}{n}.\]</span></p>
+<p>This is a valid template when the range and Gaussian calibration are public.</p>
 </section>
-<section id="empirical-quantile-clipping-fails" class="slide level2">
-<h2>Empirical quantile clipping fails</h2>
-<div id="526f4b9a" class="cell" data-execution_count="5">
-<div class="cell-output cell-output-display" data-execution_count="5">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-6-output-1.png"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-6-output-2.png"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="fragment">
-<p>Thresholds were learned non-privately; noise on the final number does not fix that.</p>
-</div>
-</section>
-<section id="median-robust-dp-stable" class="slide level2">
-<h2>Median: robust ≠ DP-stable</h2>
-<div id="4125822e" class="cell" data-execution_count="6">
-<div class="cell-output cell-output-display" data-execution_count="6">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-7-output-1.png"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-7-output-2.png"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="repair-1-rank-error-quantile" class="slide level2">
-<h2>Repair 1: rank-error quantile</h2>
-<div id="e8d08d6f" class="cell" data-execution_count="7">
-<div class="cell-output cell-output-display" data-execution_count="7">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-8-output-1.png"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-8-output-2.png"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="fragment">
-<p>Privacy from changing the <strong>error metric</strong>, not only adding noise.</p>
-</div>
-</section>
-<section id="repair-2-private-quantile-clipped-mean" class="slide level2">
-<h2>Repair 2: private quantile-clipped mean</h2>
-<div id="bd159255" class="cell" data-execution_count="8">
-<div class="cell-output cell-output-display" data-execution_count="8">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-9-output-1.png"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-9-output-2.png"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="fragment">
-<p>Budget: <span class="math inline">\(\varepsilon_{\mathrm{low}}+\varepsilon_{\mathrm{high}}+\varepsilon_{\mathrm{mean}} = `r EPS_TOTAL`\)</span>.</p>
-</div>
-</section>
-<section id="empirical-μkσ-fails" class="slide level2">
-<h2>Empirical μ±kσ fails</h2>
-<div id="4ecfdbb1" class="cell" data-execution_count="9">
-<div class="cell-output cell-output-display" data-execution_count="9">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-10-output-1.png"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-10-output-2.png"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="repair-3-noisy-histogram-localization" class="slide level2">
-<h2>Repair 3: noisy histogram localization</h2>
-<div id="b9b4506a" class="cell" data-execution_count="10">
-<div class="cell-output cell-output-display" data-execution_count="10">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-11-output-1.png"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/cell-11-output-2.png"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="fragment">
-<p>Privacy from mechanisms; <strong>accuracy</strong> from the Gaussian assumption.</p>
-</div>
-</section>
-<section id="takeaways" class="slide level2">
-<h2>Takeaways</h2>
+<section id="sensitivity-sets-the-noise-scale" class="slide level2">
+<h2>Sensitivity sets the noise scale</h2>
 <ul>
-<li>Every data-dependent choice is part of the release.</li>
-<li>Auditing disproves claims; it never proves DP.</li>
-<li>Witness construction is the practical skill.</li>
-<li>Next: choosing <strong>which</strong> query to answer (Lecture 6).</li>
+<li>A conservative salary domain can be far wider than the observed data.</li>
+<li>Here the public width is <span class="math inline">\(10^8\)</span> dollars.</li>
+<li>At <span class="math inline">\(n=1{,}000\)</span>, the calibrated noise standard deviation is about <strong>187,788 dollars</strong>.</li>
 </ul>
+<p>The mechanism may be private and still be useless for a mean near tens of thousands of dollars.</p>
+</section>
+<section id="validbut-useful" class="slide level2">
+<h2>Valid—but useful?</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-5-output-1.png" class="r-stretch"><blockquote>
+<p><strong>Question:</strong> Did privacy fail here, or did the public sensitivity bound destroy utility?</p>
+</blockquote>
+</section>
+<section id="diagnosis-1-bound-first" class="slide level2">
+<h2>Diagnosis 1 — bound first</h2>
+<ul>
+<li>Adding noise is not the design step; bounding contribution is.</li>
+<li>A huge public range makes the raw mean private at huge cost.</li>
+<li>A narrow range would help—but learning it from private data is itself a private computation.</li>
+</ul>
+<p>The next proposals try to discover a useful clipping range.</p>
+</section>
+<section id="proposal-2-empirical-mupm4sigma" class="slide level2 scrollable">
+<h2>Proposal 2 — empirical <span class="math inline">\(\mu\pm4\sigma\)</span></h2>
+<ol type="1">
+<li>Compute the sample mean <span class="math inline">\(\hat\mu\)</span> and standard deviation <span class="math inline">\(\hat\sigma\)</span>.</li>
+<li>Clip each row to <span class="math inline">\([\hat\mu-4\hat\sigma,\hat\mu+4\hat\sigma]\)</span>.</li>
+<li>Add noise calibrated to the learned width.</li>
+</ol>
+<blockquote>
+<p><strong>Question:</strong> What else changed besides the final clipped mean when one row changed?</p>
+</blockquote>
+</section>
+<section id="a-typical-audit-may-look-fine" class="slide level2">
+<h2>A typical audit may look fine</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-6-output-1.png" class="r-stretch"><p>This finite audit does <strong>not</strong> cross the claimed <span class="math inline">\(\varepsilon=1\)</span> bound on its chosen pair.</p>
+</section>
+<section id="why-the-audit-is-one-sided" class="slide level2">
+<h2>Why the audit is one-sided</h2>
+<ul>
+<li>Finding a separating witness disproves a privacy claim.</li>
+<li>Failing to find one does not quantify over all neighboring datasets and events.</li>
+<li>Here both the clipping interval and the output noise scale depend on private data.</li>
+</ul>
+<blockquote>
+<p><strong>Question:</strong> Can an empirical audit ever certify the universal DP definition?</p>
+</blockquote>
+</section>
+<section id="diagnosis-2-preprocessing-is-part-of-the-release" class="slide level2">
+<h2>Diagnosis 2 — preprocessing is part of the release</h2>
+<p>The mechanism is not</p>
+<p><span class="math display">\[\text{fixed clipping}\ \longrightarrow\ \text{DP mean}.\]</span></p>
+<p>It is</p>
+<p><span class="math display">\[D\longrightarrow(\hat\mu(D),\hat\sigma(D))
+\longrightarrow\text{data-dependent clipping and noise}.\]</span></p>
+<p>Those first arrows need privacy accounting too.</p>
+</section>
+<section id="proposal-3-empirical-quantile-clipping" class="slide level2">
+<h2>Proposal 3 — empirical quantile clipping</h2>
+<ul>
+<li>Learn the 1st and 99th percentiles from the private sample.</li>
+<li>Clip to those empirical thresholds.</li>
+<li>Release a noisy clipped mean.</li>
+</ul>
+<p>Quantiles are robust on typical data, but the learned order statistics can jump across a constructed gap.</p>
+</section>
+<section id="a-witness-catches-the-leak" class="slide level2">
+<h2>A witness catches the leak</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-7-output-1.png" class="r-stretch"><blockquote>
+<p><strong>Question:</strong> Why can the output laws separate even though the final mean is clipped?</p>
+</blockquote>
+</section>
+<section id="diagnosis-3-post-processing-starts-too-late" class="slide level2">
+<h2>Diagnosis 3 — post-processing starts too late</h2>
+<ul>
+<li>The lower and upper thresholds are data-dependent.</li>
+<li>They change both the deterministic clipped mean and its noise scale.</li>
+<li>Noise on the final number does not privatize thresholds that were learned non-privately.</li>
+</ul>
+<p>The repair must privatize the bounds before using them.</p>
+</section>
+<section id="repair-1-private-quantile-clipped-mean" class="slide level2">
+<h2>Repair 1 — private quantile-clipped mean</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-8-output-1.png" class="r-stretch"><p>Select public threshold candidates with private rank scores, then clip and release the mean.</p>
+</section>
+<section id="composition-is-a-ledger" class="slide level2">
+<h2>Composition is a ledger</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-9-output-1.png" class="r-stretch"><p>The total is <strong><span class="math inline">\(\varepsilon=1\)</span></strong> by sequential composition.</p>
+</section>
+<section id="reallocate-without-changing-the-guarantee" class="slide level2">
+<h2>Reallocate without changing the guarantee</h2>
+<div id="945a6ebf" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+        <script>
+        window.PlotlyConfig = {MathJaxConfig: 'local'};
+        if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+        </script>
+        <script type="module">import "https://cdn.plot.ly/plotly-3.6.0.min"</script>
+        
+</div>
+<div class="cell-output cell-output-display">
+<div style="height:380px; width:920px;">            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script>if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="../../../assets/vendor/plotly-3.6.0.min.js" integrity="sha256-QaOVwtVY0T02VaHrr6pnoHLCwayMJp4O5n4YyaE3rJk=" crossorigin="anonymous"></script>                <div id="b3fc25e7-55e9-4e17-92c2-9c670cfeea11" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("b3fc25e7-55e9-4e17-92c2-9c670cfeea11")) {                    Plotly.newPlot(                        "b3fc25e7-55e9-4e17-92c2-9c670cfeea11",                        [{"customdata":[[0.25]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.25],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.25]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.25],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.5]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.5],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["4.0\u00d7","4.0\u00d7","2.0\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[4.0,4.0,2.0],"yaxis":"y2","type":"bar"}],                        {"annotations":[{"font":{"size":16},"showarrow":false,"text":"One composed \u03b5 ledger","x":0.21,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"Randomization-pressure proxy","x":0.79,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"barmode":"stack","height":380,"legend":{"orientation":"h","traceorder":"normal","x":0.0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":85,"l":55,"r":30,"t":95},"template":{"data":{"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"#E5ECF6","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2}}},"title":{"text":"Composition stays \u03b5=1.00: bounds receive 50%, mean receives 50%"},"width":920,"xaxis":{"anchor":"y","domain":[0.0,0.42],"range":[0.0,1.0],"title":{"text":"allocated \u03b5"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":""}},"xaxis2":{"anchor":"y2","domain":[0.58,1.0],"title":{"text":"private step"}},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"range":[0.0,23.0],"title":{"text":"\u03b5_total \u002f \u03b5_step"}},"sliders":[{"active":4,"currentvalue":{"font":{"size":16},"prefix":"\u03b5 share for both bounds: "},"font":{"size":13},"len":0.92,"pad":{"b":12,"t":58},"steps":[{"args":[["bounds_fraction-0"],{"mode":"immediate","frame":{"duration":0,"redraw":true},"transition":{"duration":0}}],"label":"0.1","method":"animate"},{"args":[["bounds_fraction-1"],{"mode":"immediate","frame":{"duration":0,"redraw":true},"transition":{"duration":0}}],"label":"0.2","method":"animate"},{"args":[["bounds_fraction-2"],{"mode":"immediate","frame":{"duration":0,"redraw":true},"transition":{"duration":0}}],"label":"0.3","method":"animate"},{"args":[["bounds_fraction-3"],{"mode":"immediate","frame":{"duration":0,"redraw":true},"transition":{"duration":0}}],"label":"0.4","method":"animate"},{"args":[["bounds_fraction-4"],{"mode":"immediate","frame":{"duration":0,"redraw":true},"transition":{"duration":0}}],"label":"0.5","method":"animate"},{"args":[["bounds_fraction-5"],{"mode":"immediate","frame":{"duration":0,"redraw":true},"transition":{"duration":0}}],"label":"0.6","method":"animate"},{"args":[["bounds_fraction-6"],{"mode":"immediate","frame":{"duration":0,"redraw":true},"transition":{"duration":0}}],"label":"0.7","method":"animate"},{"args":[["bounds_fraction-7"],{"mode":"immediate","frame":{"duration":0,"redraw":true},"transition":{"duration":0}}],"label":"0.8","method":"animate"},{"args":[["bounds_fraction-8"],{"mode":"immediate","frame":{"duration":0,"redraw":true},"transition":{"duration":0}}],"label":"0.9","method":"animate"}],"x":0.04}]},                        {"responsive": true}                    ).then(function(){
+                            Plotly.addFrames('b3fc25e7-55e9-4e17-92c2-9c670cfeea11', [{"data":[{"customdata":[[0.05]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.05],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.05]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.05],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.9]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.9],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["20.0\u00d7","20.0\u00d7","1.1\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[20.0,20.0,1.1111111111111112],"yaxis":"y2","type":"bar"}],"layout":{"title":{"text":"Composition stays \u03b5=1.00: bounds receive 10%, mean receives 90%"}},"name":"bounds_fraction-0","traces":[0,1,2,3]},{"data":[{"customdata":[[0.1]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.1],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.1]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.1],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.8]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.8],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["10.0\u00d7","10.0\u00d7","1.2\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[10.0,10.0,1.25],"yaxis":"y2","type":"bar"}],"layout":{"title":{"text":"Composition stays \u03b5=1.00: bounds receive 20%, mean receives 80%"}},"name":"bounds_fraction-1","traces":[0,1,2,3]},{"data":[{"customdata":[[0.15]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.15],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.15]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.15],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.7]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.7],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["6.7\u00d7","6.7\u00d7","1.4\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[6.666666666666667,6.666666666666667,1.4285714285714286],"yaxis":"y2","type":"bar"}],"layout":{"title":{"text":"Composition stays \u03b5=1.00: bounds receive 30%, mean receives 70%"}},"name":"bounds_fraction-2","traces":[0,1,2,3]},{"data":[{"customdata":[[0.2]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.2],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.2]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.2],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.6]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.6],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["5.0\u00d7","5.0\u00d7","1.7\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[5.0,5.0,1.6666666666666667],"yaxis":"y2","type":"bar"}],"layout":{"title":{"text":"Composition stays \u03b5=1.00: bounds receive 40%, mean receives 60%"}},"name":"bounds_fraction-3","traces":[0,1,2,3]},{"data":[{"customdata":[[0.25]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.25],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.25]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.25],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.5]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.5],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["4.0\u00d7","4.0\u00d7","2.0\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[4.0,4.0,2.0],"yaxis":"y2","type":"bar"}],"layout":{"title":{"text":"Composition stays \u03b5=1.00: bounds receive 50%, mean receives 50%"}},"name":"bounds_fraction-4","traces":[0,1,2,3]},{"data":[{"customdata":[[0.3]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.3],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.3]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.3],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.4]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.4],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["3.3\u00d7","3.3\u00d7","2.5\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[3.3333333333333335,3.3333333333333335,2.5],"yaxis":"y2","type":"bar"}],"layout":{"title":{"text":"Composition stays \u03b5=1.00: bounds receive 60%, mean receives 40%"}},"name":"bounds_fraction-5","traces":[0,1,2,3]},{"data":[{"customdata":[[0.35]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.35],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.35]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.35],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.30000000000000004]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.30000000000000004],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["2.9\u00d7","2.9\u00d7","3.3\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[2.857142857142857,2.857142857142857,3.333333333333333],"yaxis":"y2","type":"bar"}],"layout":{"title":{"text":"Composition stays \u03b5=1.00: bounds receive 70%, mean receives 30%"}},"name":"bounds_fraction-6","traces":[0,1,2,3]},{"data":[{"customdata":[[0.4]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.4],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.4]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.4],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.19999999999999996]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.19999999999999996],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["2.5\u00d7","2.5\u00d7","5.0\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[2.5,2.5,5.000000000000001],"yaxis":"y2","type":"bar"}],"layout":{"title":{"text":"Composition stays \u03b5=1.00: bounds receive 80%, mean receives 20%"}},"name":"bounds_fraction-7","traces":[0,1,2,3]},{"data":[{"customdata":[[0.45]],"hovertemplate":"lower quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4c78a8"},"name":"lower quantile","orientation":"h","x":[0.45],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.45]],"hovertemplate":"upper quantile\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#72b7b2"},"name":"upper quantile","orientation":"h","x":[0.45],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"customdata":[[0.09999999999999998]],"hovertemplate":"clipped mean\u003cbr\u003e\u03b5=%{x:.2f}\u003cbr\u003eshare=%{customdata[0]:.0%}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#f58518"},"name":"clipped mean","orientation":"h","x":[0.09999999999999998],"xaxis":"x","y":["total"],"yaxis":"y","type":"bar"},{"hovertemplate":"%{x}\u003cbr\u003e\u03b5_total \u002f \u03b5_step = %{y:.2f}\u00d7\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#4c78a8","#72b7b2","#f58518"]},"showlegend":false,"text":["2.2\u00d7","2.2\u00d7","10.0\u00d7"],"textposition":"outside","x":["lower quantile","upper quantile","clipped mean"],"xaxis":"x2","y":[2.2222222222222223,2.2222222222222223,10.000000000000002],"yaxis":"y2","type":"bar"}],"layout":{"title":{"text":"Composition stays \u03b5=1.00: bounds receive 90%, mean receives 10%"}},"name":"bounds_fraction-8","traces":[0,1,2,3]}]);
+                        }).then(function(){
+                            
+var gd = document.getElementById('b3fc25e7-55e9-4e17-92c2-9c670cfeea11');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+<p>Move the bounds’ share; the slices still sum to <span class="math inline">\(\varepsilon=1\)</span>. The proxy is bookkeeping, not measured error—choose an allocation with an accuracy experiment.</p>
+</section>
+<section id="a-different-target-the-median" class="slide level2">
+<h2>A different target — the median</h2>
+<p>The median resists an isolated outlier on ordinary samples, so it is tempting to release</p>
+<p><span class="math display">\[\operatorname{median}(D)+\text{value noise}.\]</span></p>
+<p>But robustness describes typical contamination; DP sensitivity asks for the largest change over all neighboring datasets.</p>
+</section>
+<section id="robust-is-not-worst-case-stable" class="slide level2">
+<h2>Robust is not worst-case stable</h2>
+<blockquote>
+<p><strong>Question:</strong> Can one substituted row move the median across an arbitrarily wide gap in the value domain?</p>
+</blockquote>
+<p>Ordinary data may hide the answer. Construct the neighboring pair that stresses the order statistic.</p>
+</section>
+<section id="one-row-one-median-gap" class="slide level2">
+<h2>One row, one median gap</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-11-output-1.png" class="r-stretch"><p>The constructed neighbors move the median from <strong>$39,990</strong> to <strong>$59,996</strong>.</p>
+<p>Value noise calibrated to the full public range is valid—but can erase the utility of the median.</p>
+</section>
+<section id="repair-2-change-the-error-metric" class="slide level2">
+<h2>Repair 2 — change the error metric</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-12-output-1.png" class="r-stretch"><p>The rank utility</p>
+<p><span class="math display">\[u(D,t)=-\left|\#\{x_i\le t\}-\frac n2\right|\]</span></p>
+<p>changes by at most one under substitution, independent of dollar gaps.</p>
+</section>
+<section id="inverse-sensitivity-landscape" class="slide level2">
+<h2>Inverse-sensitivity landscape</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-13-output-1.png" class="r-stretch"><blockquote>
+<p><strong>Question:</strong> Why is spending privacy on rank error more useful than adding noise in dollars?</p>
+</blockquote>
+</section>
+<section id="from-clipping-to-localization" class="slide level2">
+<h2>From clipping to localization</h2>
+<p>For a roughly Gaussian population, useful clipping needs private estimates of both scale and location.</p>
+<ul>
+<li>Estimating <span class="math inline">\(\sigma\)</span> from raw values is entangled with unknown <span class="math inline">\(\mu\)</span>.</li>
+<li>Estimating <span class="math inline">\(\mu\)</span> needs a grid whose resolution matches the unknown scale.</li>
+<li>Each private choice must appear in the budget ledger.</li>
+</ul>
+</section>
+<section id="localize-scale-without-the-mean" class="slide level2">
+<h2>Localize scale without the mean</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-14-output-1.png" class="r-stretch"><p>Disjoint pairwise differences <span class="math inline">\(|X_i-X_j|\)</span> cancel the mean; a noisy histogram privately selects a scale bin.</p>
+</section>
+<section id="localize-the-center-on-a-public-grid" class="slide level2">
+<h2>Localize the center on a public grid</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-15-output-1.png" class="r-stretch"><p>The private scale determines a useful public-grid resolution; noisy counts then localize the center before the final clipped mean.</p>
+</section>
+<section id="model-assumptions-still-matter" class="slide level2">
+<h2>Model assumptions still matter</h2>
+
+<img data-src="presentation_files/figure-revealjs/cell-16-output-1.png" class="r-stretch"><blockquote>
+<p><strong>Question:</strong> If privacy accounting is valid but the Gaussian model is wrong, what failed?</p>
+</blockquote>
+</section>
+<section id="method-map" class="slide level2 smaller">
+<h2>Method map</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Proposal</th>
+<th>Privacy status</th>
+<th>Main lesson</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Public-range noisy mean</td>
+<td>valid, poor utility</td>
+<td>sensitivity can dominate</td>
+</tr>
+<tr class="even">
+<td>Empirical <span class="math inline">\(\mu\pm k\sigma\)</span> clipping</td>
+<td>invalid</td>
+<td>private preprocessing needs accounting</td>
+</tr>
+<tr class="odd">
+<td>Empirical quantile clipping</td>
+<td>invalid</td>
+<td>robust thresholds are still private</td>
+</tr>
+<tr class="even">
+<td>Private quantile-clipped mean</td>
+<td>valid</td>
+<td>spend budget on bounds and mean</td>
+</tr>
+<tr class="odd">
+<td>Median value noise</td>
+<td>valid, poor utility</td>
+<td>value sensitivity ignores robustness</td>
+</tr>
+<tr class="even">
+<td>Rank-based median</td>
+<td>valid</td>
+<td>change the metric, not just the noise</td>
+</tr>
+<tr class="odd">
+<td>Gaussian localization</td>
+<td>valid; model-dependent accuracy</td>
+<td>privacy and accuracy are separate claims</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="takeaways-and-bridge" class="slide level2">
+<h2>Takeaways and bridge</h2>
+<ul>
+<li>State the target, public menu, private choices, and released output.</li>
+<li>Use audits to find counterexamples—not to certify privacy.</li>
+<li>Diagnose the data-dependent step before choosing its repair.</li>
+<li>Account for every private selection by composition.</li>
+<li>Validate statistical assumptions separately from privacy.</li>
+</ul>
+<p>Next: use private selection mechanisms to choose <strong>which</strong> query or model to release.</p>
 
 
 </section>

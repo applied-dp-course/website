@@ -1,10 +1,38 @@
 {
   "artifacts": {
-    "empirical-audit-6025863018|028bfcb83fce720c269b018c23e46a62ddd55bcd2111a5d19c08a2c38a35b73c": {
+    "empirical-audit-32fe4e59a1|1d11314b620c9ec7e92a985a6d3b1a1f88847b657fa049109a471a5c4e3b62a6": {
+      "artifact_name": "empirical-audit-32fe4e59a1",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/empirical-audit-32fe4e59a1-1d11314b620c",
+      "signature": "1d11314b620c9ec7e92a985a6d3b1a1f88847b657fa049109a471a5c4e3b62a6",
+      "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "empirical-audit-32fe4e59a1",
+          "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+          "source_parent": "blog-posts/ml-privacy-attacks-auditing"
+        }
+      ]
+    },
+    "empirical-audit-50e394c9d4|24e0bb11c77745cbb8b00e6f372b3570048e458fa21f68f40610152c40a37067": {
+      "artifact_name": "empirical-audit-50e394c9d4",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/empirical-audit-50e394c9d4-24e0bb11c777",
+      "signature": "24e0bb11c77745cbb8b00e6f372b3570048e458fa21f68f40610152c40a37067",
+      "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "empirical-audit-50e394c9d4",
+          "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+          "source_parent": "blog-posts/ml-privacy-attacks-auditing"
+        }
+      ]
+    },
+    "empirical-audit-6025863018|573ddb2bf84ce07e86fe1734ef9cac75cf6a3d629c5c32b9fa37b80c3f1d78dc": {
       "artifact_name": "empirical-audit-6025863018",
       "export_backend": "plotly-declarative",
-      "shared_path": "shared/empirical-audit-6025863018-028bfcb83fce",
-      "signature": "028bfcb83fce720c269b018c23e46a62ddd55bcd2111a5d19c08a2c38a35b73c",
+      "shared_path": "shared/empirical-audit-6025863018-573ddb2bf84c",
+      "signature": "573ddb2bf84ce07e86fe1734ef9cac75cf6a3d629c5c32b9fa37b80c3f1d78dc",
       "source": "content/blog-posts/private-estimation/post.ipynb",
       "uses": [
         {
@@ -14,11 +42,39 @@
         }
       ]
     },
-    "empirical-roc-sum-of-logistic-distributions-e465e3ce57|e3110276f3d6dcdb1d5aacbfd0d867e99fd460085ea95f2c097f1dfaf4e58b7d": {
+    "empirical-audit-69346f8c51|fc4e239fe384e4ffb1eb8493f69ea45ac8deeaad15a431914b4a186cf07481ed": {
+      "artifact_name": "empirical-audit-69346f8c51",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/empirical-audit-69346f8c51-fc4e239fe384",
+      "signature": "fc4e239fe384e4ffb1eb8493f69ea45ac8deeaad15a431914b4a186cf07481ed",
+      "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "empirical-audit-69346f8c51",
+          "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+          "source_parent": "blog-posts/ml-privacy-attacks-auditing"
+        }
+      ]
+    },
+    "empirical-audit-f0d24455bf|bcb58a74df0298fec1515f86743365f774a47fa12b82d537565f85ad32c59daa": {
+      "artifact_name": "empirical-audit-f0d24455bf",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/empirical-audit-f0d24455bf-bcb58a74df02",
+      "signature": "bcb58a74df0298fec1515f86743365f774a47fa12b82d537565f85ad32c59daa",
+      "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "empirical-audit-f0d24455bf",
+          "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+          "source_parent": "blog-posts/ml-privacy-attacks-auditing"
+        }
+      ]
+    },
+    "empirical-roc-sum-of-logistic-distributions-e465e3ce57|239bb98edd0dd5c52d33145a6c556451e92ce5bbab3131492e16614fd960532f": {
       "artifact_name": "empirical-roc-sum-of-logistic-distributions-e465e3ce57",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-e3110276f3d6",
-      "signature": "e3110276f3d6dcdb1d5aacbfd0d867e99fd460085ea95f2c097f1dfaf4e58b7d",
+      "shared_path": "shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-239bb98edd0d",
+      "signature": "239bb98edd0dd5c52d33145a6c556451e92ce5bbab3131492e16614fd960532f",
       "source": "content/blog-posts/privacy-auditing/post.ipynb",
       "uses": [
         {
@@ -33,11 +89,53 @@
         }
       ]
     },
-    "naive-safe-epsilon-histogram|864ab2be48f1d12d0a28af25eddf6271a7a653d5858dbf1de87c50e0bfaaf417": {
+    "l10-one-run-audit-4fee798c13|25d36ee102207309fcc10caf563d51fd5e9f753d9e3ce5d1ee00a66305164925": {
+      "artifact_name": "l10-one-run-audit-4fee798c13",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/l10-one-run-audit-4fee798c13-25d36ee10220",
+      "signature": "25d36ee102207309fcc10caf563d51fd5e9f753d9e3ce5d1ee00a66305164925",
+      "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "l10-one-run-audit-4fee798c13",
+          "source": "content/blog-posts/ml-privacy-attacks-auditing/post.ipynb",
+          "source_parent": "blog-posts/ml-privacy-attacks-auditing"
+        }
+      ]
+    },
+    "l9-poisson-inclusion-gaussian-privacy-profile|3e7f4bfeea7222b3b0f99b5c9c16ab6e863a537f706dec0d6b8a99a23e40e3d1": {
+      "artifact_name": "l9-poisson-inclusion-gaussian-privacy-profile",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/l9-poisson-inclusion-gaussian-privacy-profile-3e7f4bfeea72",
+      "signature": "3e7f4bfeea7222b3b0f99b5c9c16ab6e863a537f706dec0d6b8a99a23e40e3d1",
+      "source": "content/blog-posts/logistic-regression-dp-sgd/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "l9-poisson-inclusion-gaussian-privacy-profile",
+          "source": "content/blog-posts/logistic-regression-dp-sgd/post.ipynb",
+          "source_parent": "blog-posts/logistic-regression-dp-sgd"
+        }
+      ]
+    },
+    "l9-poisson-inclusion-gaussian-roc|5cbf0777813dab2b417336942579c47a3e5c2aa31c4e923d9894e3eeb0fb82fb": {
+      "artifact_name": "l9-poisson-inclusion-gaussian-roc",
+      "export_backend": "plotly-declarative",
+      "shared_path": "shared/l9-poisson-inclusion-gaussian-roc-5cbf0777813d",
+      "signature": "5cbf0777813dab2b417336942579c47a3e5c2aa31c4e923d9894e3eeb0fb82fb",
+      "source": "content/blog-posts/logistic-regression-dp-sgd/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "l9-poisson-inclusion-gaussian-roc",
+          "source": "content/blog-posts/logistic-regression-dp-sgd/post.ipynb",
+          "source_parent": "blog-posts/logistic-regression-dp-sgd"
+        }
+      ]
+    },
+    "naive-safe-epsilon-histogram|89cac6dd52e9c6fe111a098d4ff25032803ee1de498b878325af70b017ce7d6e": {
       "artifact_name": "naive-safe-epsilon-histogram",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/naive-safe-epsilon-histogram-864ab2be48f1",
-      "signature": "864ab2be48f1d12d0a28af25eddf6271a7a653d5858dbf1de87c50e0bfaaf417",
+      "shared_path": "shared/naive-safe-epsilon-histogram-89cac6dd52e9",
+      "signature": "89cac6dd52e9c6fe111a098d4ff25032803ee1de498b878325af70b017ce7d6e",
       "source": "content/blog-posts/privacy-auditing/post.ipynb",
       "uses": [
         {
@@ -52,30 +150,25 @@
         }
       ]
     },
-    "ols-influence-geometry|df54a1bf9ab26b47a88b06e7fc64c25166c80426f494a994248c4e93f7545e24": {
+    "ols-influence-geometry|0222cc8b58bbea2bf73e819eb237e54dd43d8246ca0605a32e307fe3b83f3a6e": {
       "artifact_name": "ols-influence-geometry",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/ols-influence-geometry-df54a1bf9ab2",
-      "signature": "df54a1bf9ab26b47a88b06e7fc64c25166c80426f494a994248c4e93f7545e24",
-      "source": "content/blog-posts/private-linear-regression/post.ipynb",
+      "shared_path": "shared/ols-influence-geometry-0222cc8b58bb",
+      "signature": "0222cc8b58bbea2bf73e819eb237e54dd43d8246ca0605a32e307fe3b83f3a6e",
+      "source": "content/lecture-presentations/private-linear-regression/presentation.qmd",
       "uses": [
         {
           "artifact_name": "ols-influence-geometry",
           "source": "content/lecture-presentations/private-linear-regression/presentation.qmd",
           "source_parent": "lecture-presentations/private-linear-regression"
-        },
-        {
-          "artifact_name": "ols-influence-geometry",
-          "source": "content/blog-posts/private-linear-regression/post.ipynb",
-          "source_parent": "blog-posts/private-linear-regression"
         }
       ]
     },
-    "privacy-plot-norm-6197737a49|caa96b3e6b9f9ba377627237173db58a1779a12c1bae8a01d3c0423fdc01a375": {
+    "privacy-plot-norm-6197737a49|8cac3fd4fe7b99d455a2c72242a29526a8d76888f86c5890178a9654a5b95c0d": {
       "artifact_name": "privacy-plot-norm-6197737a49",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/privacy-plot-norm-6197737a49-caa96b3e6b9f",
-      "signature": "caa96b3e6b9f9ba377627237173db58a1779a12c1bae8a01d3c0423fdc01a375",
+      "shared_path": "shared/privacy-plot-norm-6197737a49-8cac3fd4fe7b",
+      "signature": "8cac3fd4fe7b99d455a2c72242a29526a8d76888f86c5890178a9654a5b95c0d",
       "source": "content/blog-posts/hypothesis-testing/post.ipynb",
       "uses": [
         {
@@ -95,6 +188,11 @@
         },
         {
           "artifact_name": "privacy-plot-norm-6197737a49",
+          "source": "content/class-assignments/hypothesis-testing/assignment.ipynb",
+          "source_parent": "class-assignments/hypothesis-testing"
+        },
+        {
+          "artifact_name": "privacy-plot-norm-6197737a49",
           "source": "content/tools/privacy-tradeoff-explorer/index.qmd",
           "source_parent": "tools/privacy-tradeoff-explorer"
         },
@@ -105,11 +203,11 @@
         }
       ]
     },
-    "privacy-plot-norm-laplace-ce9c999a7a|38ef9f4fc6b425714d80665118bfdabd39bf13f05590d959f6357e2a733f242c": {
+    "privacy-plot-norm-laplace-ce9c999a7a|a23fb15e7ff2ce43b4adf75fdcf15e9d83bdb69308b7e1e5fec5929088a2a569": {
       "artifact_name": "privacy-plot-norm-laplace-ce9c999a7a",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/privacy-plot-norm-laplace-ce9c999a7a-38ef9f4fc6b4",
-      "signature": "38ef9f4fc6b425714d80665118bfdabd39bf13f05590d959f6357e2a733f242c",
+      "shared_path": "shared/privacy-plot-norm-laplace-ce9c999a7a-a23fb15e7ff2",
+      "signature": "a23fb15e7ff2ce43b4adf75fdcf15e9d83bdb69308b7e1e5fec5929088a2a569",
       "source": "content/blog-posts/privacy-auditing/post.ipynb",
       "uses": [
         {
@@ -124,11 +222,11 @@
         }
       ]
     },
-    "privacy-plot-norm-laplace-uniform-06b3767cd2|6419f9ec0c58fb512dfbf0101ca2d9a6b8827dcf7123e308d0e78b53bca83a25": {
+    "privacy-plot-norm-laplace-uniform-06b3767cd2|aaf4fff3997bd8b5311d6233f9901d7fe5b91adb24d9cf7c6a26312b4974082d": {
       "artifact_name": "privacy-plot-norm-laplace-uniform-06b3767cd2",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/privacy-plot-norm-laplace-uniform-06b3767cd2-6419f9ec0c58",
-      "signature": "6419f9ec0c58fb512dfbf0101ca2d9a6b8827dcf7123e308d0e78b53bca83a25",
+      "shared_path": "shared/privacy-plot-norm-laplace-uniform-06b3767cd2-aaf4fff3997b",
+      "signature": "aaf4fff3997bd8b5311d6233f9901d7fe5b91adb24d9cf7c6a26312b4974082d",
       "source": "content/blog-posts/hypothesis-testing/post.ipynb",
       "uses": [
         {
@@ -143,11 +241,39 @@
         }
       ]
     },
-    "roc-decision-1474ef07aa|cb54221388e4bb690b384ddabd5a0d37518a1fa6218b42eb1c875131cf44080d": {
+    "ridge-noise-spectrum|3de862d58260e188e60f4294b51ee960bc3f0384ab33b4b4a228e0340755d961": {
+      "artifact_name": "ridge-noise-spectrum",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/ridge-noise-spectrum-3de862d58260",
+      "signature": "3de862d58260e188e60f4294b51ee960bc3f0384ab33b4b4a228e0340755d961",
+      "source": "content/lecture-presentations/private-linear-regression/presentation.qmd",
+      "uses": [
+        {
+          "artifact_name": "ridge-noise-spectrum",
+          "source": "content/lecture-presentations/private-linear-regression/presentation.qmd",
+          "source_parent": "lecture-presentations/private-linear-regression"
+        }
+      ]
+    },
+    "ridge-noise-spectrum|8a2dd5d6b82e686632479d0a464468ddf3d86cf3acf98339090bcd27c11dc8f1": {
+      "artifact_name": "ridge-noise-spectrum",
+      "export_backend": "wasm-marimo",
+      "shared_path": "shared/ridge-noise-spectrum-8a2dd5d6b82e",
+      "signature": "8a2dd5d6b82e686632479d0a464468ddf3d86cf3acf98339090bcd27c11dc8f1",
+      "source": "content/blog-posts/private-linear-regression/post.ipynb",
+      "uses": [
+        {
+          "artifact_name": "ridge-noise-spectrum",
+          "source": "content/blog-posts/private-linear-regression/post.ipynb",
+          "source_parent": "blog-posts/private-linear-regression"
+        }
+      ]
+    },
+    "roc-decision-1474ef07aa|deff8c377aed2652609a329b273ad4b141b39d30441df989becb72952eedc99f": {
       "artifact_name": "roc-decision-1474ef07aa",
       "export_backend": "plotly-declarative",
-      "shared_path": "shared/roc-decision-1474ef07aa-cb54221388e4",
-      "signature": "cb54221388e4bb690b384ddabd5a0d37518a1fa6218b42eb1c875131cf44080d",
+      "shared_path": "shared/roc-decision-1474ef07aa-deff8c377aed",
+      "signature": "deff8c377aed2652609a329b273ad4b141b39d30441df989becb72952eedc99f",
       "source": "content/blog-posts/hypothesis-testing/post.ipynb",
       "uses": [
         {
@@ -162,11 +288,11 @@
         }
       ]
     },
-    "roc-decision-4bac7ab47e|7a351a2e793cfecce7947da7327e6c07a50f39b62342d49db0468d80964d9871": {
+    "roc-decision-4bac7ab47e|6429ad61dfa5333355c4cc927f0ea8ddac34fbbd36b80d2ebfef118afcae40c6": {
       "artifact_name": "roc-decision-4bac7ab47e",
       "export_backend": "plotly-declarative",
-      "shared_path": "shared/roc-decision-4bac7ab47e-7a351a2e793c",
-      "signature": "7a351a2e793cfecce7947da7327e6c07a50f39b62342d49db0468d80964d9871",
+      "shared_path": "shared/roc-decision-4bac7ab47e-6429ad61dfa5",
+      "signature": "6429ad61dfa5333355c4cc927f0ea8ddac34fbbd36b80d2ebfef118afcae40c6",
       "source": "content/blog-posts/hypothesis-testing/post.ipynb",
       "uses": [
         {
@@ -181,11 +307,11 @@
         }
       ]
     },
-    "roc-decision-f4fad854c4|dc32f33188d277c68c029e4b3339da2e88a7f9fc31f717da6be14ff401e62342": {
+    "roc-decision-f4fad854c4|ad10dfe9b2d46c4f724872768a4ebcf466b4033bccfcf5c1fe22cd3a63e2dabe": {
       "artifact_name": "roc-decision-f4fad854c4",
       "export_backend": "plotly-declarative",
-      "shared_path": "shared/roc-decision-f4fad854c4-dc32f33188d2",
-      "signature": "dc32f33188d277c68c029e4b3339da2e88a7f9fc31f717da6be14ff401e62342",
+      "shared_path": "shared/roc-decision-f4fad854c4-ad10dfe9b2d4",
+      "signature": "ad10dfe9b2d46c4f724872768a4ebcf466b4033bccfcf5c1fe22cd3a63e2dabe",
       "source": "content/blog-posts/hypothesis-testing/post.ipynb",
       "uses": [
         {
@@ -200,11 +326,11 @@
         }
       ]
     },
-    "theory-roc-gaussian-13519da316|6ef8c1fb1fc8f28439b2935184dea247c75daaf58b386c3cb50c1200735b58c8": {
+    "theory-roc-gaussian-13519da316|2a242b36a6ac5a30734d0e27e2b9db9b55ec9231af9ce9133768e964c0706949": {
       "artifact_name": "theory-roc-gaussian-13519da316",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-gaussian-13519da316-6ef8c1fb1fc8",
-      "signature": "6ef8c1fb1fc8f28439b2935184dea247c75daaf58b386c3cb50c1200735b58c8",
+      "shared_path": "shared/theory-roc-gaussian-13519da316-2a242b36a6ac",
+      "signature": "2a242b36a6ac5a30734d0e27e2b9db9b55ec9231af9ce9133768e964c0706949",
       "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
       "uses": [
         {
@@ -214,11 +340,11 @@
         }
       ]
     },
-    "theory-roc-gaussian-188c721dff|152c2dc8011df35c1fd766d595480f076b0af503ce8d84872e30ab1f3850d395": {
+    "theory-roc-gaussian-188c721dff|2612a3ee3d68541607da9edcee193d3e724248f0fb478617e6d7c93ed9eb82c4": {
       "artifact_name": "theory-roc-gaussian-188c721dff",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-gaussian-188c721dff-152c2dc8011d",
-      "signature": "152c2dc8011df35c1fd766d595480f076b0af503ce8d84872e30ab1f3850d395",
+      "shared_path": "shared/theory-roc-gaussian-188c721dff-2612a3ee3d68",
+      "signature": "2612a3ee3d68541607da9edcee193d3e724248f0fb478617e6d7c93ed9eb82c4",
       "source": "content/blog-posts/private-estimation/post.ipynb",
       "uses": [
         {
@@ -228,11 +354,11 @@
         }
       ]
     },
-    "theory-roc-gaussian-206171b802|bbb8c81ae659d1222a5c4f2a13137df3227948a8287957649335b2a22feaa326": {
+    "theory-roc-gaussian-206171b802|049e0ac688cf55bc6ca1f6b80cd5a22ec6f3c2824f9a67dcb98dc1b1e365e10f": {
       "artifact_name": "theory-roc-gaussian-206171b802",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-gaussian-206171b802-bbb8c81ae659",
-      "signature": "bbb8c81ae659d1222a5c4f2a13137df3227948a8287957649335b2a22feaa326",
+      "shared_path": "shared/theory-roc-gaussian-206171b802-049e0ac688cf",
+      "signature": "049e0ac688cf55bc6ca1f6b80cd5a22ec6f3c2824f9a67dcb98dc1b1e365e10f",
       "source": "content/blog-posts/private-estimation/post.ipynb",
       "uses": [
         {
@@ -242,11 +368,11 @@
         }
       ]
     },
-    "theory-roc-gaussian-549429866e|2f8a9d69e2838e3286be8ec82f4201017d0a0ef6f36bf58cc02612f261314af0": {
+    "theory-roc-gaussian-549429866e|bdc94536de9d1377af0e5b3b58da9d8c549924f1ba0f88fe0a6d62b9a3318b1a": {
       "artifact_name": "theory-roc-gaussian-549429866e",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-gaussian-549429866e-2f8a9d69e283",
-      "signature": "2f8a9d69e2838e3286be8ec82f4201017d0a0ef6f36bf58cc02612f261314af0",
+      "shared_path": "shared/theory-roc-gaussian-549429866e-bdc94536de9d",
+      "signature": "bdc94536de9d1377af0e5b3b58da9d8c549924f1ba0f88fe0a6d62b9a3318b1a",
       "source": "content/blog-posts/privacy-auditing/post.ipynb",
       "uses": [
         {
@@ -261,11 +387,11 @@
         }
       ]
     },
-    "theory-roc-gaussian-7d8db735a6|bb7f52761f969c6f6f6e93f90350b5677b80b7f4a142c46524b1adb77100e8e3": {
+    "theory-roc-gaussian-7d8db735a6|d640c516142b73ab95839507adb58fd7fd10b101f74ded1beb5eb75104392dd4": {
       "artifact_name": "theory-roc-gaussian-7d8db735a6",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-gaussian-7d8db735a6-bb7f52761f96",
-      "signature": "bb7f52761f969c6f6f6e93f90350b5677b80b7f4a142c46524b1adb77100e8e3",
+      "shared_path": "shared/theory-roc-gaussian-7d8db735a6-d640c516142b",
+      "signature": "d640c516142b73ab95839507adb58fd7fd10b101f74ded1beb5eb75104392dd4",
       "source": "content/blog-posts/private-estimation/post.ipynb",
       "uses": [
         {
@@ -275,11 +401,11 @@
         }
       ]
     },
-    "theory-roc-gaussian-7e39247e45|2eb2cab1bf1b14a6751e950534474231d6ab5bef83abd0c92e8907acb4f3258e": {
+    "theory-roc-gaussian-7e39247e45|e0c07e704bcdc29c2ff12e4cdc6a8648d6a76ff1071adc38382a18a0e1e4cb8c": {
       "artifact_name": "theory-roc-gaussian-7e39247e45",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-gaussian-7e39247e45-2eb2cab1bf1b",
-      "signature": "2eb2cab1bf1b14a6751e950534474231d6ab5bef83abd0c92e8907acb4f3258e",
+      "shared_path": "shared/theory-roc-gaussian-7e39247e45-e0c07e704bcd",
+      "signature": "e0c07e704bcdc29c2ff12e4cdc6a8648d6a76ff1071adc38382a18a0e1e4cb8c",
       "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
       "uses": [
         {
@@ -289,11 +415,11 @@
         }
       ]
     },
-    "theory-roc-gaussian-c32c318b84|a4caf6e46837c18fbf1c9b91c7c3fd1c2dbf298859f6009cb6a5bd4a1048d6ba": {
+    "theory-roc-gaussian-c32c318b84|41526ca569090bd950944ae25eaa903aa1902ba77c22c678b6e7faca5960e369": {
       "artifact_name": "theory-roc-gaussian-c32c318b84",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-gaussian-c32c318b84-a4caf6e46837",
-      "signature": "a4caf6e46837c18fbf1c9b91c7c3fd1c2dbf298859f6009cb6a5bd4a1048d6ba",
+      "shared_path": "shared/theory-roc-gaussian-c32c318b84-41526ca56909",
+      "signature": "41526ca569090bd950944ae25eaa903aa1902ba77c22c678b6e7faca5960e369",
       "source": "content/blog-posts/private-estimation/post.ipynb",
       "uses": [
         {
@@ -303,11 +429,11 @@
         }
       ]
     },
-    "theory-roc-gaussian-cc73c6c083|92a616d3961b2c00ed395b5d9635c86c279465014bcf49429c5fec21bcd51019": {
+    "theory-roc-gaussian-cc73c6c083|c2480c30e30e2056217288b0bb3dc65eff11ee530e41a7e07e6dbd2e5c81802f": {
       "artifact_name": "theory-roc-gaussian-cc73c6c083",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-gaussian-cc73c6c083-92a616d3961b",
-      "signature": "92a616d3961b2c00ed395b5d9635c86c279465014bcf49429c5fec21bcd51019",
+      "shared_path": "shared/theory-roc-gaussian-cc73c6c083-c2480c30e30e",
+      "signature": "c2480c30e30e2056217288b0bb3dc65eff11ee530e41a7e07e6dbd2e5c81802f",
       "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
       "uses": [
         {
@@ -317,11 +443,11 @@
         }
       ]
     },
-    "theory-roc-gaussian-d0690a1d39|8c2656e7ad2164b69b9e956a1a07893a023e09874a7fc623b2e1e3126f7fe89f": {
+    "theory-roc-gaussian-d0690a1d39|037f03cf952e441aadc09b12694b0a36f6c3a892a3129812331bcbcf5a06b975": {
       "artifact_name": "theory-roc-gaussian-d0690a1d39",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-gaussian-d0690a1d39-8c2656e7ad21",
-      "signature": "8c2656e7ad2164b69b9e956a1a07893a023e09874a7fc623b2e1e3126f7fe89f",
+      "shared_path": "shared/theory-roc-gaussian-d0690a1d39-037f03cf952e",
+      "signature": "037f03cf952e441aadc09b12694b0a36f6c3a892a3129812331bcbcf5a06b975",
       "source": "content/blog-posts/private-subgroup-comparisons/post.ipynb",
       "uses": [
         {
@@ -331,11 +457,11 @@
         }
       ]
     },
-    "theory-roc-laplace-f6bad2e12f|cde924fd26bb00da9af13ca6bc89554cde7625294b1644baeed0761bdbbac204": {
+    "theory-roc-laplace-f6bad2e12f|31eea334cf401d1d3bb2191c12ec29bc509edcd791dadbb7a29c94fe86acaee6": {
       "artifact_name": "theory-roc-laplace-f6bad2e12f",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-laplace-f6bad2e12f-cde924fd26bb",
-      "signature": "cde924fd26bb00da9af13ca6bc89554cde7625294b1644baeed0761bdbbac204",
+      "shared_path": "shared/theory-roc-laplace-f6bad2e12f-31eea334cf40",
+      "signature": "31eea334cf401d1d3bb2191c12ec29bc509edcd791dadbb7a29c94fe86acaee6",
       "source": "content/blog-posts/privacy-auditing/post.ipynb",
       "uses": [
         {
@@ -350,11 +476,11 @@
         }
       ]
     },
-    "theory-roc-logistic-f5dff6a9e8|f4f57ba0f14457b79b1a1fc7b4654365ec73bd8192c8d24181c18f2f245e0a86": {
+    "theory-roc-logistic-f5dff6a9e8|f1d62d3395093784b37bc53163cf677e94f2a3c75bc9275e261814b0d0f35d89": {
       "artifact_name": "theory-roc-logistic-f5dff6a9e8",
       "export_backend": "wasm-marimo",
-      "shared_path": "shared/theory-roc-logistic-f5dff6a9e8-f4f57ba0f144",
-      "signature": "f4f57ba0f14457b79b1a1fc7b4654365ec73bd8192c8d24181c18f2f245e0a86",
+      "shared_path": "shared/theory-roc-logistic-f5dff6a9e8-f1d62d339509",
+      "signature": "f1d62d3395093784b37bc53163cf677e94f2a3c75bc9275e261814b0d0f35d89",
       "source": "content/blog-posts/privacy-auditing/post.ipynb",
       "uses": [
         {
@@ -371,42 +497,51 @@
     }
   },
   "uses": {
-    "blog-posts/hypothesis-testing|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-caa96b3e6b9f",
-    "blog-posts/hypothesis-testing|privacy-plot-norm-laplace-uniform-06b3767cd2": "shared/privacy-plot-norm-laplace-uniform-06b3767cd2-6419f9ec0c58",
-    "blog-posts/hypothesis-testing|roc-decision-1474ef07aa": "shared/roc-decision-1474ef07aa-cb54221388e4",
-    "blog-posts/hypothesis-testing|roc-decision-4bac7ab47e": "shared/roc-decision-4bac7ab47e-7a351a2e793c",
-    "blog-posts/hypothesis-testing|roc-decision-f4fad854c4": "shared/roc-decision-f4fad854c4-dc32f33188d2",
-    "blog-posts/privacy-auditing|empirical-roc-sum-of-logistic-distributions-e465e3ce57": "shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-e3110276f3d6",
-    "blog-posts/privacy-auditing|naive-safe-epsilon-histogram": "shared/naive-safe-epsilon-histogram-864ab2be48f1",
-    "blog-posts/privacy-auditing|privacy-plot-norm-laplace-ce9c999a7a": "shared/privacy-plot-norm-laplace-ce9c999a7a-38ef9f4fc6b4",
-    "blog-posts/privacy-auditing|theory-roc-gaussian-549429866e": "shared/theory-roc-gaussian-549429866e-2f8a9d69e283",
-    "blog-posts/privacy-auditing|theory-roc-laplace-f6bad2e12f": "shared/theory-roc-laplace-f6bad2e12f-cde924fd26bb",
-    "blog-posts/privacy-auditing|theory-roc-logistic-f5dff6a9e8": "shared/theory-roc-logistic-f5dff6a9e8-f4f57ba0f144",
-    "blog-posts/private-estimation|empirical-audit-6025863018": "shared/empirical-audit-6025863018-028bfcb83fce",
-    "blog-posts/private-estimation|theory-roc-gaussian-188c721dff": "shared/theory-roc-gaussian-188c721dff-152c2dc8011d",
-    "blog-posts/private-estimation|theory-roc-gaussian-206171b802": "shared/theory-roc-gaussian-206171b802-bbb8c81ae659",
-    "blog-posts/private-estimation|theory-roc-gaussian-7d8db735a6": "shared/theory-roc-gaussian-7d8db735a6-bb7f52761f96",
-    "blog-posts/private-estimation|theory-roc-gaussian-c32c318b84": "shared/theory-roc-gaussian-c32c318b84-a4caf6e46837",
-    "blog-posts/private-linear-regression|ols-influence-geometry": "shared/ols-influence-geometry-df54a1bf9ab2",
-    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-13519da316": "shared/theory-roc-gaussian-13519da316-6ef8c1fb1fc8",
-    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-7e39247e45": "shared/theory-roc-gaussian-7e39247e45-2eb2cab1bf1b",
-    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-cc73c6c083": "shared/theory-roc-gaussian-cc73c6c083-92a616d3961b",
-    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-d0690a1d39": "shared/theory-roc-gaussian-d0690a1d39-8c2656e7ad21",
-    "lecture-presentations/hypothesis-testing|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-caa96b3e6b9f",
-    "lecture-presentations/hypothesis-testing|privacy-plot-norm-laplace-uniform-06b3767cd2": "shared/privacy-plot-norm-laplace-uniform-06b3767cd2-6419f9ec0c58",
-    "lecture-presentations/hypothesis-testing|roc-decision-1474ef07aa": "shared/roc-decision-1474ef07aa-cb54221388e4",
-    "lecture-presentations/hypothesis-testing|roc-decision-4bac7ab47e": "shared/roc-decision-4bac7ab47e-7a351a2e793c",
-    "lecture-presentations/hypothesis-testing|roc-decision-f4fad854c4": "shared/roc-decision-f4fad854c4-dc32f33188d2",
-    "lecture-presentations/privacy-auditing|empirical-roc-sum-of-logistic-distributions-e465e3ce57": "shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-e3110276f3d6",
-    "lecture-presentations/privacy-auditing|naive-safe-epsilon-histogram": "shared/naive-safe-epsilon-histogram-864ab2be48f1",
-    "lecture-presentations/privacy-auditing|privacy-plot-norm-laplace-ce9c999a7a": "shared/privacy-plot-norm-laplace-ce9c999a7a-38ef9f4fc6b4",
-    "lecture-presentations/privacy-auditing|theory-roc-gaussian-549429866e": "shared/theory-roc-gaussian-549429866e-2f8a9d69e283",
-    "lecture-presentations/privacy-auditing|theory-roc-laplace-f6bad2e12f": "shared/theory-roc-laplace-f6bad2e12f-cde924fd26bb",
-    "lecture-presentations/privacy-auditing|theory-roc-logistic-f5dff6a9e8": "shared/theory-roc-logistic-f5dff6a9e8-f4f57ba0f144",
-    "lecture-presentations/private-linear-regression|ols-influence-geometry": "shared/ols-influence-geometry-df54a1bf9ab2",
-    "pages|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-caa96b3e6b9f",
-    "site-posts/gaussian-privacy-tradeoff|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-caa96b3e6b9f",
-    "tools/privacy-tradeoff-explorer|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-caa96b3e6b9f"
+    "blog-posts/hypothesis-testing|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-8cac3fd4fe7b",
+    "blog-posts/hypothesis-testing|privacy-plot-norm-laplace-uniform-06b3767cd2": "shared/privacy-plot-norm-laplace-uniform-06b3767cd2-aaf4fff3997b",
+    "blog-posts/hypothesis-testing|roc-decision-1474ef07aa": "shared/roc-decision-1474ef07aa-deff8c377aed",
+    "blog-posts/hypothesis-testing|roc-decision-4bac7ab47e": "shared/roc-decision-4bac7ab47e-6429ad61dfa5",
+    "blog-posts/hypothesis-testing|roc-decision-f4fad854c4": "shared/roc-decision-f4fad854c4-ad10dfe9b2d4",
+    "blog-posts/logistic-regression-dp-sgd|l9-poisson-inclusion-gaussian-privacy-profile": "shared/l9-poisson-inclusion-gaussian-privacy-profile-3e7f4bfeea72",
+    "blog-posts/logistic-regression-dp-sgd|l9-poisson-inclusion-gaussian-roc": "shared/l9-poisson-inclusion-gaussian-roc-5cbf0777813d",
+    "blog-posts/ml-privacy-attacks-auditing|empirical-audit-32fe4e59a1": "shared/empirical-audit-32fe4e59a1-1d11314b620c",
+    "blog-posts/ml-privacy-attacks-auditing|empirical-audit-50e394c9d4": "shared/empirical-audit-50e394c9d4-24e0bb11c777",
+    "blog-posts/ml-privacy-attacks-auditing|empirical-audit-69346f8c51": "shared/empirical-audit-69346f8c51-fc4e239fe384",
+    "blog-posts/ml-privacy-attacks-auditing|empirical-audit-f0d24455bf": "shared/empirical-audit-f0d24455bf-bcb58a74df02",
+    "blog-posts/ml-privacy-attacks-auditing|l10-one-run-audit-4fee798c13": "shared/l10-one-run-audit-4fee798c13-25d36ee10220",
+    "blog-posts/privacy-auditing|empirical-roc-sum-of-logistic-distributions-e465e3ce57": "shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-239bb98edd0d",
+    "blog-posts/privacy-auditing|naive-safe-epsilon-histogram": "shared/naive-safe-epsilon-histogram-89cac6dd52e9",
+    "blog-posts/privacy-auditing|privacy-plot-norm-laplace-ce9c999a7a": "shared/privacy-plot-norm-laplace-ce9c999a7a-a23fb15e7ff2",
+    "blog-posts/privacy-auditing|theory-roc-gaussian-549429866e": "shared/theory-roc-gaussian-549429866e-bdc94536de9d",
+    "blog-posts/privacy-auditing|theory-roc-laplace-f6bad2e12f": "shared/theory-roc-laplace-f6bad2e12f-31eea334cf40",
+    "blog-posts/privacy-auditing|theory-roc-logistic-f5dff6a9e8": "shared/theory-roc-logistic-f5dff6a9e8-f1d62d339509",
+    "blog-posts/private-estimation|empirical-audit-6025863018": "shared/empirical-audit-6025863018-573ddb2bf84c",
+    "blog-posts/private-estimation|theory-roc-gaussian-188c721dff": "shared/theory-roc-gaussian-188c721dff-2612a3ee3d68",
+    "blog-posts/private-estimation|theory-roc-gaussian-206171b802": "shared/theory-roc-gaussian-206171b802-049e0ac688cf",
+    "blog-posts/private-estimation|theory-roc-gaussian-7d8db735a6": "shared/theory-roc-gaussian-7d8db735a6-d640c516142b",
+    "blog-posts/private-estimation|theory-roc-gaussian-c32c318b84": "shared/theory-roc-gaussian-c32c318b84-41526ca56909",
+    "blog-posts/private-linear-regression|ridge-noise-spectrum": "shared/ridge-noise-spectrum-8a2dd5d6b82e",
+    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-13519da316": "shared/theory-roc-gaussian-13519da316-2a242b36a6ac",
+    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-7e39247e45": "shared/theory-roc-gaussian-7e39247e45-e0c07e704bcd",
+    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-cc73c6c083": "shared/theory-roc-gaussian-cc73c6c083-c2480c30e30e",
+    "blog-posts/private-subgroup-comparisons|theory-roc-gaussian-d0690a1d39": "shared/theory-roc-gaussian-d0690a1d39-037f03cf952e",
+    "class-assignments/hypothesis-testing|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-8cac3fd4fe7b",
+    "lecture-presentations/hypothesis-testing|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-8cac3fd4fe7b",
+    "lecture-presentations/hypothesis-testing|privacy-plot-norm-laplace-uniform-06b3767cd2": "shared/privacy-plot-norm-laplace-uniform-06b3767cd2-aaf4fff3997b",
+    "lecture-presentations/hypothesis-testing|roc-decision-1474ef07aa": "shared/roc-decision-1474ef07aa-deff8c377aed",
+    "lecture-presentations/hypothesis-testing|roc-decision-4bac7ab47e": "shared/roc-decision-4bac7ab47e-6429ad61dfa5",
+    "lecture-presentations/hypothesis-testing|roc-decision-f4fad854c4": "shared/roc-decision-f4fad854c4-ad10dfe9b2d4",
+    "lecture-presentations/privacy-auditing|empirical-roc-sum-of-logistic-distributions-e465e3ce57": "shared/empirical-roc-sum-of-logistic-distributions-e465e3ce57-239bb98edd0d",
+    "lecture-presentations/privacy-auditing|naive-safe-epsilon-histogram": "shared/naive-safe-epsilon-histogram-89cac6dd52e9",
+    "lecture-presentations/privacy-auditing|privacy-plot-norm-laplace-ce9c999a7a": "shared/privacy-plot-norm-laplace-ce9c999a7a-a23fb15e7ff2",
+    "lecture-presentations/privacy-auditing|theory-roc-gaussian-549429866e": "shared/theory-roc-gaussian-549429866e-bdc94536de9d",
+    "lecture-presentations/privacy-auditing|theory-roc-laplace-f6bad2e12f": "shared/theory-roc-laplace-f6bad2e12f-31eea334cf40",
+    "lecture-presentations/privacy-auditing|theory-roc-logistic-f5dff6a9e8": "shared/theory-roc-logistic-f5dff6a9e8-f1d62d339509",
+    "lecture-presentations/private-linear-regression|ols-influence-geometry": "shared/ols-influence-geometry-0222cc8b58bb",
+    "lecture-presentations/private-linear-regression|ridge-noise-spectrum": "shared/ridge-noise-spectrum-3de862d58260",
+    "pages|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-8cac3fd4fe7b",
+    "site-posts/gaussian-privacy-tradeoff|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-8cac3fd4fe7b",
+    "tools/privacy-tradeoff-explorer|privacy-plot-norm-6197737a49": "shared/privacy-plot-norm-6197737a49-8cac3fd4fe7b"
   },
   "version": 1
 }

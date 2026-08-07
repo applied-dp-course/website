@@ -1,0 +1,8 @@
+name=empirical_roc_from_samples
+artifact=empirical-audit-69346f8c51
+export_backend=plotly-declarative
+signature=fc4e239fe384e4ffb1eb8493f69ea45ac8deeaad15a431914b4a186cf07481ed
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/empirical-audit-69346f8c51-fc4e239fe384
+canonical_source=content/blog-posts/ml-privacy-attacks-auditing/post.ipynb

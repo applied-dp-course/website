@@ -1,0 +1,8 @@
+name=poisson_inclusion_gaussian_roc
+artifact=l9-poisson-inclusion-gaussian-roc
+export_backend=plotly-declarative
+signature=5cbf0777813dab2b417336942579c47a3e5c2aa31c4e923d9894e3eeb0fb82fb
+libdpy_version=0.2.27
+marimo_version=0.23.9
+shared_path=shared/l9-poisson-inclusion-gaussian-roc-5cbf0777813d
+canonical_source=content/blog-posts/logistic-regression-dp-sgd/post.ipynb

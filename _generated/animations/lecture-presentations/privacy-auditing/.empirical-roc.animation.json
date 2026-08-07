@@ -1,0 +1,8 @@
+{
+  "outputs": [
+    "lecture-presentations/privacy-auditing/empirical-roc.gif"
+  ],
+  "schema_version": 1,
+  "signature": "fddae3450053988165554e1a9c5b9dfb68889df48d522bbe7abb6e794d224142",
+  "source": "content/blog-posts/privacy-auditing/animations/empirical-roc.py"
+}

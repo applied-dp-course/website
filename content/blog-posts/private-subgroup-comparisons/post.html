@@ -74,8 +74,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-1514f5da12f723dc48804aac60978103.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../site_libs/bootstrap/bootstrap-dark-855f9d31b0e9cf900a1d88f7ad89bceb.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-520c36e687f14f57082fa33f95c1cf4f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-2d877df4138b1337d6dc48be9f9f2cce.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -400,110 +400,111 @@ document.addEventListener("DOMContentLoaded", function () {
 <div id="2" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.utils <span class="im">import</span> (</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    DEFAULT_DELTA,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    DEFAULT_SEED,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    gaussian_noise_std,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.lecture_figures <span class="im">import</span> (</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    DEFAULT_BETA,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    DEFAULT_COUNT_SUM_AUDIT_TRIALS,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    DEFAULT_SUBGROUP_SAMPLING_DRAW_SIZE,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    DEFAULT_REPAIR_AUDIT_TRIALS,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_FAIL,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_RELEASE,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_TEST,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    PTR_EPS_RELEASE,</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    PTR_EPS_TEST,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    SubgroupRepairSpec,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    audit_noisy_count_sum_panel,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    audit_smooth_sensitivity_panel,</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    build_oracle_ls_failure_artifact,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    build_ptr_failure_artifact,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    build_support_comparison_artifact,</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    build_subgroup_sampling_artifact,</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    build_fair_comparison_neighbor_pair,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    prepare_fair_comparison_frame,</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    evaluate_shared_subgroup_accuracy,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    global_sensitivity_release_theory_laws,</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    evaluate_subgroup_accuracy,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    make_subgroup_accuracy_leaderboard_figure,</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    make_subgroup_private_methods_population_error_figure,</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    make_ptr_failure_probability_figure,</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    make_support_comparison_figure,</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    make_subgroup_sampling_distribution_figure,</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    ptr_conditional_release_theory_laws,</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Part II — private control flow</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    build_report_noisy_max_race_artifact,</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    make_report_noisy_max_race_figure,</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    build_report_noisy_max_accuracy_artifact,</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    make_report_noisy_max_accuracy_figure,</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    build_above_threshold_ladder_artifact,</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    make_above_threshold_ladder_figure,</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    build_guess_quality_artifact,</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    make_guess_quality_figure,</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.visualization.roc_plots <span class="im">import</span> (</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    TheoryROCVisualizer,</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    make_empirical_roc_selected_threshold_figure,</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.mechanisms <span class="im">import</span> (</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    global_sensitivity_release,</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    noisy_count_sum_release,</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    oracle_local_sensitivity_output_law,</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    ptr_support_release,</span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    replacement_ls_bound,</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    smooth_sensitivity_release,</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    subgroup_counts,</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    subgroup_difference,</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.witnesses <span class="im">import</span> (</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    DEFAULT_EPS_TOTAL,</span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    DEFAULT_SUPPORT_THRESHOLD,</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    DEFAULT_TAU,</span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    DEFAULT_WALKTHROUGH_GROUP_COLUMN,</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>    DEFAULT_WALKTHROUGH_N_ROWS,</span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>    DEFAULT_FAIR_COMPARISON_MIN_SMALL,</span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    DEFAULT_FAIR_COMPARISON_MAX_SMALL,</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>    DEFAULT_FAIR_COMPARISON_N,</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>    PUBLIC_CLIP_LOWER,</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>    PUBLIC_CLIP_UPPER,</span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>    PUBLIC_REFERENCE_MEAN,</span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>    PUBLIC_VALUE_UPPER,</span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    frame_to_arrays,</span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>    prepare_fulton_subgroup_frame,</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> DEFAULT_SEED</span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>EPS_TOTAL <span class="op">=</span> DEFAULT_EPS_TOTAL</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>DELTA <span class="op">=</span> DEFAULT_DELTA</span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(SEED)</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>DOLLAR_SCALE <span class="op">=</span> PUBLIC_REFERENCE_MEAN</span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>frame <span class="op">=</span> prepare_fair_comparison_frame(seed<span class="op">=</span>SEED)</span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>x, groups <span class="op">=</span> frame_to_arrays(frame, group_column<span class="op">=</span>DEFAULT_WALKTHROUGH_GROUP_COLUMN)</span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>_, sex_groups <span class="op">=</span> frame_to_arrays(frame, group_column<span class="op">=</span><span class="st">"sex_group"</span>)</span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>population_df <span class="op">=</span> prepare_fulton_subgroup_frame(n_rows<span class="op">=</span><span class="dv">1_000_000</span>, seed<span class="op">=</span>SEED)</span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>population_x, population_sex_groups <span class="op">=</span> frame_to_arrays(population_df)</span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>_, population_latino_groups <span class="op">=</span> frame_to_arrays(population_df, group_column<span class="op">=</span><span class="st">"latino_group"</span>)</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>LEADERBOARD_N <span class="op">=</span> <span class="dv">1000</span></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>LEADERBOARD_N_DATASETS <span class="op">=</span> <span class="dv">40</span></span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>LEADERBOARD_N_RUNS <span class="op">=</span> <span class="dv">5</span></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.experiments <span class="im">import</span> (</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    SubgroupRepairSpec,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    build_oracle_ls_failure_artifact,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    build_ptr_failure_artifact,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    build_support_comparison_artifact,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    build_subgroup_sampling_artifact,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    global_sensitivity_release_theory_laws,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    evaluate_subgroup_accuracy,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    ptr_conditional_release_theory_laws,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    DEFAULT_BETA,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    DEFAULT_COUNT_SUM_AUDIT_TRIALS,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    DEFAULT_SUBGROUP_SAMPLING_DRAW_SIZE,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    DEFAULT_REPAIR_AUDIT_TRIALS,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_FAIL,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_RELEASE,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    PTR_DELTA_TEST,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    PTR_EPS_RELEASE,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    PTR_EPS_TEST,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    audit_noisy_count_sum_panel,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    audit_smooth_sensitivity_panel,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    evaluate_shared_subgroup_accuracy,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    build_report_noisy_max_race_artifact,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    build_report_noisy_max_accuracy_artifact,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    build_above_threshold_ladder_artifact,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    build_guess_quality_artifact,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.views <span class="im">import</span> (</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    make_subgroup_accuracy_leaderboard_figure,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    make_subgroup_private_methods_population_error_figure,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    make_ptr_failure_probability_figure,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    make_support_comparison_figure,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    make_subgroup_sampling_distribution_figure,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    make_report_noisy_max_race_figure,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    make_report_noisy_max_accuracy_figure,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    make_above_threshold_ladder_figure,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    make_guess_quality_figure,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.utils <span class="im">import</span> (</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    DEFAULT_DELTA,</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    DEFAULT_SEED,</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    gaussian_noise_std,</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.visualization.roc_plots <span class="im">import</span> (</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    TheoryROCVisualizer,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    make_empirical_roc_selected_threshold_figure,</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.mechanisms <span class="im">import</span> (</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    global_sensitivity_release,</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    noisy_count_sum_release,</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    oracle_local_sensitivity_output_law,</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    ptr_support_release,</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    replacement_ls_bound,</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    smooth_sensitivity_release,</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    subgroup_counts,</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    subgroup_difference,</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_subgroup_comparisons.witnesses <span class="im">import</span> (</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>    DEFAULT_EPS_TOTAL,</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    DEFAULT_SUPPORT_THRESHOLD,</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    DEFAULT_TAU,</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    DEFAULT_WALKTHROUGH_GROUP_COLUMN,</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    DEFAULT_WALKTHROUGH_N_ROWS,</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>    DEFAULT_FAIR_COMPARISON_MIN_SMALL,</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>    DEFAULT_FAIR_COMPARISON_MAX_SMALL,</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    DEFAULT_FAIR_COMPARISON_N,</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>    PUBLIC_CLIP_LOWER,</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>    PUBLIC_CLIP_UPPER,</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>    PUBLIC_REFERENCE_MEAN,</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>    PUBLIC_VALUE_UPPER,</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>    frame_to_arrays,</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    prepare_fulton_subgroup_frame,</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>    build_fair_comparison_neighbor_pair,</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    prepare_fair_comparison_frame,</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> DEFAULT_SEED</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>EPS_TOTAL <span class="op">=</span> DEFAULT_EPS_TOTAL</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>DELTA <span class="op">=</span> DEFAULT_DELTA</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(SEED)</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>DOLLAR_SCALE <span class="op">=</span> PUBLIC_REFERENCE_MEAN</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>frame <span class="op">=</span> prepare_fair_comparison_frame(seed<span class="op">=</span>SEED)</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>x, groups <span class="op">=</span> frame_to_arrays(frame, group_column<span class="op">=</span>DEFAULT_WALKTHROUGH_GROUP_COLUMN)</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>_, sex_groups <span class="op">=</span> frame_to_arrays(frame, group_column<span class="op">=</span><span class="st">"sex_group"</span>)</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>population_df <span class="op">=</span> prepare_fulton_subgroup_frame(n_rows<span class="op">=</span><span class="dv">1_000_000</span>, seed<span class="op">=</span>SEED)</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>population_x, population_sex_groups <span class="op">=</span> frame_to_arrays(population_df)</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>_, population_latino_groups <span class="op">=</span> frame_to_arrays(population_df, group_column<span class="op">=</span><span class="st">"latino_group"</span>)</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>LEADERBOARD_N <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>LEADERBOARD_N_DATASETS <span class="op">=</span> <span class="dv">40</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>LEADERBOARD_N_RUNS <span class="op">=</span> <span class="dv">5</span></span>
 <span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> subgroup_value_fn(df):</span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df[<span class="st">"x"</span>].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> subgroup_value_fn(df):</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df[<span class="st">"x"</span>].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
 <span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> subgroup_group_fn(df):</span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df[DEFAULT_WALKTHROUGH_GROUP_COLUMN].to_numpy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> subgroup_group_fn(df):</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df[DEFAULT_WALKTHROUGH_GROUP_COLUMN].to_numpy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <section id="lecture-6-private-subgroup-comparisons-after-clipping" class="level1">
@@ -582,19 +583,12 @@ Moved index 10 from smaller group 'B' -&gt; 'A'</code></pre>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_sampling_distribution_figure(</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    sex_sampling, title<span class="op">=</span><span class="st">'Sampling variability — sex-code groups (Fulton)'</span>,</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -613,19 +607,12 @@ Moved index 10 from smaller group 'B' -&gt; 'A'</code></pre>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_sampling_distribution_figure(</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    latino_sampling, title<span class="op">=</span><span class="st">'Sampling variability — Latino walkthrough comparison'</span>,</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -677,7 +664,7 @@ released Delta (dollars): $182,550</code></pre>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="8">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-13519da316-6ef8c1fb1fc8/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-13519da316-2a242b36a6ac/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
@@ -698,19 +685,12 @@ released Delta (dollars): $182,550</code></pre>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'global sensitivity'</span>, privacy_status<span class="op">=</span><span class="st">'valid'</span>, epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_accuracy_leaderboard_figure(global_rows, title<span class="op">=</span><span class="st">'Global sensitivity release'</span>)</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="9">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-10-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -739,7 +719,7 @@ released Delta (dollars): $182,550</code></pre>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="10">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-cc73c6c083-92a616d3961b/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-cc73c6c083-c2480c30e30e/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 <p>Now move to an engineered sparse-support pair. One replacement moves the <strong>clip-upper earner</strong> from the 3-person minority group <code>B</code> into <code>A</code>. Support drops 3→2, so the oracle local-sensitivity bound — and therefore the Gaussian noise std — jumps on <code>D'</code>.</p>
@@ -774,7 +754,7 @@ released Delta (dollars): $182,550</code></pre>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="12">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-d0690a1d39-8c2656e7ad21/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-d0690a1d39-037f03cf952e/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 <p><strong>Diagnosis.</strong> Local sensitivity is an excellent diagnostic, but a bad noise scale. The sparse ROC shows the output <em>distribution</em> changes between true neighbors because the mechanism’s Gaussian std depends on hidden subgroup support — so this proposal is <strong>not private</strong> under fixed-size replacement adjacency.</p>
@@ -815,22 +795,15 @@ Private Delta estimate (dollars): $44,166</code></pre>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>fig, <span class="op">*</span>_ <span class="op">=</span> make_empirical_roc_selected_threshold_figure(</span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    count_sum_audit.samples_neg, count_sum_audit.samples_pos, DELTA,</span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>tau*=1.13, eps_plug=0.112, separates=False</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="14">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-15-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-15-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-15-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -853,19 +826,12 @@ Private Delta estimate (dollars): $44,166</code></pre>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'noisy counts and sums'</span>, privacy_status<span class="op">=</span><span class="st">'valid'</span>, epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_accuracy_leaderboard_figure(count_sum_rows, title<span class="op">=</span><span class="st">'Noisy counts and sums'</span>)</span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="15">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -914,19 +880,12 @@ released Delta (mean-scaled): 0.7103</code></pre>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    marker_min_count<span class="op">=</span><span class="bu">min</span>(walkthrough_counts.values()),</span>
 <span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    marker_label<span class="op">=</span><span class="ss">f"Latino walkthrough (min n=</span><span class="sc">{</span><span class="bu">min</span>(walkthrough_counts.values())<span class="sc">}</span><span class="ss">)"</span>,</span>
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-18-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -953,7 +912,7 @@ released Delta (mean-scaled): 0.7103</code></pre>
 <span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="18">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-7e39247e45-2eb2cab1bf1b/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-7e39247e45-e0c07e704bcd/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 </section>
@@ -975,19 +934,12 @@ released Delta (mean-scaled): 0.7103</code></pre>
 <span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'PTR support'</span>, privacy_status<span class="op">=</span><span class="st">'valid PTR'</span>, epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
 <span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_accuracy_leaderboard_figure(ptr_rows, title<span class="op">=</span><span class="st">'PTR support release'</span>)</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="19">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1031,22 +983,15 @@ released Delta: 0.8540</code></pre>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>fig, <span class="op">*</span>_ <span class="op">=</span> make_empirical_roc_selected_threshold_figure(</span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    smooth_audit.samples_neg, smooth_audit.samples_pos, DELTA,</span>
 <span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>eps_plug=0, separates=False</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="21">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-22-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-22-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-22-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1068,19 +1013,12 @@ released Delta: 0.8540</code></pre>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'smooth sensitivity'</span>, privacy_status<span class="op">=</span><span class="st">'valid smooth sensitivity'</span>, epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_subgroup_accuracy_leaderboard_figure(smooth_rows, title<span class="op">=</span><span class="st">'Smooth sensitivity release'</span>)</span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="22">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-23-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1106,19 +1044,12 @@ released Delta: 0.8540</code></pre>
 <span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    private_method_rows,</span>
 <span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'Released estimate vs population gap — valid private subgroup mechanisms'</span>,</span>
 <span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="23">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-24-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-24-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-24-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1138,19 +1069,12 @@ released Delta: 0.8540</code></pre>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    eps_total<span class="op">=</span>EPS_TOTAL, tau<span class="op">=</span>DEFAULT_TAU, seed<span class="op">=</span>SEED,</span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_support_comparison_figure(support_artifact)</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="24">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-25-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-25-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-25-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1172,22 +1096,15 @@ released Delta: 0.8540</code></pre>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>race_artifact <span class="op">=</span> build_report_noisy_max_race_artifact(seed<span class="op">=</span>SEED)</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_report_noisy_max_race_figure(race_artifact)</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"true mode = </span><span class="sc">{</span>race_artifact<span class="sc">.</span>nonprivate_mode<span class="sc">}</span><span class="ss">; noisy-max selected = </span><span class="sc">{</span>race_artifact<span class="sc">.</span>selected<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>true mode = 13; noisy-max selected = 13</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="25">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-26-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-26-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-26-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1201,19 +1118,12 @@ released Delta: 0.8540</code></pre>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>accuracy_artifact <span class="op">=</span> build_report_noisy_max_accuracy_artifact(seed<span class="op">=</span>SEED, n_repeats<span class="op">=</span><span class="dv">200</span>)</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_report_noisy_max_accuracy_figure(accuracy_artifact)</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="26">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-27-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1232,22 +1142,15 @@ released Delta: 0.8540</code></pre>
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"true </span><span class="sc">{</span>ladder_artifact<span class="sc">.</span>quantile<span class="sc">:.0%}</span><span class="ss"> quantile = $</span><span class="sc">{</span>ladder_artifact<span class="sc">.</span>true_quantile<span class="sc">:,.0f}</span><span class="ss">; "</span></span>
 <span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Part-I public U = $</span><span class="sc">{</span>PUBLIC_CLIP_UPPER<span class="sc">:,.0f}</span><span class="ss">"</span></span>
 <span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>private halt (clip bound) = $143,000; true 95% quantile = $141,450; Part-I public U = $141,450</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="27">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-28-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-28-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-28-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1261,19 +1164,12 @@ released Delta: 0.8540</code></pre>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>guess_quality_artifact <span class="op">=</span> build_guess_quality_artifact(seed<span class="op">=</span>SEED, n_repeats<span class="op">=</span><span class="dv">150</span>)</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_guess_quality_figure(guess_quality_artifact)</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="28">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-29-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-29-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-29-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1910,7 +1806,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© Applied Differential Privacy. Built with Quarto.</p>
+<p>© 2026 The Hebrew University of Jerusalem. Code: MIT. Content: CC BY-NC-SA 4.0.</p>
 </div>   
     <div class="nav-footer-center">
       <ul class="footer-items list-unstyled">
@@ -1925,13 +1821,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </a>
   </li>  
     <li class="nav-item">
-    <a class="nav-link" href="../../../pages/schedule.html">
-<p>Schedule</p>
+    <a class="nav-link" href="../../../pages/about.html">
+<p>About</p>
 </a>
   </li>  
     <li class="nav-item">
-    <a class="nav-link" href="../../../pages/about.html">
-<p>About</p>
+    <a class="nav-link" href="../../../pages/license.html">
+<p>License &amp; attribution</p>
 </a>
   </li>  
 </ul>

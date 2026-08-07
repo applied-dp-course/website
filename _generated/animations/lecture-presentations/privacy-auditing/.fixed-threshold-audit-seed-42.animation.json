@@ -1,0 +1,8 @@
+{
+  "outputs": [
+    "lecture-presentations/privacy-auditing/fixed-threshold-audit-seed-42.html"
+  ],
+  "schema_version": 1,
+  "signature": "416e31cd58249f55888a92fda9f06f92693d78606c06b2f4019561a03ada831c",
+  "source": "content/blog-posts/privacy-auditing/animations/fixed-threshold-audit-seed-42.py"
+}

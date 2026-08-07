@@ -74,8 +74,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-1514f5da12f723dc48804aac60978103.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../site_libs/bootstrap/bootstrap-dark-855f9d31b0e9cf900a1d88f7ad89bceb.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-520c36e687f14f57082fa33f95c1cf4f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-2d877df4138b1337d6dc48be9f9f2cce.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -399,145 +399,153 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.lecture_figures <span class="im">import</span> (</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    build_median_section_artifact,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    build_raw_mean_section_artifact,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    make_accuracy_leaderboard_figure,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    make_oracle_income_histogram_figure,</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    make_inverse_sensitivity_landscape_figure,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    make_private_income_noisy_histogram_figure,</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    make_private_location_histogram_figure,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    make_private_scale_pairwise_histogram_figure,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.composition_interactive <span class="im">import</span> (</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    create_composition_budget_allocation_slider,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.experiments <span class="im">import</span> (</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    build_median_section_artifact,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    build_raw_mean_section_artifact,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    inverse_sensitivity_landscape_data,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    oracle_income_histogram_data,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    private_income_noisy_histogram_data,</span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.utils <span class="im">import</span> (</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    PUBLIC_INCOME_BIN_EDGES,</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    PUBLIC_INCOME_CANDIDATES,</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    PUBLIC_INVERSE_SENSITIVITY_THRESHOLDS,</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    PUBLIC_QUANTILE_LOWER,</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    PUBLIC_QUANTILE_UPPER,</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    PUBLIC_SCALE_DIFF_BIN_EDGES,</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    DEFAULT_K_SIGMA,</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    DataProvenance,</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    empirical_quantile_clipped_mean,</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    empirical_quantile_output_law,</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_clipped_mean,</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    accuracy_summary_table,</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    audit_panel,</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    budget_ledger_table,</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_bounds,</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_clipped_stat,</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_noise_scale,</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_output_law,</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    evaluate_accuracy,</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    extract_income,</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    fixed_bin_noisy_histogram,</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    gaussian_histogram_mean,</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    clipped_noisy_mean,</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    gaussian_noise_std,</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    histogram_replacement_trace,</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    private_mu_sigma_clipped_mean,</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    private_scale_from_pairwise_diffs,</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    enforce_clip_bounds,</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    private_inverse_sensitivity_quantile,</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    private_quantile_exponential,</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    public_range_noisy_mean,</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    rank_utility,</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    load_fulton,</span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    median_value_plus_noise,</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    median_perturbation_trace,</span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    neighbor_witness_table,</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    proposals_diagnoses_repairs_from_leaderboard,</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    quantile_clipping_perturbation_trace,</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    raw_mean_perturbation_trace,</span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    build_engineered_quantile_neighbor_pair,</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    replace_one_row,</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    select_typical_median_pair,</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    replacement_swap_influences,</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    population_rank_cdf,</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    select_typical_mu_sigma_pair,</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    split_base_and_pool,</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    stability_summary,</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.embed_interactives <span class="im">import</span> (</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    PrivateEstimationAuditROCVisualizer,</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.visualization.roc_plots <span class="im">import</span> (</span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    TheoryROCVisualizer,</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    make_empirical_roc_selected_threshold_figure,</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.visualizations <span class="im">import</span> (</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    PROVENANCE_STYLE,</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    sorted_dataset_bars_figure,</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    sorted_neighbor_bars_figure,</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="co"># PUBLIC-MENU CONTRACT: all candidate grids, bin edges, transformations,</span></span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="co"># hypothesis lists, clipping multipliers, and subgroup definitions are fixed</span></span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="co"># before any private sample is touched, or come from designated public data.</span></span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">42</span></span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">1000</span></span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>EPS_TOTAL <span class="op">=</span> <span class="fl">1.0</span></span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>DELTA <span class="op">=</span> <span class="fl">1e-2</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.views <span class="im">import</span> (</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    make_accuracy_leaderboard_figure,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    make_oracle_income_histogram_figure,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    make_inverse_sensitivity_landscape_figure,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    make_private_income_noisy_histogram_figure,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    make_private_location_histogram_figure,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    make_private_scale_pairwise_histogram_figure,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.utils <span class="im">import</span> (</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    PUBLIC_INCOME_BIN_EDGES,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    PUBLIC_INCOME_CANDIDATES,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    PUBLIC_INVERSE_SENSITIVITY_THRESHOLDS,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    PUBLIC_QUANTILE_LOWER,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    PUBLIC_QUANTILE_UPPER,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    PUBLIC_SCALE_DIFF_BIN_EDGES,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    DEFAULT_K_SIGMA,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    DataProvenance,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    empirical_quantile_clipped_mean,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    empirical_quantile_output_law,</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_clipped_mean,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    accuracy_summary_table,</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    audit_panel,</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    budget_ledger_table,</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_bounds,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_clipped_stat,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_noise_scale,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    empirical_mu_sigma_output_law,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    evaluate_accuracy,</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    extract_income,</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    fixed_bin_noisy_histogram,</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    gaussian_histogram_mean,</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    clipped_noisy_mean,</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    gaussian_noise_std,</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    histogram_replacement_trace,</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    private_mu_sigma_clipped_mean,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    private_scale_from_pairwise_diffs,</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    enforce_clip_bounds,</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    private_inverse_sensitivity_quantile,</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    private_quantile_exponential,</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    public_range_noisy_mean,</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    rank_utility,</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    load_fulton,</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    median_value_plus_noise,</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    median_perturbation_trace,</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    neighbor_witness_table,</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    proposals_diagnoses_repairs_from_leaderboard,</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    quantile_clipping_perturbation_trace,</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    raw_mean_perturbation_trace,</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    build_engineered_quantile_neighbor_pair,</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    replace_one_row,</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    select_typical_median_pair,</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    replacement_swap_influences,</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    population_rank_cdf,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    select_typical_mu_sigma_pair,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    split_base_and_pool,</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    stability_summary,</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.embed_interactives <span class="im">import</span> (</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    PrivateEstimationAuditROCVisualizer,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.visualization.roc_plots <span class="im">import</span> (</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    TheoryROCVisualizer,</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    make_empirical_roc_selected_threshold_figure,</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libdpy.assignment_specific.private_estimation.visualizations <span class="im">import</span> (</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    PROVENANCE_STYLE,</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>    sorted_dataset_bars_figure,</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>    sorted_neighbor_bars_figure,</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a><span class="co"># Accuracy-regime contract. Many independent datasets, one mechanism draw each,</span></span>
-<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a><span class="co"># so signed-error histograms look smooth without repeated calls per dataset.</span></span>
-<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>N_DATASETS_RECOMMENDED <span class="op">=</span> <span class="dv">5_000</span></span>
-<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>N_RUNS_RECOMMENDED <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>N_DATASETS <span class="op">=</span> N_DATASETS_RECOMMENDED</span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>N_RUNS <span class="op">=</span> N_RUNS_RECOMMENDED</span>
-<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>HISTOGRAM_TRIALS <span class="op">=</span> <span class="dv">5_000</span></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a><span class="co"># PUBLIC-MENU CONTRACT: all candidate grids, bin edges, transformations,</span></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a><span class="co"># hypothesis lists, clipping multipliers, and subgroup definitions are fixed</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="co"># before any private sample is touched, or come from designated public data.</span></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>EPS_TOTAL <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>DELTA <span class="op">=</span> <span class="fl">1e-2</span></span>
 <span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> N <span class="op">==</span> <span class="dv">1000</span></span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> EPS_TOTAL <span class="op">==</span> <span class="fl">1.0</span></span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a><span class="co"># Epsilon budget: name slices and assert sums (even when the whole budget goes to one step).</span></span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>EPS_MEAN <span class="op">=</span> EPS_TOTAL</span>
-<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">abs</span>(EPS_MEAN <span class="op">-</span> EPS_TOTAL) <span class="op">&lt;</span> <span class="fl">1e-12</span></span>
-<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a><span class="co"># Capstone Gaussian-localization split (S8).</span></span>
-<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>EPS_SCALE <span class="op">=</span> <span class="fl">0.25</span></span>
-<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>EPS_LOCATION <span class="op">=</span> <span class="fl">0.25</span></span>
-<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>EPS_GAUSS_MEAN <span class="op">=</span> <span class="fl">0.50</span></span>
-<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">abs</span>((EPS_SCALE <span class="op">+</span> EPS_LOCATION <span class="op">+</span> EPS_GAUSS_MEAN) <span class="op">-</span> EPS_TOTAL) <span class="op">&lt;</span> <span class="fl">1e-12</span></span>
-<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a><span class="co"># Child seeds (documented map from lecture root SEED).</span></span>
-<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>SEED_MAP <span class="op">=</span> {</span>
-<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_public_range_mean"</span>: SEED,</span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>    <span class="st">"typical_mu_sigma_pair"</span>: SEED <span class="op">+</span> <span class="dv">11</span>,</span>
-<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_private_ms_one"</span>: SEED <span class="op">+</span> <span class="dv">2</span>,</span>
-<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_private_ms_iter"</span>: SEED <span class="op">+</span> <span class="dv">3</span>,</span>
-<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_median_value_noise"</span>: SEED,</span>
-<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_private_quantile"</span>: SEED <span class="op">+</span> <span class="dv">6</span>,</span>
-<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_private_qcm"</span>: SEED <span class="op">+</span> <span class="dv">7</span>,</span>
-<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_gaussian_loc_synth"</span>: SEED <span class="op">+</span> <span class="dv">9</span>,</span>
-<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_gaussian_loc_fulton"</span>: SEED <span class="op">+</span> <span class="dv">8</span>,</span>
-<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>    <span class="st">"audit_ms_repair_one"</span>: SEED <span class="op">+</span> <span class="dv">40</span>,</span>
-<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>    <span class="st">"audit_ms_repair_three"</span>: SEED <span class="op">+</span> <span class="dv">41</span>,</span>
-<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>    <span class="st">"typical_median_pair"</span>: SEED <span class="op">+</span> <span class="dv">17</span>,</span>
-<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_empirical_quantile"</span>: SEED <span class="op">+</span> <span class="dv">19</span>,</span>
-<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>    <span class="st">"audit_s3_empirical_quantile"</span>: SEED <span class="op">+</span> <span class="dv">18</span>,</span>
-<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>    <span class="st">"gaussian_synth_population"</span>: SEED <span class="op">+</span> <span class="dv">100</span>,</span>
-<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> load_fulton()</span>
-<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>income_all <span class="op">=</span> extract_income(df)</span>
-<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>D, witness_pool <span class="op">=</span> split_base_and_pool(income_all, n_base<span class="op">=</span>N, seed<span class="op">=</span>SEED)</span>
-<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(SEED)</span>
-<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep Plotly figures interactive in notebooks when the frontend supports MIME rendering.</span></span>
-<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">"plotly_mimetype+notebook_connected"</span></span>
-<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>leaderboard_parts <span class="op">=</span> []</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="co"># Accuracy-regime contract. Many independent datasets, one mechanism draw each,</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a><span class="co"># so signed-error histograms look smooth without repeated calls per dataset.</span></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>N_DATASETS_RECOMMENDED <span class="op">=</span> <span class="dv">5_000</span></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>N_RUNS_RECOMMENDED <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>N_DATASETS <span class="op">=</span> N_DATASETS_RECOMMENDED</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>N_RUNS <span class="op">=</span> N_RUNS_RECOMMENDED</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>HISTOGRAM_TRIALS <span class="op">=</span> <span class="dv">5_000</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> N <span class="op">==</span> <span class="dv">1000</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> EPS_TOTAL <span class="op">==</span> <span class="fl">1.0</span></span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a><span class="co"># Epsilon budget: name slices and assert sums (even when the whole budget goes to one step).</span></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>EPS_MEAN <span class="op">=</span> EPS_TOTAL</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">abs</span>(EPS_MEAN <span class="op">-</span> EPS_TOTAL) <span class="op">&lt;</span> <span class="fl">1e-12</span></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="co"># Capstone Gaussian-localization split (S8).</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>EPS_SCALE <span class="op">=</span> <span class="fl">0.25</span></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>EPS_LOCATION <span class="op">=</span> <span class="fl">0.25</span></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>EPS_GAUSS_MEAN <span class="op">=</span> <span class="fl">0.50</span></span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">abs</span>((EPS_SCALE <span class="op">+</span> EPS_LOCATION <span class="op">+</span> EPS_GAUSS_MEAN) <span class="op">-</span> EPS_TOTAL) <span class="op">&lt;</span> <span class="fl">1e-12</span></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a><span class="co"># Child seeds (documented map from lecture root SEED).</span></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>SEED_MAP <span class="op">=</span> {</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_public_range_mean"</span>: SEED,</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>    <span class="st">"typical_mu_sigma_pair"</span>: SEED <span class="op">+</span> <span class="dv">11</span>,</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_private_ms_one"</span>: SEED <span class="op">+</span> <span class="dv">2</span>,</span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_private_ms_iter"</span>: SEED <span class="op">+</span> <span class="dv">3</span>,</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_median_value_noise"</span>: SEED,</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_private_quantile"</span>: SEED <span class="op">+</span> <span class="dv">6</span>,</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_private_qcm"</span>: SEED <span class="op">+</span> <span class="dv">7</span>,</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_gaussian_loc_synth"</span>: SEED <span class="op">+</span> <span class="dv">9</span>,</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_gaussian_loc_fulton"</span>: SEED <span class="op">+</span> <span class="dv">8</span>,</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>    <span class="st">"audit_ms_repair_one"</span>: SEED <span class="op">+</span> <span class="dv">40</span>,</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>    <span class="st">"audit_ms_repair_three"</span>: SEED <span class="op">+</span> <span class="dv">41</span>,</span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>    <span class="st">"typical_median_pair"</span>: SEED <span class="op">+</span> <span class="dv">17</span>,</span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>    <span class="st">"accuracy_empirical_quantile"</span>: SEED <span class="op">+</span> <span class="dv">19</span>,</span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>    <span class="st">"audit_s3_empirical_quantile"</span>: SEED <span class="op">+</span> <span class="dv">18</span>,</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>    <span class="st">"gaussian_synth_population"</span>: SEED <span class="op">+</span> <span class="dv">100</span>,</span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>mean_targets <span class="op">=</span> {<span class="st">'value'</span>: <span class="kw">lambda</span> x: <span class="bu">float</span>(np.mean(x))}</span>
-<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>median_targets <span class="op">=</span> {</span>
-<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>    <span class="st">'value'</span>: <span class="kw">lambda</span> x: <span class="bu">float</span>(np.median(x)),</span>
-<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>    <span class="st">'rank'</span>: <span class="kw">lambda</span> released: population_rank_cdf(income_all, released),</span>
-<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Fulton rows: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">:,}</span><span class="ss"> | accuracy sample N=</span><span class="sc">{</span>N<span class="sc">:,}</span><span class="ss"> | substitution adjacency"</span>)</span>
-<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Main privacy contract: epsilon_total=</span><span class="sc">{</span>EPS_TOTAL<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
-<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy sweep in this notebook: </span><span class="sc">{</span>N_DATASETS<span class="sc">}</span><span class="ss"> datasets x </span><span class="sc">{</span>N_RUNS<span class="sc">}</span><span class="ss"> run (recommended: </span><span class="sc">{</span>N_DATASETS_RECOMMENDED<span class="sc">}</span><span class="ss"> x </span><span class="sc">{</span>N_RUNS_RECOMMENDED<span class="sc">}</span><span class="ss">)"</span>)</span>
-<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Empirical audit histograms: </span><span class="sc">{</span>HISTOGRAM_TRIALS<span class="sc">}</span><span class="ss"> mechanism draws per neighboring dataset"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> load_fulton()</span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>income_all <span class="op">=</span> extract_income(df)</span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>D, witness_pool <span class="op">=</span> split_base_and_pool(income_all, n_base<span class="op">=</span>N, seed<span class="op">=</span>SEED)</span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(SEED)</span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a><span class="co"># Let Quarto provide the page-local Plotly runtime for MIME-rendered figures.</span></span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">"plotly_mimetype"</span></span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>leaderboard_parts <span class="op">=</span> []</span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>mean_targets <span class="op">=</span> {<span class="st">'value'</span>: <span class="kw">lambda</span> x: <span class="bu">float</span>(np.mean(x))}</span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>median_targets <span class="op">=</span> {</span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>    <span class="st">'value'</span>: <span class="kw">lambda</span> x: <span class="bu">float</span>(np.median(x)),</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>    <span class="st">'rank'</span>: <span class="kw">lambda</span> released: population_rank_cdf(income_all, released),</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Fulton rows: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">:,}</span><span class="ss"> | accuracy sample N=</span><span class="sc">{</span>N<span class="sc">:,}</span><span class="ss"> | substitution adjacency"</span>)</span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Main privacy contract: epsilon_total=</span><span class="sc">{</span>EPS_TOTAL<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy sweep in this notebook: </span><span class="sc">{</span>N_DATASETS<span class="sc">}</span><span class="ss"> datasets x </span><span class="sc">{</span>N_RUNS<span class="sc">}</span><span class="ss"> run (recommended: </span><span class="sc">{</span>N_DATASETS_RECOMMENDED<span class="sc">}</span><span class="ss"> x </span><span class="sc">{</span>N_RUNS_RECOMMENDED<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Empirical audit histograms: </span><span class="sc">{</span>HISTOGRAM_TRIALS<span class="sc">}</span><span class="ss"> mechanism draws per neighboring dataset"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Fulton rows: 25,766 | accuracy sample N=1,000 | substitution adjacency
@@ -578,20 +586,13 @@ Empirical audit histograms: 5000 mechanism draws per neighboring dataset</code><
 <div id="9" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_oracle_income_histogram_figure(seed<span class="op">=</span>SEED, log_scale<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_oracle_income_histogram_figure(oracle_income_histogram_data(seed<span class="op">=</span>SEED, log_scale<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -664,19 +665,12 @@ Gaussian noise std: 18,778.8</code></pre>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>leaderboard_parts.append(raw_accuracy_rows)</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(raw_accuracy_rows, estimate_target<span class="op">=</span><span class="st">'mean'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="8">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-9-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -801,7 +795,7 @@ Gaussian noise std: 18,778.8</code></pre>
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="14">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-188c721dff-152c2dc8011d/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-188c721dff-2612a3ee3d68/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 <p>Now move to an engineered size-<code>N=1000</code> leverage example. The pair is still a substitution-neighbor pair with the same size on both sides, but the incoming value is fabricated to make the empirical standard deviation and learned clipping interval move visibly.</p>
@@ -864,7 +858,7 @@ Gaussian noise std: 18,778.8</code></pre>
 <span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="17">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-206171b802-bbb8c81ae659/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-206171b802-049e0ac688cf/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 <p>The private repair spends epsilon on noisy truncated-moment localization and the final clipped mean. The budget ledger is computed for bookkeeping but not rendered as dataframe output in the mainline notebook.</p>
@@ -933,22 +927,15 @@ Gaussian noise std: 18,778.8</code></pre>
 <span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>fig, <span class="op">*</span>_ <span class="op">=</span> make_empirical_roc_selected_threshold_figure(</span>
 <span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    panel_ms_repair_one.samples_neg, panel_ms_repair_one.samples_pos, DELTA,</span>
 <span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>tau*=3.46e+04, eps_plug=0.468, separates=False</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="19">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-20-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -978,22 +965,15 @@ Gaussian noise std: 18,778.8</code></pre>
 <span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>fig, <span class="op">*</span>_ <span class="op">=</span> make_empirical_roc_selected_threshold_figure(</span>
 <span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    panel_ms_repair_three.samples_neg, panel_ms_repair_three.samples_pos, DELTA,</span>
 <span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>tau*=3.34e+04, eps_plug=0.346, separates=False</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="20">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-21-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-21-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-21-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1056,19 +1036,12 @@ Gaussian noise std: 18,778.8</code></pre>
 <span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>    error_metric<span class="op">=</span><span class="st">'value'</span>,</span>
 <span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="22">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-23-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1147,7 +1120,7 @@ Gaussian noise std: 18,778.8</code></pre>
 <span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="26">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-c32c318b84-a4caf6e46837/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-c32c318b84-41526ca56909/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 <p>Now move to an engineered micro-example. The pair is still a valid substitution-neighbor pair of size <code>N=1000</code>, but the rows are arranged so the 99% quantile sits just below a flat upper tail ($30k bulk → $120k tail). Replacing the <strong>top bulk order statistic</strong> (not a low row) by a witness above the tail jumps the learned upper clip by ~$90k and sharply increases the Gaussian noise scale, while the released-output distributions still overlap enough to audit the failure.</p>
@@ -1219,7 +1192,7 @@ Gaussian noise std: 18,778.8</code></pre>
 <span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="29">
-<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-7d8db735a6-bb7f52761f96/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/theory-roc-gaussian-7d8db735a6-d640c516142b/index.html" width="100%" height="750" title="Theoretical ROC explorer for common distributions." data-libdpy-interactive="theory_roc_visualizer" data-libdpy-export-backend="wasm-marimo" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&amp;&amp;e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><div style="width:28px;height:28px;border:3px solid #ccc;border-top-color:#555;border-radius:50%;animation:libdpy-spin 0.9s linear infinite;"></div><span style="font-size:0.85rem;">Loading interactive… (first load downloads a Python runtime)</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 <p>One accuracy draw for empirical quantile clipping: learn bounds from the sample, clip, calibrate Gaussian noise to the clip width, release the noisy clipped mean. Compare to the sample mean on the same draw.</p>
@@ -1264,19 +1237,12 @@ Gaussian noise std: 18,778.8</code></pre>
 <span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>leaderboard_parts.append(emp_q_rows)</span>
 <span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(emp_q_rows, estimate_target<span class="op">=</span><span class="st">'mean'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
-<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="31">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-32-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-32-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-32-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1315,7 +1281,7 @@ Gaussian noise std: 18,778.8</code></pre>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>PrivateEstimationAuditROCVisualizer(scene<span class="op">=</span><span class="st">"quantile-s3"</span>).embed()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="33">
-<div class="libdpy-interactive" data-libdpy-interactive="empirical_roc_from_samples" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/empirical-audit-6025863018-028bfcb83fce/index.html" width="100%" height="750" title="Empirical ROC audit explorer from fixed mechanism output samples." data-libdpy-interactive="empirical_roc_from_samples" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
+<div class="libdpy-interactive" data-libdpy-interactive="empirical_roc_from_samples" data-libdpy-export-backend="plotly-declarative" style="position:relative;min-height:750px;overflow:hidden;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;"><iframe data-libdpy-src="../../../_generated/apps/shared/empirical-audit-6025863018-573ddb2bf84c/index.html" width="100%" height="750" title="Empirical ROC audit explorer from fixed mechanism output samples." data-libdpy-interactive="empirical_roc_from_samples" data-libdpy-export-backend="plotly-declarative" style="border:0;width:100%;display:block;" onload="(function(f){var ov=f.parentNode.querySelector('.libdpy-interactive-loading');if(!ov){return;}var hide=function(){ov.style.display='none';};var ready=function(){var doc;try{doc=f.contentDocument;}catch(e){return true;}if(!doc){return false;}var found=false;(function walk(r){if(r.shadowRoot){walk(r.shadowRoot);}r.querySelectorAll('*').forEach(function(e){if(e.tagName&&e.tagName.toLowerCase()==='marimo-slider'){found=true;}if(e.shadowRoot){walk(e.shadowRoot);}});})(doc);return found;};var t=setInterval(function(){if(ready()){clearInterval(t);hide();}},400);setTimeout(function(){clearInterval(t);hide();},60000);})(this)"></iframe><div class="libdpy-interactive-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6em;background:#fafafa;color:#555;pointer-events:none;"><span style="font-size:0.85rem;">Loading interactive…</span></div><style>@keyframes libdpy-spin{to{transform:rotate(360deg)}}</style><noscript><style>.libdpy-interactive-loading{display:none}</style></noscript></div>
 </div>
 </div>
 <p><strong>Diagnosis:</strong> adding noise to the final number does not privatize the earlier data-dependent clipping choice.</p>
@@ -1467,19 +1433,12 @@ Gaussian std=657,256; variance=431,986,036,226</code></pre>
 <span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>leaderboard_parts.append(median_rows)</span>
 <span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(median_rows, estimate_target<span class="op">=</span><span class="st">'median'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
-<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="40">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-41-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-41-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-41-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1490,19 +1449,12 @@ Gaussian std=657,256; variance=431,986,036,226</code></pre>
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(median_rows, estimate_target<span class="op">=</span><span class="st">'median'</span>, error_metric<span class="op">=</span><span class="st">'rank'</span>)</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="41">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-42-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-42-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-42-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1519,20 +1471,15 @@ Gaussian std=657,256; variance=431,986,036,226</code></pre>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>ALPHA <span class="op">=</span> <span class="fl">0.5</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Display-only score landscape on a public grid; the mechanism itself (below) is grid-free.</span></span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_inverse_sensitivity_landscape_figure(D, alpha<span class="op">=</span>ALPHA, epsilon<span class="op">=</span>EPS_TOTAL)</span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_inverse_sensitivity_landscape_figure(</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>    inverse_sensitivity_landscape_data(D, alpha<span class="op">=</span>ALPHA, epsilon<span class="op">=</span>EPS_TOTAL)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="42">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-43-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-43-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-43-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1609,19 +1556,12 @@ Gaussian std=657,256; variance=431,986,036,226</code></pre>
 <span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a>leaderboard_parts.append(private_quantile_rows)</span>
 <span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(private_quantile_rows, estimate_target<span class="op">=</span><span class="st">'median'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
-<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="45">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-46-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-46-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-46-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1631,19 +1571,12 @@ Gaussian std=657,256; variance=431,986,036,226</code></pre>
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(private_quantile_rows, estimate_target<span class="op">=</span><span class="st">'median'</span>, error_metric<span class="op">=</span><span class="st">'rank'</span>)</span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="46">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-47-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-47-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-47-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1703,98 +1636,99 @@ Gaussian std=657,256; variance=431,986,036,226</code></pre>
 Private estimate: 33,953 | exact clipped mean on same D: 34,354</code></pre>
 </div>
 </div>
-<p>The next figure adds the valid private quantile-clipped mean to the mean track. It uses the same three signed-error lines: sampling gap, mechanism error, and total error.</p>
-<p>One accuracy draw for private quantile-clipped mean: release private L, U, and noisy clipped mean on the same dataset draw.</p>
-<div id="105" class="cell" data-execution_count="48">
+<section id="reallocate-the-same-total-budget" class="level3">
+<h3 class="anchored" data-anchor-id="reallocate-the-same-total-budget">Reallocate the same total budget</h3>
+<p>The implemented mechanism uses the visible 25% / 25% / 50% split. The explorer asks a narrower design question: if the total remains <code>epsilon = 1</code>, which step bears the randomization pressure? Moving the slider assigns one share jointly to the two private bounds (split equally) and the remainder to the clipped mean. Every state is the same sequential-composition guarantee because the three slices still sum to one.</p>
+<p>Read the stacked ledger on the left before the proxy on the right. The proxy is <code>epsilon_total / epsilon_step</code>: it rises when a step receives a smaller slice and therefore needs stronger randomization. It is dimensionless bookkeeping, not a common error unit for the exponential-mechanism quantiles and Gaussian mean. Choosing the best allocation still requires an accuracy experiment on the declared data model; the slider does not certify one split as optimal.</p>
+<div id="104" class="cell" data-execution_count="48">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>_qcm_rng <span class="op">=</span> np.random.default_rng(SEED_MAP[<span class="st">"accuracy_private_qcm"</span>])</span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>_qcm_draw <span class="op">=</span> _qcm_rng.choice(income_all, size<span class="op">=</span>N, replace<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>_qcm_run_rng <span class="op">=</span> np.random.default_rng(_qcm_rng.integers(<span class="dv">0</span>, <span class="dv">2</span><span class="op">**</span><span class="dv">31</span> <span class="op">-</span> <span class="dv">1</span>))</span>
-<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>_qcm_result <span class="op">=</span> private_quantile_clipped_mean_visible(_qcm_draw, _qcm_run_rng)</span>
-<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>_qcm_target <span class="op">=</span> <span class="bu">float</span>(np.mean(_qcm_draw))</span>
-<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"L=</span><span class="sc">{</span>_qcm_result[<span class="st">'L'</span>]<span class="sc">:,.0f}</span><span class="ss">, U=</span><span class="sc">{</span>_qcm_result[<span class="st">'U'</span>]<span class="sc">:,.0f}</span><span class="ss">, "</span></span>
-<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"estimate=</span><span class="sc">{</span>_qcm_result[<span class="st">'estimate'</span>]<span class="sc">:,.0f}</span><span class="ss">, target=</span><span class="sc">{</span>_qcm_target<span class="sc">:,.0f}</span><span class="ss">, "</span></span>
-<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"error=</span><span class="sc">{</span>_qcm_result[<span class="st">'estimate'</span>] <span class="op">-</span> _qcm_target<span class="sc">:,.0f}</span><span class="ss">"</span></span>
-<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>create_composition_budget_allocation_slider(total_epsilon<span class="op">=</span>EPS_TOTAL)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+</div>
+<p>The next figure adds the valid private quantile-clipped mean to the mean track. It uses the same three signed-error lines: sampling gap, mechanism error, and total error.</p>
+<p>One accuracy draw for private quantile-clipped mean: release private L, U, and noisy clipped mean on the same dataset draw.</p>
+<div id="107" class="cell" data-execution_count="49">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>_qcm_rng <span class="op">=</span> np.random.default_rng(SEED_MAP[<span class="st">"accuracy_private_qcm"</span>])</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>_qcm_draw <span class="op">=</span> _qcm_rng.choice(income_all, size<span class="op">=</span>N, replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>_qcm_run_rng <span class="op">=</span> np.random.default_rng(_qcm_rng.integers(<span class="dv">0</span>, <span class="dv">2</span><span class="op">**</span><span class="dv">31</span> <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>_qcm_result <span class="op">=</span> private_quantile_clipped_mean_visible(_qcm_draw, _qcm_run_rng)</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>_qcm_target <span class="op">=</span> <span class="bu">float</span>(np.mean(_qcm_draw))</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"L=</span><span class="sc">{</span>_qcm_result[<span class="st">'L'</span>]<span class="sc">:,.0f}</span><span class="ss">, U=</span><span class="sc">{</span>_qcm_result[<span class="st">'U'</span>]<span class="sc">:,.0f}</span><span class="ss">, "</span></span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"estimate=</span><span class="sc">{</span>_qcm_result[<span class="st">'estimate'</span>]<span class="sc">:,.0f}</span><span class="ss">, target=</span><span class="sc">{</span>_qcm_target<span class="sc">:,.0f}</span><span class="ss">, "</span></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"error=</span><span class="sc">{</span>_qcm_result[<span class="st">'estimate'</span>] <span class="op">-</span> _qcm_target<span class="sc">:,.0f}</span><span class="ss">"</span></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>L=0, U=338,736, estimate=38,688, target=38,074, error=613</code></pre>
 </div>
 </div>
 <p>Typical-accuracy sweep for private quantile-clipped mean. X-axis: signed error in dollars. Y-axis: probability per bin.</p>
-<div id="107" class="cell" data-execution_count="49">
+<div id="109" class="cell" data-execution_count="50">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>private_qcm_rows <span class="op">=</span> evaluate_accuracy(</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>    private_quantile_clipped_mean_visible,</span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>    income_all,</span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>    mean_targets,</span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span>N,</span>
-<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>    n_datasets<span class="op">=</span>N_DATASETS,</span>
-<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>N_RUNS,</span>
-<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>SEED_MAP[<span class="st">"accuracy_private_qcm"</span>],</span>
-<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'private quantile-clipped mean'</span>,</span>
-<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>    privacy_status<span class="op">=</span><span class="st">'valid'</span>,</span>
-<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>    estimate_target<span class="op">=</span><span class="st">'mean'</span>,</span>
-<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a>    epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
-<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a>    notes<span class="op">=</span><span class="st">'grid-free interval-exponential L,U plus noisy clipped mean'</span>,</span>
-<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a>leaderboard_parts.append(private_qcm_rows)</span>
-<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(private_qcm_rows, estimate_target<span class="op">=</span><span class="st">'mean'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
-<span id="cb64-17"><a href="#cb64-17" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>private_qcm_rows <span class="op">=</span> evaluate_accuracy(</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>    private_quantile_clipped_mean_visible,</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>    income_all,</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>    mean_targets,</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span>N,</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>    n_datasets<span class="op">=</span>N_DATASETS,</span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>N_RUNS,</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>SEED_MAP[<span class="st">"accuracy_private_qcm"</span>],</span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'private quantile-clipped mean'</span>,</span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>    privacy_status<span class="op">=</span><span class="st">'valid'</span>,</span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>    estimate_target<span class="op">=</span><span class="st">'mean'</span>,</span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>    epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>    notes<span class="op">=</span><span class="st">'grid-free interval-exponential L,U plus noisy clipped mean'</span>,</span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>leaderboard_parts.append(private_qcm_rows)</span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(private_qcm_rows, estimate_target<span class="op">=</span><span class="st">'mean'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
+<span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="49">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-50-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-50-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="s7-noisy-histograms-and-the-binning-problem" class="level2">
-<h2 class="anchored" data-anchor-id="s7-noisy-histograms-and-the-binning-problem">S7 — Noisy Histograms and the Binning Problem</h2>
-<p>Before the final Gaussian-style estimator, isolate the histogram issue. Exact EDA is forbidden, but a fixed-bin noisy histogram is private if the bins are public. The utility problem is binning: bins that are too wide hide the feature we need, while bins that are too narrow spend the same noisy count vector over many unstable cells.</p>
-<p>The next plot is a private fixed-bin histogram of the size-1000 sample <code>D</code>. X-axis: public income bins. Y-axis: noisy counts. The bins were fixed before seeing the private sample, and each substitution changes at most two bin counts.</p>
-<div id="110" class="cell" data-execution_count="50">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_private_income_noisy_histogram_figure(D, epsilon<span class="op">=</span>EPS_SCALE, seed<span class="op">=</span>SEED)</span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-display" data-execution_count="50">
 <div>
 <figure class="figure">
 <p><img src="post_files/figure-html/cell-51-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
+</div>
+</section>
+</section>
+<section id="s7-noisy-histograms-and-the-binning-problem" class="level2">
+<h2 class="anchored" data-anchor-id="s7-noisy-histograms-and-the-binning-problem">S7 — Noisy Histograms and the Binning Problem</h2>
+<p>Before the final Gaussian-style estimator, isolate the histogram issue. Exact EDA is forbidden, but a fixed-bin noisy histogram is private if the bins are public. The utility problem is binning: bins that are too wide hide the feature we need, while bins that are too narrow spend the same noisy count vector over many unstable cells.</p>
+<p>The next plot is a private fixed-bin histogram of the size-1000 sample <code>D</code>. X-axis: public income bins. Y-axis: noisy counts. The bins were fixed before seeing the private sample, and each substitution changes at most two bin counts.</p>
+<div id="112" class="cell" data-execution_count="51">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>hist <span class="op">=</span> private_income_noisy_histogram_data(D, epsilon<span class="op">=</span>EPS_SCALE, seed<span class="op">=</span>SEED)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_private_income_noisy_histogram_figure(hist, n<span class="op">=</span><span class="bu">len</span>(D), epsilon<span class="op">=</span>EPS_SCALE)</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-51-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-52-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>This cell computes the histogram sensitivity trace without rendering dataframe output: one substitution leaves one bin and enters another, so at most two bin counts change.</p>
-<div id="112" class="cell" data-execution_count="51">
+<div id="114" class="cell" data-execution_count="52">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>out_candidates <span class="op">=</span> np.where((D <span class="op">&gt;=</span> <span class="dv">10_000</span>) <span class="op">&amp;</span> (D <span class="op">&lt;</span> <span class="dv">20_000</span>))[<span class="dv">0</span>]</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>out_i <span class="op">=</span> <span class="bu">int</span>(out_candidates[<span class="dv">0</span>]) <span class="cf">if</span> <span class="bu">len</span>(out_candidates) <span class="cf">else</span> <span class="bu">int</span>(np.argmin(D))</span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>histogram_trace_rows <span class="op">=</span> histogram_replacement_trace(</span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>    D, PUBLIC_INCOME_BIN_EDGES, out_i, <span class="fl">345_000.0</span></span>
-<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>out_candidates <span class="op">=</span> np.where((D <span class="op">&gt;=</span> <span class="dv">10_000</span>) <span class="op">&amp;</span> (D <span class="op">&lt;</span> <span class="dv">20_000</span>))[<span class="dv">0</span>]</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>out_i <span class="op">=</span> <span class="bu">int</span>(out_candidates[<span class="dv">0</span>]) <span class="cf">if</span> <span class="bu">len</span>(out_candidates) <span class="cf">else</span> <span class="bu">int</span>(np.argmin(D))</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>histogram_trace_rows <span class="op">=</span> histogram_replacement_trace(</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>    D, PUBLIC_INCOME_BIN_EDGES, out_i, <span class="fl">345_000.0</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>The sensitivity trace gives the sensitivity story, but not the accuracy story. Even with the right noise calibration, a fixed income grid can be a poor scale-localization tool when the relevant spread is multiplicative or when the useful bin width depends on the unknown standard deviation.</p>
@@ -1803,195 +1737,167 @@ Private estimate: 33,953 | exact clipped mean on same D: 34,354</code></pre>
 <h2 class="anchored" data-anchor-id="s8-gaussian-localization-via-pairwise-differences-kv18">S8 — Gaussian Localization via Pairwise Differences (KV18)</h2>
 <p>The final scale-based idea follows Karwa &amp; Vadhan (2018, <a href="https://arxiv.org/pdf/1711.03908">arXiv:1711.03908</a>). The key trick: take <strong>disjoint pairwise absolute differences</strong> <code>|X_i − X_j|</code>. Each difference is the absolute value of an <code>N(0, 2σ²)</code> variable, so the <strong>unknown mean cancels</strong> and the differences depend only on the scale <code>σ</code>. A noisy histogram of those differences localizes <code>σ</code> (each row sits in one pair, so the count vector has bounded sensitivity); the selected scale then sets the resolution for a private location search and the final <code>μ ± 3σ</code> clipping range used for the mean.</p>
 <p>This is a <strong>model-dependent</strong> estimator: privacy holds by composition, but accuracy depends on the Gaussian assumption. We therefore validate it twice — first on <strong>synthetic Gaussian</strong> data, where it is accurate, then on <strong>Fulton income</strong>, where the heavy tail breaks the assumption and the mean estimate is biased low.</p>
-<div id="115" class="cell" data-execution_count="52">
+<div id="117" class="cell" data-execution_count="53">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># KV18 capstone: localize scale from a noisy histogram of disjoint pairwise</span></span>
-<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="co"># |differences|, then location, then the clipped noisy mean. All grids are public.</span></span>
-<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>gaussian_histogram_mean_visible <span class="op">=</span> <span class="kw">lambda</span> x, rng: gaussian_histogram_mean(</span>
-<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>    x,</span>
-<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>    EPS_SCALE,</span>
-<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>    EPS_LOCATION,</span>
-<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>    EPS_GAUSS_MEAN,</span>
-<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>    PUBLIC_SCALE_DIFF_BIN_EDGES,</span>
-<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>    PUBLIC_INCOME_BIN_EDGES,</span>
-<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>    rng,</span>
-<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>    DELTA,</span>
-<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>scale_demo <span class="op">=</span> private_scale_from_pairwise_diffs(D, EPS_SCALE, PUBLIC_SCALE_DIFF_BIN_EDGES, rng)</span>
-<span id="cb67-15"><a href="#cb67-15" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_private_scale_pairwise_histogram_figure(scale_demo)</span>
-<span id="cb67-16"><a href="#cb67-16" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># KV18 capstone: localize scale from a noisy histogram of disjoint pairwise</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="co"># |differences|, then location, then the clipped noisy mean. All grids are public.</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>gaussian_histogram_mean_visible <span class="op">=</span> <span class="kw">lambda</span> x, rng: gaussian_histogram_mean(</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>    x,</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>    EPS_SCALE,</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>    EPS_LOCATION,</span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>    EPS_GAUSS_MEAN,</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>    PUBLIC_SCALE_DIFF_BIN_EDGES,</span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>    PUBLIC_INCOME_BIN_EDGES,</span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>    rng,</span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>    DELTA,</span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a>scale_demo <span class="op">=</span> private_scale_from_pairwise_diffs(D, EPS_SCALE, PUBLIC_SCALE_DIFF_BIN_EDGES, rng)</span>
+<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_private_scale_pairwise_histogram_figure(scale_demo)</span>
+<span id="cb69-16"><a href="#cb69-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="52">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-53-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-53-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-54-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>The selected scale <code>sigma_tilde</code> now determines the resolution for the private location search and the final <code>mu ± 3 sigma</code> clipping range. The next computation runs the full pipeline (scale from pairwise differences → location → clipped noisy mean) and records the intermediate private quantities.</p>
-<div id="117" class="cell" data-execution_count="53">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>kv_demo <span class="op">=</span> gaussian_histogram_mean_visible(D, rng)</span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>kv_demo_summary <span class="op">=</span> {</span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'private_sigma'</span>: kv_demo[<span class="st">'sigma_tilde'</span>],</span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'private_mu_bin'</span>: kv_demo[<span class="st">'mu_hat'</span>],</span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'clip_L'</span>: kv_demo[<span class="st">'L'</span>],</span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'clip_U'</span>: kv_demo[<span class="st">'U'</span>],</span>
-<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'private_estimate'</span>: kv_demo[<span class="st">'estimate'</span>],</span>
-<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sample_mean'</span>: <span class="bu">float</span>(np.mean(D)),</span>
-<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p>The next plot uses the same private sigma-bin output to draw the private location histogram and the final clipping interval.</p>
 <div id="119" class="cell" data-execution_count="54">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_private_location_histogram_figure(kv_demo)</span>
-<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>kv_demo <span class="op">=</span> gaussian_histogram_mean_visible(D, rng)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>kv_demo_summary <span class="op">=</span> {</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'private_sigma'</span>: kv_demo[<span class="st">'sigma_tilde'</span>],</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'private_mu_bin'</span>: kv_demo[<span class="st">'mu_hat'</span>],</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'clip_L'</span>: kv_demo[<span class="st">'L'</span>],</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'clip_U'</span>: kv_demo[<span class="st">'U'</span>],</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'private_estimate'</span>: kv_demo[<span class="st">'estimate'</span>],</span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sample_mean'</span>: <span class="bu">float</span>(np.mean(D)),</span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="54">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-55-output-1.png" class="img-fluid figure-img"></p>
-</figure>
 </div>
-</div>
+<p>The next plot uses the same private sigma-bin output to draw the private location histogram and the final clipping interval.</p>
+<div id="121" class="cell" data-execution_count="55">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_private_location_histogram_figure(kv_demo)</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-55-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-56-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Before income, validate where the assumption holds: a <strong>synthetic Gaussian</strong> population with a known mean. Here scale and location are well-defined, so the pairwise-difference σ̃, the location histogram μ̂, and the <code>μ̂ ± 3σ̃</code> clip all behave and the estimate tracks the true mean. The next figure is the signed-error decomposition on that synthetic population (mechanism error should be small and centered).</p>
-<div id="121" class="cell" data-execution_count="55">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>GAUSS_MU, GAUSS_SIGMA <span class="op">=</span> <span class="fl">40_000.0</span>, <span class="fl">12_000.0</span></span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>gaussian_population <span class="op">=</span> np.random.default_rng(SEED_MAP[<span class="st">"gaussian_synth_population"</span>]).normal(</span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>    GAUSS_MU, GAUSS_SIGMA, size<span class="op">=</span><span class="dv">25_000</span></span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p>One accuracy draw on synthetic Gaussian data before the full sweep.</p>
 <div id="123" class="cell" data-execution_count="56">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>_gs_rng <span class="op">=</span> np.random.default_rng(SEED_MAP[<span class="st">"accuracy_gaussian_loc_synth"</span>])</span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>_gs_draw <span class="op">=</span> _gs_rng.choice(gaussian_population, size<span class="op">=</span>N, replace<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>_gs_run_rng <span class="op">=</span> np.random.default_rng(_gs_rng.integers(<span class="dv">0</span>, <span class="dv">2</span><span class="op">**</span><span class="dv">31</span> <span class="op">-</span> <span class="dv">1</span>))</span>
-<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>_gs_result <span class="op">=</span> gaussian_histogram_mean_visible(_gs_draw, _gs_run_rng)</span>
-<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>_gs_target <span class="op">=</span> <span class="bu">float</span>(np.mean(_gs_draw))</span>
-<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"single draw: target=</span><span class="sc">{</span>_gs_target<span class="sc">:,.0f}</span><span class="ss">, estimate=</span><span class="sc">{</span>_gs_result[<span class="st">'estimate'</span>]<span class="sc">:,.0f}</span><span class="ss">, "</span></span>
-<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"error=</span><span class="sc">{</span>_gs_result[<span class="st">'estimate'</span>] <span class="op">-</span> _gs_target<span class="sc">:,.0f}</span><span class="ss">"</span></span>
-<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>GAUSS_MU, GAUSS_SIGMA <span class="op">=</span> <span class="fl">40_000.0</span>, <span class="fl">12_000.0</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>gaussian_population <span class="op">=</span> np.random.default_rng(SEED_MAP[<span class="st">"gaussian_synth_population"</span>]).normal(</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>    GAUSS_MU, GAUSS_SIGMA, size<span class="op">=</span><span class="dv">25_000</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>One accuracy draw on synthetic Gaussian data before the full sweep.</p>
+<div id="125" class="cell" data-execution_count="57">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>_gs_rng <span class="op">=</span> np.random.default_rng(SEED_MAP[<span class="st">"accuracy_gaussian_loc_synth"</span>])</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>_gs_draw <span class="op">=</span> _gs_rng.choice(gaussian_population, size<span class="op">=</span>N, replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>_gs_run_rng <span class="op">=</span> np.random.default_rng(_gs_rng.integers(<span class="dv">0</span>, <span class="dv">2</span><span class="op">**</span><span class="dv">31</span> <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>_gs_result <span class="op">=</span> gaussian_histogram_mean_visible(_gs_draw, _gs_run_rng)</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>_gs_target <span class="op">=</span> <span class="bu">float</span>(np.mean(_gs_draw))</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"single draw: target=</span><span class="sc">{</span>_gs_target<span class="sc">:,.0f}</span><span class="ss">, estimate=</span><span class="sc">{</span>_gs_result[<span class="st">'estimate'</span>]<span class="sc">:,.0f}</span><span class="ss">, "</span></span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"error=</span><span class="sc">{</span>_gs_result[<span class="st">'estimate'</span>] <span class="op">-</span> _gs_target<span class="sc">:,.0f}</span><span class="ss">"</span></span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>single draw: target=40,689, estimate=41,032, error=342</code></pre>
 </div>
 </div>
 <p>Full accuracy sweep on synthetic Gaussian data. X-axis: signed error in dollars. Y-axis: probability per bin.</p>
-<div id="125" class="cell" data-execution_count="57">
+<div id="127" class="cell" data-execution_count="58">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Side validation on synthetic Gaussian data (not appended to the income leaderboard).</span></span>
-<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>gaussian_loc_synth_rows <span class="op">=</span> evaluate_accuracy(</span>
-<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>    gaussian_histogram_mean_visible,</span>
-<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>    gaussian_population,</span>
-<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>    mean_targets,</span>
-<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span>N,</span>
-<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>    n_datasets<span class="op">=</span>N_DATASETS,</span>
-<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>N_RUNS,</span>
-<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>SEED_MAP[<span class="st">"accuracy_gaussian_loc_synth"</span>],</span>
-<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'gaussian localization mean — synthetic Gaussian'</span>,</span>
-<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a>    privacy_status<span class="op">=</span><span class="st">'model_dependent'</span>,</span>
-<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a>    estimate_target<span class="op">=</span><span class="st">'mean'</span>,</span>
-<span id="cb73-13"><a href="#cb73-13" aria-hidden="true" tabindex="-1"></a>    epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
-<span id="cb73-14"><a href="#cb73-14" aria-hidden="true" tabindex="-1"></a>    notes<span class="op">=</span><span class="st">'KV18 pairwise-difference localization on data that is actually Gaussian'</span>,</span>
-<span id="cb73-15"><a href="#cb73-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb73-16"><a href="#cb73-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(gaussian_loc_synth_rows, estimate_target<span class="op">=</span><span class="st">'mean'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
-<span id="cb73-17"><a href="#cb73-17" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Side validation on synthetic Gaussian data (not appended to the income leaderboard).</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>gaussian_loc_synth_rows <span class="op">=</span> evaluate_accuracy(</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>    gaussian_histogram_mean_visible,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>    gaussian_population,</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>    mean_targets,</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span>N,</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>    n_datasets<span class="op">=</span>N_DATASETS,</span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>N_RUNS,</span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>SEED_MAP[<span class="st">"accuracy_gaussian_loc_synth"</span>],</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'gaussian localization mean — synthetic Gaussian'</span>,</span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>    privacy_status<span class="op">=</span><span class="st">'model_dependent'</span>,</span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>    estimate_target<span class="op">=</span><span class="st">'mean'</span>,</span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a>    epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a>    notes<span class="op">=</span><span class="st">'KV18 pairwise-difference localization on data that is actually Gaussian'</span>,</span>
+<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb75-16"><a href="#cb75-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(gaussian_loc_synth_rows, estimate_target<span class="op">=</span><span class="st">'mean'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
+<span id="cb75-17"><a href="#cb75-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="57">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-58-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-58-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-59-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Now the <strong>same mechanism on Fulton income</strong>, which is heavy-tailed rather than Gaussian. The model breaks at every step: the pairwise-difference scale sees only the bulk spread (σ̃ ≈ 20k vs a true std ≈ 62k), the location histogram locks onto the low-income <strong>mode</strong> (μ̂ ≈ 6k, well below the 39k mean), and the resulting <code>μ̂ ± 3σ̃</code> clip discards the upper tail that drives the mean. The estimate is therefore biased <strong>low</strong> (≈ 27k vs 39k). Privacy is still valid by composition; only <strong>accuracy</strong> fails — exactly because the Gaussian assumption does not hold. Compare the centering/spread here with the synthetic-Gaussian panel above.</p>
 <p>One accuracy draw on Fulton income before the full Gaussian-localization sweep.</p>
-<div id="128" class="cell" data-execution_count="58">
+<div id="130" class="cell" data-execution_count="59">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>_gf_rng <span class="op">=</span> np.random.default_rng(SEED_MAP[<span class="st">"accuracy_gaussian_loc_fulton"</span>])</span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>_gf_draw <span class="op">=</span> _gf_rng.choice(income_all, size<span class="op">=</span>N, replace<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>_gf_run_rng <span class="op">=</span> np.random.default_rng(_gf_rng.integers(<span class="dv">0</span>, <span class="dv">2</span><span class="op">**</span><span class="dv">31</span> <span class="op">-</span> <span class="dv">1</span>))</span>
-<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>_gf_result <span class="op">=</span> gaussian_histogram_mean_visible(_gf_draw, _gf_run_rng)</span>
-<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>_gf_target <span class="op">=</span> <span class="bu">float</span>(np.mean(_gf_draw))</span>
-<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"single draw: target=</span><span class="sc">{</span>_gf_target<span class="sc">:,.0f}</span><span class="ss">, estimate=</span><span class="sc">{</span>_gf_result[<span class="st">'estimate'</span>]<span class="sc">:,.0f}</span><span class="ss">, "</span></span>
-<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"error=</span><span class="sc">{</span>_gf_result[<span class="st">'estimate'</span>] <span class="op">-</span> _gf_target<span class="sc">:,.0f}</span><span class="ss">"</span></span>
-<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>_gf_rng <span class="op">=</span> np.random.default_rng(SEED_MAP[<span class="st">"accuracy_gaussian_loc_fulton"</span>])</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>_gf_draw <span class="op">=</span> _gf_rng.choice(income_all, size<span class="op">=</span>N, replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>_gf_run_rng <span class="op">=</span> np.random.default_rng(_gf_rng.integers(<span class="dv">0</span>, <span class="dv">2</span><span class="op">**</span><span class="dv">31</span> <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>_gf_result <span class="op">=</span> gaussian_histogram_mean_visible(_gf_draw, _gf_run_rng)</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>_gf_target <span class="op">=</span> <span class="bu">float</span>(np.mean(_gf_draw))</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"single draw: target=</span><span class="sc">{</span>_gf_target<span class="sc">:,.0f}</span><span class="ss">, estimate=</span><span class="sc">{</span>_gf_result[<span class="st">'estimate'</span>]<span class="sc">:,.0f}</span><span class="ss">, "</span></span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"error=</span><span class="sc">{</span>_gf_result[<span class="st">'estimate'</span>] <span class="op">-</span> _gf_target<span class="sc">:,.0f}</span><span class="ss">"</span></span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>single draw: target=39,582, estimate=27,254, error=-12,328</code></pre>
 </div>
 </div>
 <p>Full accuracy sweep on Fulton income with the Gaussian-localization mechanism. X-axis: signed error in dollars. Y-axis: probability per bin.</p>
-<div id="130" class="cell" data-execution_count="59">
+<div id="132" class="cell" data-execution_count="60">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>gaussian_loc_rows <span class="op">=</span> evaluate_accuracy(</span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>    gaussian_histogram_mean_visible,</span>
-<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>    income_all,</span>
-<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>    mean_targets,</span>
-<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span>N,</span>
-<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    n_datasets<span class="op">=</span>N_DATASETS,</span>
-<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>N_RUNS,</span>
-<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>SEED_MAP[<span class="st">"accuracy_gaussian_loc_fulton"</span>],</span>
-<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'gaussian localization mean — Fulton income'</span>,</span>
-<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>    privacy_status<span class="op">=</span><span class="st">'model_dependent'</span>,</span>
-<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>    estimate_target<span class="op">=</span><span class="st">'mean'</span>,</span>
-<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>    epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
-<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>    notes<span class="op">=</span><span class="st">'KV18 pairwise-difference scale, then location and clipped mean; Gaussian assumption fails on heavy-tailed income'</span>,</span>
-<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>leaderboard_parts.append(gaussian_loc_rows)</span>
-<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(gaussian_loc_rows, estimate_target<span class="op">=</span><span class="st">'mean'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
-<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>gaussian_loc_rows <span class="op">=</span> evaluate_accuracy(</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>    gaussian_histogram_mean_visible,</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>    income_all,</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>    mean_targets,</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span>N,</span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>    n_datasets<span class="op">=</span>N_DATASETS,</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>    n_runs<span class="op">=</span>N_RUNS,</span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>SEED_MAP[<span class="st">"accuracy_gaussian_loc_fulton"</span>],</span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'gaussian localization mean — Fulton income'</span>,</span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>    privacy_status<span class="op">=</span><span class="st">'model_dependent'</span>,</span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>    estimate_target<span class="op">=</span><span class="st">'mean'</span>,</span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>    epsilon_total<span class="op">=</span>EPS_TOTAL,</span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a>    notes<span class="op">=</span><span class="st">'KV18 pairwise-difference scale, then location and clipped mean; Gaussian assumption fails on heavy-tailed income'</span>,</span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>leaderboard_parts.append(gaussian_loc_rows)</span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> make_accuracy_leaderboard_figure(gaussian_loc_rows, estimate_target<span class="op">=</span><span class="st">'mean'</span>, error_metric<span class="op">=</span><span class="st">'value'</span>)</span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="59">
-<div>
-<figure class="figure">
-<p><img src="post_files/figure-html/cell-60-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="post_files/figure-html/cell-60-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="post_files/figure-html/cell-61-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -2000,12 +1906,12 @@ Private estimate: 33,953 | exact clipped mean on same D: 34,354</code></pre>
 <section id="s9-summary-and-transition" class="level2">
 <h2 class="anchored" data-anchor-id="s9-summary-and-transition">S9 — Summary and Transition</h2>
 <p>The summary artifacts are generated from the leaderboard for downstream use, but the notebook mainline does not render dataframe outputs.</p>
-<div id="132" class="cell" data-execution_count="60">
+<div id="134" class="cell" data-execution_count="61">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>leaderboard <span class="op">=</span> pd.concat(leaderboard_parts, ignore_index<span class="op">=</span><span class="va">True</span>) <span class="cf">if</span> leaderboard_parts <span class="cf">else</span> pd.DataFrame()</span>
-<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>accuracy_summary <span class="op">=</span> accuracy_summary_table(leaderboard)</span>
-<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>proposal_summary <span class="op">=</span> pd.DataFrame(proposals_diagnoses_repairs_from_leaderboard(leaderboard))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>leaderboard <span class="op">=</span> pd.concat(leaderboard_parts, ignore_index<span class="op">=</span><span class="va">True</span>) <span class="cf">if</span> leaderboard_parts <span class="cf">else</span> pd.DataFrame()</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>accuracy_summary <span class="op">=</span> accuracy_summary_table(leaderboard)</span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>proposal_summary <span class="op">=</span> pd.DataFrame(proposals_diagnoses_repairs_from_leaderboard(leaderboard))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 
@@ -2630,7 +2536,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© Applied Differential Privacy. Built with Quarto.</p>
+<p>© 2026 The Hebrew University of Jerusalem. Code: MIT. Content: CC BY-NC-SA 4.0.</p>
 </div>   
     <div class="nav-footer-center">
       <ul class="footer-items list-unstyled">
@@ -2645,13 +2551,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </a>
   </li>  
     <li class="nav-item">
-    <a class="nav-link" href="../../../pages/schedule.html">
-<p>Schedule</p>
+    <a class="nav-link" href="../../../pages/about.html">
+<p>About</p>
 </a>
   </li>  
     <li class="nav-item">
-    <a class="nav-link" href="../../../pages/about.html">
-<p>About</p>
+    <a class="nav-link" href="../../../pages/license.html">
+<p>License &amp; attribution</p>
 </a>
   </li>  
 </ul>
